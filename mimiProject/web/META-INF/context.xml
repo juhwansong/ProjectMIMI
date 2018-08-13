@@ -5,7 +5,7 @@
 		License at http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
 		WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 	--><!-- The contents of this file will be loaded for each web application -->
-<Context workDir="d:\web_workspace\mimiProject\web\WEB-INF\jspwork">
+<Context workDir="C:\Users\KCS\git\ProjectMIMI\mimiProject\web\WEB-INF\jspwork">
 <!-- 본인 프로젝트 경로 --> 
 
     <!-- Default set of monitored resources -->
