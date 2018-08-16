@@ -56,7 +56,8 @@
 	    	</div>
 	  	</div>
 	  	<div class="col-sm-6 col-md-4">
-	    	<div class="thumbnail" style="cursor: pointer;" onclick="location.href='contentManage.jsp'">
+	    	<!-- <div class="thumbnail" style="cursor: pointer;" onclick="location.href='contentManage.jsp'"> -->
+	    	<div class="thumbnail" style="cursor: pointer;" onclick="location.href='/mimi/allboardlist'">
 	      		<img src="../../resources/images/admin/align-left-solid.svg" id="img" alt="게시물 관리">
 	      		<div class="caption">
 	        		<h4>전체 게시물 관리</h4>

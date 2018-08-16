@@ -1,6 +1,14 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8" errorPage="adminPageError.jsp"%>
+<%@ page import="common.model.vo.Board, java.util.ArrayList" %>
+<%
+	ArrayList<Board> list = (ArrayList<Board>)request.getAttribute("list");
+	int listCount = ((Integer)request.getAttribute("listCount")).intValue();
+	int startPage = ((Integer)request.getAttribute("startPage")).intValue();
+	int endPage = ((Integer)request.getAttribute("endPage")).intValue();
+	int maxPage = ((Integer)request.getAttribute("maxPage")).intValue();
+	int currentPage = ((Integer)request.getAttribute("currentPage")).intValue();
+%>
 <!-- head -->
 <%@include file="../../head.jsp" %>
 <!-- body -->
@@ -87,12 +95,13 @@
 		$(".dropdown-menu li a").click(function(){
 			$("#selectBtn:first-child").text($(this).text());
 	   	});
-
+		
 		//column checkbox select all or cancel
 		$("input.select-all").click(function() {
 			var checked = this.checked;
 			$("input.select-item").each(function(index, item) {
 				item.checked = checked;
+				console.log($(this).val());
 			});
 		});
 	
@@ -100,12 +109,14 @@
 		$("input.select-item").click(function() {
 			var checked = this.checked;
 			console.log(checked);
+			console.log($(this).val());
 			checkSelected();
 		});
 	
 		//check is all selected
 		function checkSelected() {
-			var all = $("input.select-all")[0];
+			/* var all = $("input.select-all")[0]; */
+			var all = $("input.select-all");
 			var total = $("input.select-item").length;
 			var len = $("input.select-item:checked:checked").length;
 			console.log("total:" + total);
@@ -118,12 +129,34 @@
 			$("#mySidenav").toggle(function(){
  			    console.log("실행됨");
 				//$("#mySidenav").css({"width" : "150px"});
-				
-				
+
 			})
 			
 		})
 	});
+	
+	function deleteRow() {
+		var selected = new String();
+		
+		$("input.select-item").each(function(index, item) {
+			if($(this).is(':checked')) {
+				selected += $(this).val() + " ";
+			}
+		});
+		
+		$.get("/mimi/allboarddelete", {boardNoStr: selected}, function() {
+			location.href="/mimi/allboardlist?page=1";
+		});
+		
+		<%-- $.ajax({
+			url: "/mimi/allboarddelete",
+			type: "get",
+			data: {boardNoStr: selected, currentPage: <%= currentPage %>},
+			success: function(data) {
+				console.log(selected);
+			}
+		}); --%>
+	};
 /* 	
 	function openNav() {
 	    document.getElementById("mySidenav").style.width = "190px";
@@ -139,12 +172,11 @@
 </script>
 
 <!-- ------------------------------------------------ -->
-
 <div id="mySidenav" class="sidenav" style="width:150px;"><!--추가--><!-- 
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a> -->
   <a href="adminPage.jsp" id="menuItem" style="color: #555; font-weight: 600; font-size:15px;">관리자 메뉴</a>
   <a href="userInfoManage.jsp" id="menuItem">전체 회원 관리</a>
-  <a href="contentManage.jsp" id="menuItem">전체 게시글 관리</a>  
+  <a href="/mimi/allboardlist" id="menuItem">전체 게시글 관리</a>  
   <a href="commentManage.jsp" id="menuItem">전체 댓글 관리</a>
 </div>
 
@@ -189,7 +221,19 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
+			<% for(Board b : list) { %>
+				<tr>
+				<td><input type="checkbox" class="select-item checkbox"
+					name="select-item" value="<%= b.getBoardNo() %>" /></td>
+				<td><%= b.getBoardNo().substring(2).replaceAll("^0*", "") %></td>
+				<td><%= b.getTitle() %></td>
+				<td><%= b.getNickName() %></td>
+				<td><%= b.getBoardDate() %></td>
+				<td><%= b.getHits() %></td>
+				<td><%= b.getRecommed() %></td>
+				</tr>
+			<% } %> 
+			<!-- <tr>
 				<td><input type="checkbox" class="select-item checkbox"
 					name="select-item" value="1000" /></td>
 				<td>1</td>
@@ -228,7 +272,7 @@
 				<td>18-07-31</td>
 				<td>33</td>
 				<td>5</td>
-			</tr>
+			</tr> -->
 		</tbody>
 	</table>
 <hr class="margin1" style="margin: 0px auto 5px auto;">
@@ -238,13 +282,13 @@
 		<td width="10%"></td><!-- 빈칸 -->
 		<td width="*"><!-- 페이지 -->
 	<!-- Pagination -->
-		<ul class="pagination" style="float: center; display: flex; justify-content: center;">
+		<!-- <ul class="pagination" style="float: center; display: flex; justify-content: center;">
 			<li>
-				<a href="#" aria-label="Previous">
+				<a href="/mimi/allboardlist?page=1" aria-label="Previous">
 				<span aria-hidden="true">&laquo;</span>
 				<span class="sr-only">Previous</span>
 				</a>
-			</li>
+			</li>	
 			<li><a href="#">1</a></li>
 			<li><a href="#">2</a></li>
 			<li><a href="#">3</a></li>
@@ -254,11 +298,55 @@
 				<span class="sr-only">Next</span>
 				</a>
 			</li>
-		</ul>	
+		</ul> -->
+		<ul class="pagination" style="float: center; display: flex; justify-content: center;">
+         <!-- 맨앞으로 -->
+         <li>
+         <% if(currentPage <= 1){ %>
+            <span style="color:#ccc;">&laquo;</span>
+         <% }else{ %>
+            <a href="/mimi/allboardlist?page=1" title="맨처음"><span style="color:#444;">&laquo;</span></a>
+         <% } %>
+         </li>
+         
+         <!-- 하나 앞 -->
+         <li>
+            <% if((currentPage - 10) < startPage && (currentPage - 10) > 1){ %>
+            <a href="/mimi/allboardlist?page=<%=startPage - 10%>" title="이전"><span style="color:#444;">&lt;</span></a>   
+         <% }else{ %>
+            <span style="color:#ccc;">&lt;</span>
+         <% } %>
+         </li>
+         
+         <% for(int p = startPage; p <= endPage; p++){
+               if(p == currentPage){%>
+         <li><span style="color:#ccc;"><%=p %></span></li>
+         <% }else{ %>
+         <li><a href="/mimi/allboardlist?page=<%=p%>"><span style="color:#444;"><%=p %></span></a></li>
+         <% }} %>
+         
+         <!-- 하나 뒤 -->
+         <% if((currentPage + 10) > endPage && (currentPage + 10) < maxPage){ %>
+         <li>
+            <a href="/mimi/allboardlist?page=<%=endPage + 10%>" title="다음"><span style="color:#444;">&gt;</span></a>
+         </li>
+         <% }else{ %>
+         <li><span style="color:#ccc;">&gt;</span></li>
+         <!-- 맨뒤 -->
+         <% }
+            if(currentPage >= maxPage){%>
+            <li><span style="color:#ccc;">&raquo;</span></li>
+         <% }else{ %>
+         <li>
+            <a href="/mimi/allboardlist?page=<%=maxPage%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
+         </li>
+         <% } %>
+         
+      </ul>   	
 	</td>
 		<!-- 삭제버튼 -->
 			<td width="10%" style="vertical-align: top;">
-			<input type="button" class="btn btn-default pull-right" onClick="#" value="삭제" style="outline: none;"></td>
+			<input type="button" class="btn btn-default pull-right" onclick="deleteRow();" value="삭제" style="outline: none;"></td>
 		</tr>
 </table>
 </div>
