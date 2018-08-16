@@ -1,11 +1,17 @@
 package userboard.controller;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import common.model.vo.Board;
+import userboard.exception.UserBoardException;
+import userboard.model.service.UserBoardService;
 
 /**
  * Servlet implementation class UserBoardDetailViewServlet
@@ -26,8 +32,36 @@ public class UserBoardDetailViewServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.setContentType("text/html; charset=utf-8");
+		
+		String boardNum = request.getParameter("bnum");
+		int currentPage = Integer.parseInt(request.getParameter("page"));
+		
+		UserBoardService ubservice = new UserBoardService();
+		
+		RequestDispatcher view = null;
+		try {
+			//상세보기시 조회수 1 증가 처리
+			ubservice.addReadCount(boardNum);
+			//해당 게시글 조회해 옴
+			Board board = ubservice.selectUserBoard(boardNum);
+			
+			if(board != null){
+				view = request.getRequestDispatcher("views/userReview/userReviewView.jsp");
+				request.setAttribute("board", board);
+				request.setAttribute("currentPage", currentPage);
+				view.forward(request, response);
+			}else{
+				view = request.getRequestDispatcher("views/userReview/userReviewError.jsp");
+				request.setAttribute("message", boardNum + "번 글 조회실패!");
+				view.forward(request, response);
+			}
+			
+		} catch (UserBoardException e) {
+			view = request.getRequestDispatcher("views/userReview/userReviewError.jsp");
+			request.setAttribute("message", e.getMessage());
+			view.forward(request, response);
+		}
 	}
 
 	/**

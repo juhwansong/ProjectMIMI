@@ -165,7 +165,7 @@
                         <a  href="/mimi/views/bestReview/bestReviewList.jsp">Best리뷰</a>
                     </li>
                     <li>
-                        <a  href="/mimi/views/userReview/userReviewList.jsp">유저리뷰</a>
+                        <a  href="/mimi/userboardlist">유저리뷰</a>
                     </li>
                     <li>
                         <a  href="/mimi/views/board/nearShop.jsp">주변매장</a>
@@ -175,6 +175,9 @@
                     </li>
                     <li>
                         <a  href="/mimi/views/intro/information.jsp">사이트소개</a>
+                    </li>
+                     <li>
+                        <a href="/mimi/testlist">테스트페이지</a>
                     </li>
                 </ul>
             </div>

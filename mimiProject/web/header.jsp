@@ -170,7 +170,7 @@
                         <a href="/mimi/views/bestReview/bestReviewList.jsp">Best리뷰</a>
                     </li>
                     <li>
-                        <a href="/mimi/views/userReview/userReviewList.jsp">유저리뷰</a>
+                        <a href="/mimi/userboardlist">유저리뷰</a>
                     </li>
                     <li>
                         <a href="/mimi/views/board/nearShop.jsp">주변매장</a>

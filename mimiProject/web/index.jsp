@@ -99,7 +99,6 @@
 	<a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
 	-->
 </div>
-<!-- test -->
 <!-- /이미지 슬라이드 -->
 <%@include file="footer.jsp" %> 
 <%@include file="end.jsp" %> 
