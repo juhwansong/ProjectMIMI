@@ -156,7 +156,7 @@
                         <a href="#page-top"></a>
                     </li> 
                     <li>
-                        <a  href="/mimi/views/notice/noticeList.jsp">공지사항</a>
+                        <a  href="/mimi/noticelist">공지사항</a>
                     </li>
                     <li>
                         <a  href="/mimi/views/board/adminReview.jsp">MIMI 리뷰</a>
