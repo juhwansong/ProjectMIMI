@@ -8,6 +8,10 @@
 	int endPage = ((Integer)request.getAttribute("endPage")).intValue();
 	int maxPage = ((Integer)request.getAttribute("maxPage")).intValue();
 	int currentPage = ((Integer)request.getAttribute("currentPage")).intValue();
+	String servletName = (String)request.getAttribute("servletName");
+	
+	String category = (String)request.getAttribute("category");
+	String searchText = (String)request.getAttribute("searchText");
 %>
 <!-- head -->
 <%@include file="../../head.jsp" %>
@@ -151,7 +155,7 @@
 		<%-- $.ajax({
 			url: "/mimi/allboarddelete",
 			type: "get",
-			data: {boardNoStr: selected, currentPage: <%= currentPage %>},
+			data: {boardNoStr: selected},
 			success: function(data) {
 				console.log(selected);
 			}
@@ -175,9 +179,9 @@
 <div id="mySidenav" class="sidenav" style="width:150px;"><!--추가--><!-- 
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a> -->
   <a href="adminPage.jsp" id="menuItem" style="color: #555; font-weight: 600; font-size:15px;">관리자 메뉴</a>
-  <a href="userInfoManage.jsp" id="menuItem">전체 회원 관리</a>
+  <a href="views/admin/userInfoManage.jsp" id="menuItem">전체 회원 관리</a>
   <a href="/mimi/allboardlist" id="menuItem">전체 게시글 관리</a>  
-  <a href="commentManage.jsp" id="menuItem">전체 댓글 관리</a>
+  <a href="views/admin/commentManage.jsp" id="menuItem">전체 댓글 관리</a>
 </div>
 
 <div class="container container-fluid" style="width:1150px;">
@@ -188,16 +192,16 @@
 			<td style="text-align: right; vertical-align: bottom; color: #777">
 				<!-- 카테고리 -->
 				<form class="form-inline" name="select-category"
-					id="select-category" method="get" action="#">
+					id="select-category" method="get" action="/mimi/allboardsearch?page=1">
 					<div class="form-group" style="float: right; margin: 3px;">
-						<select class="form-control">
-							<option value="1" selected>전체</option>
-							<option value="2">제목</option>
-							<option value="3">내용</option>
-							<option value="4">글번호</option>
+						<select name="category" id="category" class="form-control">
+							<option value="ALL" selected>전체</option>
+							<option value="BOARD_NO">글번호</option>
+							<option value="TITLE">제목</option>
+							<option value="NICKNAME">작성자</option>
 						</select> <input type="text" class="form-control" name="search-text"
 							id="search-text" size="8" placeholder=" ">&nbsp; ​​​​​​​
-						<button type="button" class="btn" name="btn" style="outline:none">
+						<button type="submit" class="btn" name="btn" style="outline:none">
 							검색&nbsp;<i class="fas fa-search"></i>
 						</button>
 					</div>
@@ -212,8 +216,8 @@
 			<tr>
 				<th><input type="checkbox" class="select-all checkbox"
 					name="select-all" /></th>
-				<th width="8%">글번호</th>
-				<th width="*">제목</th>
+				<th width="*">글번호</th>
+				<th width="50%">제목</th>
 				<th width="12%"><i class="fas fa-pen"></i>작성자</th>
 				<th width="8%"><i class="far fa-calendar"></i>작성일</th>
 				<th width="8%"><i class="far fa-eye"></i>조회수</th>
@@ -226,7 +230,7 @@
 				<td><input type="checkbox" class="select-item checkbox"
 					name="select-item" value="<%= b.getBoardNo() %>" /></td>
 				<td><%= b.getBoardNo().substring(2).replaceAll("^0*", "") %></td>
-				<td><%= b.getTitle() %></td>
+				<td class="tbl-td-title"><%= b.getTitle() %></td>
 				<td><%= b.getNickName() %></td>
 				<td><%= b.getBoardDate() %></td>
 				<td><%= b.getHits() %></td>
@@ -236,12 +240,12 @@
 			<!-- <tr>
 				<td><input type="checkbox" class="select-item checkbox"
 					name="select-item" value="1000" /></td>
-				<td>1</td>
+				<td>2</td>
 				<td class="tbl-td-title">titleeeeeeeeeeeeeeeeeeeeeee</td>
-				<td>user01</td>
+				<td>admin</td>
 				<td>18-07-31</td>
-				<td>112</td>
-				<td>50</td>
+				<td>200</td>
+				<td>143</td>
 			</tr>
 			<tr>
 				<td><input type="checkbox" class="select-item checkbox"
@@ -305,14 +309,22 @@
          <% if(currentPage <= 1){ %>
             <span style="color:#ccc;">&laquo;</span>
          <% }else{ %>
-            <a href="/mimi/allboardlist?page=1" title="맨처음"><span style="color:#444;">&laquo;</span></a>
+         	<% if(category == null || category.equals("ALL")) { %>
+         		<a href="/mimi/allboardlist?page=1&category=<%=category%>&searchText=<%=searchText%>" title="맨처음"><span style="color:#444;">&laquo;</span></a>
+         	<% } else { %>
+            	<a href="/mimi/allboardsearch?page=1&category=<%=category%>&searchText=<%=searchText%>" title="맨처음"><span style="color:#444;">&laquo;</span></a>
+         	<% } %>
          <% } %>
          </li>
          
          <!-- 하나 앞 -->
          <li>
-            <% if((currentPage - 10) < startPage && (currentPage - 10) > 1){ %>
-            <a href="/mimi/allboardlist?page=<%=startPage - 10%>" title="이전"><span style="color:#444;">&lt;</span></a>   
+         <% if((currentPage - 10) < startPage && (currentPage - 10) > 1){ %>
+			<% if(category == null || category.equals("ALL")) { %>
+         		<a href="/mimi/allboardlist?page=<%=startPage - 10%>&category=<%=category%>&searchText=<%=searchText%>" title="이전"><span style="color:#444;">&lt;</span></a>
+         	<% } else { %>
+				<a href="/mimi/allboardsearch?page=<%=startPage - 10%>&category=<%=category%>&searchText=<%=searchText%>" title="이전"><span style="color:#444;">&lt;</span></a>  
+         	<% } %>
          <% }else{ %>
             <span style="color:#ccc;">&lt;</span>
          <% } %>
@@ -322,23 +334,35 @@
                if(p == currentPage){%>
          <li><span style="color:#ccc;"><%=p %></span></li>
          <% }else{ %>
-         <li><a href="/mimi/allboardlist?page=<%=p%>"><span style="color:#444;"><%=p %></span></a></li>
+            <% if(category == null || category.equals("ALL")) { %>
+         		<li><a href="/mimi/allboardlist?page=<%=p%>&category=<%=category%>&searchText=<%=searchText%>"><span style="color:#444;"><%=p %></span></a></li>
+         	<% } else { %>
+            	<li><a href="/mimi/allboardsearch?page=<%=p%>&category=<%=category%>&searchText=<%=searchText%>"><span style="color:#444;"><%=p %></span></a></li>
+         	<% } %>
          <% }} %>
          
          <!-- 하나 뒤 -->
          <% if((currentPage + 10) > endPage && (currentPage + 10) < maxPage){ %>
          <li>
-            <a href="/mimi/allboardlist?page=<%=endPage + 10%>" title="다음"><span style="color:#444;">&gt;</span></a>
+         	<% if(category == null || category.equals("ALL")) { %>
+         		<a href="/mimi/allboardlist?page=<%=endPage + 10%>&category=<%=category%>&searchText=<%=searchText%>" title="다음"><span style="color:#444;">&gt;</span></a>
+         	<% } else { %>
+				<a href="/mimi/allboardsearch?page=<%=endPage + 10%>&category=<%=category%>&searchText=<%=searchText%>" title="다음"><span style="color:#444;">&gt;</span></a>							                 
+         	<% } %>
          </li>
          <% }else{ %>
          <li><span style="color:#ccc;">&gt;</span></li>
          <!-- 맨뒤 -->
          <% }
-            if(currentPage >= maxPage){%>
+ 			if(currentPage >= maxPage){%>
             <li><span style="color:#ccc;">&raquo;</span></li>
          <% }else{ %>
          <li>
-            <a href="/mimi/allboardlist?page=<%=maxPage%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
+         	<% if(category == null || category.equals("ALL")) { %>
+         		<a href="/mimi/allboardlist?page=<%=maxPage%>&category=<%=category%>&searchText=<%=searchText%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
+         	<% } else { %>
+            	<a href="/mimi/allboardsearch?page=<%=maxPage%>&category=<%=category%>&searchText=<%=searchText%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
+         	<% } %>
          </li>
          <% } %>
          
