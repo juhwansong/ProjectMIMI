@@ -164,7 +164,7 @@
                         <a href="/mimi/noticelist">공지사항</a>
                     </li>
                     <li>
-                        <a href="/mimi/views/board/adminReview.jsp">MIMI 리뷰</a>
+                        <a href="/mimi/adminboardlist">MIMI 리뷰</a>
                     </li>
                     <li>
                         <a href="/mimi/views/bestReview/bestReviewList.jsp">Best리뷰</a>

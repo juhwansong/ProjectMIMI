@@ -32,16 +32,21 @@ public class FileDownloadServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
+		
 		String readFolder = request.getSession().getServletContext().getRealPath("/files/notice");
 		String noticeRealFile = request.getParameter("ofile");
 		String noticeRenameFile = request.getParameter("rfile");
+		
 		ServletOutputStream downOut = response.getOutputStream();
+		
 		File downFile = new File(readFolder + "/" + noticeRenameFile);
+		
 		response.setContentType("text/plain; charset=utf-8");
 		response.addHeader("Content-Disposition", "attachment; filename=\"" + new String(noticeRealFile.getBytes("utf-8"), "ISO-8859-1") + "\"");
 		response.setContentLength((int) downFile.length());
 		
 		BufferedInputStream bin = new BufferedInputStream(new FileInputStream(downFile));
+		
 		int read = -1;
 		while((read = bin.read()) != -1){
 			downOut.write(read);

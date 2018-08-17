@@ -1,11 +1,18 @@
 package bookmark.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import bookmark.exception.BookmarkException;
+import bookmark.model.service.BookmarkService;
+import common.model.vo.Board;
 
 /**
  * Servlet implementation class BookmarkSearchServlet
@@ -26,8 +33,75 @@ public class BookmarkSearchServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		//LinkedHashMap<String, String> map = new LinkedHashMap<>();
+		
+		request.setCharacterEncoding("utf-8");
+		String userId = "user01"; //////////////임시값///////////////
+		String category = request.getParameter("selectReview"); //board_gb
+		String keyword = request.getParameter("textSearch"); //title + contents + shop_name + shop_address
+		String gb = null;
+		if(keyword == null)
+			keyword = ""; //전부
+		
+		if(category.equals("allReview") || category == null){
+			gb = "in ('AR', 'UR')";
+			
+		}else if(category.equals("mimiReview")){
+			gb = "= 'AR'"; 
+			
+		}else{
+			gb = "= 'UR'";
+		}
+		
+		response.setContentType("text/html; charset=utf-8");		
+		int currentPage = 1; //맨 첫화면은 1페이지
+		int countList = 10;	//한 화면에 출력될 리스트 개수
+		int countPage = 10; //한 화면에 출력될 페이지 개수
+				
+		if(request.getParameter("page") != null) {
+			currentPage = Integer.parseInt(request.getParameter("page"));
+		}
+		
+		RequestDispatcher view = null;
+		try {
+			ArrayList<Board> list = new BookmarkService().searchBookmark(userId, gb, keyword, currentPage, countList);
+			
+			int totalCount = list.size();
+			int maxPage = totalCount / countList;
+			if(totalCount % countList > 0)
+				maxPage++;
+			
+			if(maxPage < currentPage)
+				currentPage = maxPage;
+			
+			
+			int startPage = ((currentPage - 1) / 10) * 10 + 1;
+			int endPage = startPage + countPage - 1;
+			
+			if(endPage > maxPage)
+				endPage = maxPage;
+
+			//if(list.size() > 0){
+				view = request.getRequestDispatcher("views/board/bookmarkList.jsp");
+				request.setAttribute("list", list);
+				request.setAttribute("currentPage", currentPage);
+				request.setAttribute("maxPage", maxPage);
+				request.setAttribute("startPage", startPage);
+				request.setAttribute("endPage", endPage);
+				request.setAttribute("totalCount", totalCount);
+				view.forward(request, response);
+
+			//}else{
+//				//즐겨찾기한 목록이 없을때...
+//				view = request.getRequestDispatcher("views/board/boardError.jsp");
+//				request.setAttribute("message", "즐겨찾기한 게시물이 존재하지 않습니다.");
+//				view.forward(request, response);
+//			}
+		} catch (BookmarkException e) {
+			view = request.getRequestDispatcher("views/board/boardError.jsp");
+			request.setAttribute("message", e.getMessage());
+			view.forward(request, response);
+		}
 	}
 
 	/**

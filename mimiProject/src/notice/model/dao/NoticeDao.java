@@ -23,7 +23,6 @@ public class NoticeDao {
 		
 		int startRow = (currentPage - 1) * countList + 1;
 		int endRow = startRow + countList - 1;
-		int age = null;
 		
 		try {
 			pstmt = conn.prepareStatement(query);

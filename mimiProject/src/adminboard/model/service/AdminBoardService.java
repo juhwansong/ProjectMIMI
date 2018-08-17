@@ -1,9 +1,12 @@
 package adminboard.model.service;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static common.jdbc.JDBCTemplate.*;
 import adminboard.exception.AdminBoardException;
+import adminboard.model.dao.AdminBoardDao;
 import common.model.vo.Board;
 
 public class AdminBoardService {//미미 리뷰 게시판 기능
@@ -13,7 +16,10 @@ public class AdminBoardService {//미미 리뷰 게시판 기능
 		
 	}
 	public int getListCount() throws AdminBoardException{//게시물 총 갯수(페이지네이션 관리 시 필요)
-		return 0;
+		Connection conn = getConnection();
+		int listCount = new AdminBoardDao().getListCount(conn);
+		close(conn);
+		return listCount;
 	}
 	public int getSearchListCount(HashMap<String, String> keword) throws AdminBoardException{ //검색한 게시물 총 갯수(페이지네이션 관리 시 필요)
 		return 0;
@@ -29,7 +35,10 @@ public class AdminBoardService {//미미 리뷰 게시판 기능
 		return 0;
 	}
 	public ArrayList<Board> selectAdminBoardList() throws AdminBoardException{//전체 게시물 조회
-		return null;
+		Connection conn = getConnection();
+		ArrayList<Board> list = new AdminBoardDao().selectAdminList(conn);
+		close(conn);
+		return list;
 	}
 	public int updateAdminBoard(Board board) throws AdminBoardException{ //게시물 수정
 		return 0;
