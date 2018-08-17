@@ -256,8 +256,7 @@
 	<div class="row">
 		<div class="col-xs-6 text-left">
 			<input type="button" class="btn btn-default"
-				onClick="location.href='/mimi/views/userReview/userReviewList.jsp'"
-				value="목록">
+				onClick="location.href='/mimi/userboardlist?page=<%= currentPage %>'" value="목록">
 		</div>
 		<div class="col-xs-6 text-right">
 			<input type="submit" class="btn btn-default" value="수정" style="outline: none;"> <input

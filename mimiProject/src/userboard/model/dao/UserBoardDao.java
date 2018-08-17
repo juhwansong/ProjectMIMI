@@ -220,5 +220,123 @@ public class UserBoardDao {
 		return urboard;
 	}
 
+	public int insertBoard(Connection con, Board board) throws UserBoardException {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		String query = "INSERT INTO TB_BOARD_REVIEW "
+				+ "(BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, "
+				+ "CONTENTS, CONTENTS_TAG, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, "
+				+ "LATITUDE, LONGITUDE, FILE_CNT, BOARD_LINK, THUMBNAIL_NAME) "
+				+ "VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), ?, ?, 'UR', ?, "
+				+ "?, ?, ?, ?, ?, "
+				+ "?, ?, 0, '링크', ?)";
+		
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, board.getCategoryNo());
+			pstmt.setString(2, board.getUserId());
+			pstmt.setString(3, board.getTitle());
+			pstmt.setString(4, board.getContents());
+			pstmt.setString(5, board.getContentsTag());
+			pstmt.setString(6, board.getShopName());
+			pstmt.setString(7, board.getShopAddress());
+			pstmt.setString(8, board.getShopCall());
+			pstmt.setInt(9, board.getLatitude());
+			pstmt.setInt(10, board.getLongitude());
+			pstmt.setString(11, board.getThumbnailName());
+		
+			result = pstmt.executeUpdate();
+			
+			if(result <= 0)
+				throw new UserBoardException("새 원글 등록 실패!");			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserBoardException(e.getMessage());
+		}finally{
+			close(pstmt);
+		}		
+		
+		return result;
+	}
+
+	public int deleteBoard(Connection con, 
+			String boardNum) throws UserBoardException{
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		String query = "delete from board "
+				+ "where board_num = ?";
+		
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, boardNum);
+			
+			result = pstmt.executeUpdate();
+			
+			if(result <= 0)
+				throw new UserBoardException("게시글 삭제 실패!");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserBoardException(e.getMessage());
+		}finally{
+			close(pstmt);
+		}
+		
+		return result;
+	}
+
+	public int insertReply(Connection con, Board replyBoard) throws UserBoardException {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		String query = null;
+		
+		/*
+		//원글의 댓글인 경우
+		if(replyBoard.getBoardLevel() == 1){
+			query = "insert into board values ("
+				+ "(select max(board_num) + 1 from board), "
+				+ "?, ?, ?, null, null, sysdate, ?, ?, "
+				+ "(select max(board_num) + 1 from board), "
+				+ "1, default)";
+		}
+		
+		//댓글의 댓글인 경우
+		if(replyBoard.getBoardLevel() == 2){
+			query = "insert into board values ("
+					+ "(select max(board_num) + 1 from board), "
+					+ "?, ?, ?, null, null, sysdate, ?, ?, ?, "
+					+ "1, default)";
+		}
+		*/
+		/*
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, replyBoard.getTitle());
+			pstmt.setString(2, replyBoard.getUserId());
+			
+			if(replyBoard.getBoardLevel() == 2)
+				pstmt.setInt(6, replyBoard.getBoardReplyRef());
+			
+			result = pstmt.executeUpdate();
+			
+			if(result <= 0)
+				throw new BoardException(
+					replyBoard.getBoardRef()
+					+ "번글에 대한 댓글 달기 실패!");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BoardException(e.getMessage());
+		}finally{
+			close(pstmt);
+		}
+		*/
+		return result;
+	}
+
 
 }

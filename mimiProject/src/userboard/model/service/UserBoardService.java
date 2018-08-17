@@ -70,7 +70,14 @@ public class UserBoardService {	//유저 리뷰 게시판 기능
 		return 0;
 	}
 	public int insertUserBoardReply(Board board) throws UserBoardException{//게시물 댓글 추가
-		return 0;
+		Connection con = getConnection();
+		int result = new UserBoardDao().insertBoard(con, board);
+		if(result > 0)
+			commit(con);
+		else
+			rollback(con);
+		close(con);
+		return result;
 	}
 	public int updateUserBoardReply(Board board) throws UserBoardException{//게시물 댓글 수정
 		return 0;
