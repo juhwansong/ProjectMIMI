@@ -181,7 +181,7 @@
   <a href="adminPage.jsp" id="menuItem" style="color: #555; font-weight: 600; font-size:15px;">관리자 메뉴</a>
   <a href="views/admin/userInfoManage.jsp" id="menuItem">전체 회원 관리</a>
   <a href="/mimi/allboardlist" id="menuItem">전체 게시글 관리</a>  
-  <a href="views/admin/commentManage.jsp" id="menuItem">전체 댓글 관리</a>
+  <a href="/mimi/allcommentlist" id="menuItem">전체 댓글 관리</a>
 </div>
 
 <div class="container container-fluid" style="width:1150px;">

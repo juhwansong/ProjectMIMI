@@ -65,7 +65,8 @@
 	    	</div>
 	  	</div>
 	  	<div class="col-sm-6 col-md-4">
-	    	<div class="thumbnail" style="cursor: pointer;" onclick="location.href='commentManage.jsp'">
+	    	<!-- <div class="thumbnail" style="cursor: pointer;" onclick="location.href='commentManage.jsp'"> -->
+	    	<div class="thumbnail" style="cursor: pointer;" onclick="location.href='/mimi/allcommentlist'">
 	      		<img src="../../resources/images/admin/comments-solid.svg" id="img" alt="댓글 관리">
 	      		<div class="caption">
 	        		<h4>전체 댓글 관리</h4>
