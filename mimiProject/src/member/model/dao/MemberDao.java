@@ -11,7 +11,6 @@ import static common.jdbc.JDBCTemplate.*;
 
 public class MemberDao {
 	public String selectCheckInfo(Connection con, String whereQuery, String value) {
-		System.out.println("확인");
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		String result = null;
