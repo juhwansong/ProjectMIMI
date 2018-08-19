@@ -186,9 +186,9 @@
 			<!-- 관리자 로그인 상태에서 메뉴 버튼 누를시 -->
 			<div class="admin-menu-box">
 				<div>
-					<p align="center" style="margin:0px;font-size:7pt;">level1</p>
-					<p align="center" style="margin:0px;">Nickname</p>
-					<p align="center" style="font-size:7pt;">admin</p>
+					<p id="menu-gradename" align="center" style="margin:0px;font-size:7pt;"></p>
+					<p id="menu-nickname" align="center" style="margin:0px;"></p>
+					<p id="menu-userid" align="center" style="font-size:7pt;"><%=session.getAttribute("userId") %></p>
 				</div>
 				<div align="center">
 					<a href="#">로그아웃</a>
@@ -238,20 +238,39 @@
    
     <script type="text/javascript">
 		$(function(){
+			//화면 로딩 시 바로 ajax 통해서 회원 닉네임, 등급이름 가져온다.
+			$.ajax({
+	      		url : "/mimi/membermenuinfo",
+	      		type : "post",
+	      		success : function(data){
+	      			var json = data;
+	      			$("#menu-gradename").html(decodeURI(json.gradeName));
+	      			$("#menu-nickname").html(decodeURI(json.nickName));
+	      		}
+	      	});
+			
+			
 			$(document).on("mouseover", "#menu-box-btn", function(){
 				$("#menu-box-btn").css("cursor", "pointer");
 			});
-			$(document).on("click", "#menu-box-btn", function(){
+			
+			
+			$(document).on("click", "body", function(event){
 				if($(".admin-menu-box").css("display") === "none"){
-					$(".admin-menu-box").slideDown("slow", function() {
-						
-					});
+					if($(event.target).is("#menu-box-btn,#menu-box-btn *")){
+						$(".admin-menu-box").slideDown("slow", function() {	
+						});	
+					}
 				}
-				else{
-					$(".admin-menu-box").slideUp("slow", function() {
-						
-					});
+				else{					
+					if(!$(event.target).is(".admin-menu-box,.admin-menu-box *")){
+						$(".admin-menu-box").slideUp("slow", function() {	
+						});	
+					}
 				}
 			});	
+			
+			
+			
 		});
 	</script>

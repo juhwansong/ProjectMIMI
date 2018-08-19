@@ -19,3 +19,24 @@
 </head>
 <body>
 <!-- 바디 태그 시작 -->
+
+<%
+	String userId = (String)session.getAttribute("userId");
+	String authority = (String)session.getAttribute("authority");
+	
+	if(userId == null){
+%>		
+		<%@include file="header.jsp" %>
+<% 		
+	}
+	else if(authority.equals("U")){
+%>		
+		<%@include file="memberHeader.jsp" %>
+<%	
+	}
+	else if(authority.equals("A")){
+%>		
+		<%@include file="adminHeader.jsp" %>
+<%		
+	}
+%>

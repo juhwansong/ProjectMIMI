@@ -2,9 +2,6 @@
     pageEncoding="UTF-8"%>
 
 <%@include file="head.jsp" %> 
-<%-- <%@include file="header.jsp" %> --%>
-<%-- <%@include file="memberHeader.jsp" %> --%>
-<%@include file="adminHeader.jsp" %>
 
 <title>MIMI</title>
 
@@ -21,8 +18,6 @@
 		opacity: .8;
 	}
 </style>
-
-	
 	
 <!-- 이미지 슬라이드 -->
 <div class="carousel slide" id="myCarousel" data-ride="carousel"  style="position:relative; min-width:1150px;"> 

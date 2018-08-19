@@ -2,12 +2,11 @@
 	pageEncoding="UTF-8"%>
 
 <%@include file="../../head.jsp"%>
-<%@include file="../../header.jsp"%>
 
 
 <!-- ---------------------- -->
 
-<script src="https://cdn.jsdelivr.net/clipboard.js/1.5.3/clipboard.min.js"></script>
+
 <script src="/mimi/resources/js/kakao.min.js"></script>
 
 <style type="text/css">

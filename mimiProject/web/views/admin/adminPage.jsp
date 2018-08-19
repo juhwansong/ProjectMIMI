@@ -2,10 +2,7 @@
     pageEncoding="UTF-8"%>
 
 <%@include file="../../head.jsp" %>
-<!-- body -->
-<%-- <%@include file="../../header.jsp" %>
-<%@include file="../../memberHeader.jsp" %> --%>
-<%@include file="../../adminHeader.jsp" %>
+
 
 <!-- ----------- -->
 <!-- <title>adminPage</title> -->

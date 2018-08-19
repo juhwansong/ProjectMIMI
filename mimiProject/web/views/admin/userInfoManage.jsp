@@ -2,8 +2,6 @@
 	pageEncoding="UTF-8"%>
 <!-- head -->
 <%@include file="../../head.jsp" %>
-<!-- body -->
-<%@include file="../../adminHeader.jsp" %>
 <style>
 .sidenav {
     height: 35%; /* 변경 */

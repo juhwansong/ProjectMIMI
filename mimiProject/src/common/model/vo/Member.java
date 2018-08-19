@@ -11,7 +11,7 @@ public class Member implements Serializable {
 	private String userName;	//이름
 	private String nickName;	//닉네임
 	private String email;		//이메일
-	private Date birth;			//생일
+	private String birth;		//생일
 	private String phone;		//전화번호
 	private int gradePoint;		//등급포인트
 	private String gradeName;	//등급이름
@@ -21,7 +21,7 @@ public class Member implements Serializable {
 	
 	public Member(){}
 
-	public Member(String userId, String userPwd, String userName, String nickName, String email, Date birth,
+	public Member(String userId, String userPwd, String userName, String nickName, String email, String birth,
 			String phone, int gradePoint, String gradeName, String authority, String state, Date delDate) {
 		this.userId = userId;
 		this.userPwd = userPwd;
@@ -85,11 +85,11 @@ public class Member implements Serializable {
 		this.email = email;
 	}
 
-	public Date getBirth() {
+	public String getBirth() {
 		return birth;
 	}
 
-	public void setBirth(Date birth) {
+	public void setBirth(String birth) {
 		this.birth = birth;
 	}
 

@@ -2,9 +2,6 @@
     pageEncoding="UTF-8"%>
 
 <%@include file="../../head.jsp" %>
-<%-- <%@include file="../../header.jsp" %> --%>
-<%@include file="../../memberHeader.jsp" %>
-<%-- <%@include file="../../adminHeader.jsp" %> --%> 
 
 <div class="container" style="width:1150px;">
 
