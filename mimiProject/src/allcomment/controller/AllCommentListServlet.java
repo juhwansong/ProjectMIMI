@@ -41,7 +41,6 @@ public class AllCommentListServlet extends HttpServlet {
 		int currentPage = 1;
 		int limit = 15;
 		int pageLimit = 10;
-		String servletName = "AllCommentListServlet";
 		
 		if(category == null || category.equals("ALL")) {
 			category = "ALL";
@@ -84,7 +83,6 @@ public class AllCommentListServlet extends HttpServlet {
 				request.setAttribute("startPage", startPage);
 				request.setAttribute("endPage", endPage);
 				request.setAttribute("listCount", listCount);
-				request.setAttribute("servletName", servletName);
 				request.setAttribute("category", category);
 				request.setAttribute("searchText", searchText);
 				view.forward(request, response);

@@ -9,7 +9,6 @@
 	int endPage = ((Integer)request.getAttribute("endPage")).intValue();
 	int maxPage = ((Integer)request.getAttribute("maxPage")).intValue();
 	int currentPage = ((Integer)request.getAttribute("currentPage")).intValue();
-	String servletName = (String)request.getAttribute("servletName");
 	
 	String category = (String)request.getAttribute("category");
 	String searchText = (String)request.getAttribute("searchText");
@@ -253,7 +252,6 @@
 							<td class="tbl-td-title"><%= b.getCommentContents() %></td>
 							<td><%= b.getCommentDate() %></td>
 							<td><%= b.getTitle() %></td>
-							<td><%= b.getLatitude() %></td>
 						</tr>
 					<% } %> 
 	   				<!-- <tr>

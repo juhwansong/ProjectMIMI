@@ -8,7 +8,6 @@
 	int endPage = ((Integer)request.getAttribute("endPage")).intValue();
 	int maxPage = ((Integer)request.getAttribute("maxPage")).intValue();
 	int currentPage = ((Integer)request.getAttribute("currentPage")).intValue();
-	String servletName = (String)request.getAttribute("servletName");
 	
 	String category = (String)request.getAttribute("category");
 	String searchText = (String)request.getAttribute("searchText");
@@ -194,7 +193,7 @@
 				<form class="form-inline" name="select-category"
 					id="select-category" method="get" action="/mimi/allboardsearch?page=1">
 					<div class="form-group" style="float: right; margin: 3px;">
-						<select name="category" id="category" class="form-control">
+						<select name="category" class="form-control">
 							<option value="ALL" selected>전체</option>
 							<option value="BOARD_NO">글번호</option>
 							<option value="TITLE">제목</option>

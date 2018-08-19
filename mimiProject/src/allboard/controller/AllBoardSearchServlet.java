@@ -39,7 +39,6 @@ public class AllBoardSearchServlet extends HttpServlet {
 		
 		String category = request.getParameter("category");
 		String searchText = request.getParameter("search-text");
-		String servletName = "AllBoardSearchServlet"; 
 		
 		if(searchText == null)
 			searchText = request.getParameter("searchText");
@@ -100,7 +99,6 @@ public class AllBoardSearchServlet extends HttpServlet {
 				request.setAttribute("startPage", startPage);
 				request.setAttribute("endPage", endPage);
 				request.setAttribute("listCount", searchListCount);
-				request.setAttribute("servletName", servletName);
 				request.setAttribute("category", category);
 				request.setAttribute("searchText", searchText);
 				view.forward(request, response);

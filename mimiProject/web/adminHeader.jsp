@@ -197,7 +197,8 @@
 			
 				<div style="padding-top:20px;" align="center">	
 					<span style="width:100px;">	
-						<a href="/mimi/views/board/myContent.jsp">
+						<!-- <a href="/mimi/views/board/myContent.jsp"> -->
+						<a href="/mimi/myboardlist?nickname=NICKNAME&user=관리자">
 							<div>
 								<p style="font-size:25pt;" class="far fa-file-alt" aria-hidden="true"></p>
 								<p>작성한 글</p>	
@@ -205,7 +206,8 @@
 						</a>
 					</span>			
 					<span style="width:100px;">	
-						<a href="/mimi/views/board/myComment.jsp">
+						<!-- <a href="/mimi/views/board/myComment.jsp"> -->
+						<a href="/mimi/mycommentlist?nickname=NICKNAME&user=관리자">
 							<div>
 								<p style="font-size:25pt;" class="far fa-comments" aria-hidden="true"></p>
 								<p>작성한 댓글</p>	
