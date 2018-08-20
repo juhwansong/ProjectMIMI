@@ -1,12 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8" errorPage="noticeError.jsp"%>
+<%@ page import="notice.model.vo.Notice" %>
     
 <%
+	Notice notice = (Notice)request.getAttribute("notice");
+	int currentPage = ((Integer)request.getAttribute("page")).intValue();
 	String nickName = (String)session.getAttribute("nickname");
 	String userId = (String)session.getAttribute("userid");
 %>
 
 <%@include file="../../head.jsp" %>
+<%-- <%@include file="../../header.jsp" %> --%>
+<%-- <%@include file="../../memberHeader.jsp" %> --%>
+<%@include file="../../adminHeader.jsp" %>
+
 
 <style type="text/css">
 .filebox input[type="file"] { 
@@ -63,29 +70,30 @@
 	}); 
 
 </script>
-
-<!-- <title>MIMI</title> -->
-
 <div class="container" style="width:1150px;">
-	<h3>공지사항 작성</h3>
+	<h3>공지사항 수정</h3>
 	<div class="form-group">
-	<form action="/mimi/noticeinsert" method="post" enctype="multipart/form-data">
-	<input type="hidden" name="userid" value="<%-- <%=userId%> --%>admin1"><!-- userid로 join이라 가져가야함 -->
+	<form action="/mimi/noticeupdate" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="userid" value="<%=userId%>"><!-- userid로 join이라 가져가야함 -->
+	<input type="hidden" name="noticeno" value="<%= notice.getNoticeNo()%>">
 		<table class="table" id="table-css2">
 			<tr>
 				<th width="15%">제목</th>
-				<td><input type="text" name="title" class="form-control" placeholder="제목 입력"></td>
+				<td><input type="text" name="title" class="form-control" value="<%= notice.getNoticeTitle()%>"></td>
 				<th width="15%">작성자</th>
-				<td width="20%"><%=nickName%><!-- 닉네임 --></td>
+				<td width="20%"><%= notice.getUserId()%><!-- 닉네임/ 수정 불가 --></td>
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td colspan="3"><textarea name="contents" class="form-control" rows="15" placeholder="내용 입력"></textarea></td>
+				<td colspan="3"><textarea name="contents" class="form-control" rows="15"><%= notice.getNoticeContents() %></textarea></td>
 			</tr>
 			<tr>
 				<th rowspan="2">첨부파일</th>
 				<td colspan="3">
-				<div class="filebox">
+				<div class="filebox" style="text-align:left;">
+				<% if(notice.getNoticeRealFile() != null){ %>
+				 &nbsp;&nbsp;현재 첨부 파일&nbsp;:&nbsp;&nbsp;<a href="/mimi/filedownload?ofile=<%= notice.getNoticeRealFile()%>&rfile=<%= notice.getNoticeRenameFile()%>"><%= notice.getNoticeRealFile() %></a>
+				<% } %>
 				<input class="upload-name" value="" disabled="disabled"><label for="ex_filename" class="pull-right">파일 첨부</label>
 				<input type="file" name="upfile" id="ex_filename" class="upload-hidden"> </div></td>
 			</tr>
@@ -93,8 +101,8 @@
 		</table>
 		<hr class="my-hr">
 		<div align="center" style="margin:5px;">
-		<button type="submit" class="btn btn-default" name="btn" style="outline:none">등록</button>
-		<button type="button" class="btn btn-default" name="btn" onclick="window.history.back();" style="outline:none">취소</button>
+		<button type="submit" class="btn btn-default" name="btn" style="outline:none">수정</button>
+		<button type="button" class="btn btn-default" name="btn" onclick="location.href='/mimi/noticelist?page=<%= currentPage %>'" style="outline:none">취소</button>
 		</div>
 		</form>
 	</div>

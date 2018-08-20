@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import="java.util.*, common.model.vo.Member" %>
+<%
+	ArrayList<Member> list = (ArrayList<Member>)request.getAttribute("customerList");
+%>
 <!-- head -->
 <%@include file="../../head.jsp" %>
 <style>
@@ -147,162 +151,32 @@
 		<th width="10%">상태</th>
 	</tr>
 	</thead>
+	<% for (Member member : list) { %>
 	<tbody>
 	<tr>
 		<td><input type="checkbox" name="checkOne" id="checkOne"></td>
-		<td>userId1<!-- 아이디 --></td>
-		<td>Nickname<!-- 닉네임 --></td>
-		<td>email@email.com<!-- 이메일 --></td>
-		<td>010-0000-0000<!-- 전화번호 --></td>
-		<td>식신<!-- 등급명 --></td>
-		<td>243<!-- 등급포인트 --></td>
+		<td><%= member.getUserId() %><!-- 아이디 --></td>
+		<td><%= member.getNickName() %><!-- 닉네임 --></td>
+		<td><%= member.getEmail() %><!-- 이메일 --></td>
+		<td><%= member.getPhone() %><!-- 전화번호 --></td>
+		<td><%= member.getGradeName() %><!-- 등급명 --></td>
+		<td><%= member.getGradePoint() %><!-- 등급포인트 --></td>
 		<td>
 		<!-- 권한 -->
 		<select class="border-zero" name="dropdown1" id="dropdown1">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;회원</option>
+			<option value="<%= member.getAuthority() %>" selected><%= member.getAuthority() %></option>
 			<option value="<%--그외값1--%>">관리자</option>
 		</select>
 		</td>
 		<td><!-- 상태 -->
 		<select class="border-zero" name="dropdown2" id="dropdown2">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;일반</option>
-			<option value="<%--그외값1--%>">삭제대기</option>
-		</select>
-		</td>
-	</tr>
-	<tr>
-		<td><input type="checkbox" name="checkOne" id="checkOne"></td>
-		<td>userId1<!-- 아이디 --></td>
-		<td>Nickname<!-- 닉네임 --></td>
-		<td>email@email.com<!-- 이메일 --></td>
-		<td>010-0000-0000<!-- 전화번호 --></td>
-		<td>식신<!-- 등급명 --></td>
-		<td>243<!-- 등급포인트 --></td>
-		<td>
-		<!-- 권한 -->
-		<select class="border-zero" name="dropdown1" id="dropdown1">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;회원</option>
-			<option value="<%--그외값1--%>">관리자</option>
-		</select>
-		</td>
-		<td><!-- 상태 -->
-		<select class="border-zero" name="dropdown2" id="dropdown2">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;일반</option>
-			<option value="<%--그외값1--%>">삭제대기</option>
-		</select>
-		</td>
-	</tr>
-	<tr>
-		<td><input type="checkbox" name="checkOne" id="checkOne"></td>
-		<td>userId1<!-- 아이디 --></td>
-		<td>Nickname<!-- 닉네임 --></td>
-		<td>email@email.com<!-- 이메일 --></td>
-		<td>010-0000-0000<!-- 전화번호 --></td>
-		<td>식신<!-- 등급명 --></td>
-		<td>243<!-- 등급포인트 --></td>
-		<td>
-		<!-- 권한 -->
-		<select class="border-zero" name="dropdown1" id="dropdown1">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;회원</option>
-			<option value="<%--그외값1--%>">관리자</option>
-		</select>
-		</td>
-		<td><!-- 상태 -->
-		<select class="border-zero" name="dropdown2" id="dropdown2">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;일반</option>
-			<option value="<%--그외값1--%>">삭제대기</option>
-		</select>
-		</td>
-	</tr>
-	<tr>
-		<td><input type="checkbox" name="checkOne" id="checkOne"></td>
-		<td>userId1<!-- 아이디 --></td>
-		<td>Nickname<!-- 닉네임 --></td>
-		<td>email@email.com<!-- 이메일 --></td>
-		<td>010-0000-0000<!-- 전화번호 --></td>
-		<td>식신<!-- 등급명 --></td>
-		<td>243<!-- 등급포인트 --></td>
-		<td>
-		<!-- 권한 -->
-		<select class="border-zero" name="dropdown1" id="dropdown1">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;회원</option>
-			<option value="<%--그외값1--%>">관리자</option>
-		</select>
-		</td>
-		<td><!-- 상태 -->
-		<select class="border-zero" name="dropdown2" id="dropdown2">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;일반</option>
-			<option value="<%--그외값1--%>">삭제대기</option>
-		</select>
-		</td>
-	</tr>
-	<tr>
-		<td><input type="checkbox" name="checkOne" id="checkOne"></td>
-		<td>userId1<!-- 아이디 --></td>
-		<td>Nickname<!-- 닉네임 --></td>
-		<td>email@email.com<!-- 이메일 --></td>
-		<td>010-0000-0000<!-- 전화번호 --></td>
-		<td>식신<!-- 등급명 --></td>
-		<td>243<!-- 등급포인트 --></td>
-		<td>
-		<!-- 권한 -->
-		<select class="border-zero" name="dropdown1" id="dropdown1">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;회원</option>
-			<option value="<%--그외값1--%>">관리자</option>
-		</select>
-		</td>
-		<td><!-- 상태 -->
-		<select class="border-zero" name="dropdown2" id="dropdown2">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;일반</option>
-			<option value="<%--그외값1--%>">삭제대기</option>
-		</select>
-		</td>
-	</tr>
-	<tr>
-		<td><input type="checkbox" name="checkOne" id="checkOne"></td>
-		<td>userId1<!-- 아이디 --></td>
-		<td>Nickname<!-- 닉네임 --></td>
-		<td>email@email.com<!-- 이메일 --></td>
-		<td>010-0000-0000<!-- 전화번호 --></td>
-		<td>식신<!-- 등급명 --></td>
-		<td>243<!-- 등급포인트 --></td>
-		<td>
-		<!-- 권한 -->
-		<select class="border-zero" name="dropdown1" id="dropdown1">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;회원</option>
-			<option value="<%--그외값1--%>">관리자</option>
-		</select>
-		</td>
-		<td><!-- 상태 -->
-		<select class="border-zero" name="dropdown2" id="dropdown2">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;일반</option>
-			<option value="<%--그외값1--%>">삭제대기</option>
-		</select>
-		</td>
-	</tr>
-	<tr>
-		<td><input type="checkbox" name="checkOne" id="checkOne"></td>
-		<td>userId1<!-- 아이디 --></td>
-		<td>Nickname<!-- 닉네임 --></td>
-		<td>email@email.com<!-- 이메일 --></td>
-		<td>010-0000-0000<!-- 전화번호 --></td>
-		<td>식신<!-- 등급명 --></td>
-		<td>243<!-- 등급포인트 --></td>
-		<td>
-		<!-- 권한 -->
-		<select class="border-zero" name="dropdown1" id="dropdown1">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;회원</option>
-			<option value="<%--그외값1--%>">관리자</option>
-		</select>
-		</td>
-		<td><!-- 상태 -->
-		<select class="border-zero" name="dropdown2" id="dropdown2">
-			<option value="<%--등록값--%>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;일반</option>
+			<option value="<%= member.getState() %>" selected><%= member.getState() %></option>
 			<option value="<%--그외값1--%>">삭제대기</option>
 		</select>
 		</td>
 	</tr>
 	</tbody>
+	<% } %> <!-- ArrayList 종료 -->
 </table>
 
 

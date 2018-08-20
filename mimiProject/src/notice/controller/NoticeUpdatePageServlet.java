@@ -1,6 +1,10 @@
 package notice.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,20 +13,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+
+import com.oreilly.servlet.MultipartRequest;
+import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
+
 import notice.exception.NoticeException;
 import notice.model.service.NoticeService;
+import notice.model.vo.Notice;
 
 /**
- * Servlet implementation class NoticeDeleteServlet
+ * Servlet implementation class NoticeUpdateServlet
  */
-@WebServlet("/noticedelete")
-public class NoticeDeleteServlet extends HttpServlet {
+@WebServlet("/noticeupdatepage")
+public class NoticeUpdatePageServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public NoticeDeleteServlet() {
+    public NoticeUpdatePageServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,16 +41,24 @@ public class NoticeDeleteServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String noticeNo = request.getParameter("no");
+		//수정페이지 출력용...
 		response.setContentType("text/html; charset=utf-8");
+		
+		String noticeNo = request.getParameter("no");
+		int currentPage = Integer.parseInt(request.getParameter("page"));
+		
 		RequestDispatcher view = null;
 		try {
-			int result = new NoticeService().deleteNotice(noticeNo);
-			if(result > 0){
-				response.sendRedirect("/mimi/noticelist");
+			Notice n = new NoticeService().selectNotice(noticeNo);
+			
+			if(n != null){
+				view = request.getRequestDispatcher("views/notice/noticeModify.jsp");
+				request.setAttribute("notice", n);
+				request.setAttribute("page", currentPage);
+				view.forward(request, response);
 			}else{
 				view = request.getRequestDispatcher("views/notice/noticeError.jsp");
-				request.setAttribute("message", "공지사항 삭제 실패...");
+				request.setAttribute("message", "공지사항 수정페이지 이동에 실패하였습니다.");
 				view.forward(request, response);
 			}
 		} catch (NoticeException e) {
@@ -48,6 +66,7 @@ public class NoticeDeleteServlet extends HttpServlet {
 			request.setAttribute("message", e.getMessage());
 			view.forward(request, response);
 		}
+		
 	}
 
 	/**

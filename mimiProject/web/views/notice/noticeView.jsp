@@ -1,5 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ page import="notice.model.vo.Notice" %>
+    <% Notice notice = (Notice)request.getAttribute("notice");
+      String num = notice.getNoticeNo().substring(2).replaceAll("^0*","");//글번호만 추출
+      int currentPage = ((Integer)request.getAttribute("page")).intValue();
+    %>
 
 <%@include file="../../head.jsp" %>
 
@@ -11,43 +16,43 @@
 	<div class="form-group">
 		<table class="table" id="table-css3">
 			<tr>
-				<th width="15%"><!-- 글번호 -->No.555</th>
-				<th style="text-align:left;"><!-- 제목 -->Title</th>
-				<th width="15%"><i class="fas fa-pen"></i><!-- 작성자 -->admin24</th>
-				<th width="15%"><i class="far fa-calendar"></i><!-- 작성일 -->18-08-01</th>
+				<th width="15%">No.<%=num%><!-- 글번호 --></th>
+				<th style="text-align:left;"><%= notice.getNoticeTitle()%><!-- 제목 --></th>
+				<th width="15%"><i class="fas fa-pen"></i><%= notice.getUserId()%><!-- 작성자 --></th>
+				<th width="15%"><i class="far fa-calendar"></i><%= notice.getNoticeDate()%><!-- 작성일 --></th>
 			</tr>
 			<tr>
 				<td colspan="4"><!-- 내용 -->
 				<div style="padding:10px 50px 10px 50px; border:0px; min-height:350px; width:100%;">
-				
-				좌우여백 테스트 좌우여백 테스트 좌우여백 테스트 좌우여백 테스트 좌우여백 테스트 좌우여백 테스트 좌우여백 테스트 좌우여백 테스트 
-				
-				<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>
-				.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>.<br>
-				스크롤테스트...
-				
+				<%= notice.getNoticeContents() %>				
 				</div>
 				</td>
 			</tr>
+			<% if(notice.getNoticeRealFile() != null){ %>
 			<tr>
 				<td colspan="4"><!-- 첨부파일 -->
-				<div class="div-st" style="margin:3px;"><!-- 첨부파일 목록 -->첨부파일 출력</div>
+				<div class="div-st" style="margin:3px;">
+
+				<a href="/mimi/filedownload?ofile=<%= notice.getNoticeRealFile()%>&rfile=<%= notice.getNoticeRenameFile()%>"><%= notice.getNoticeRealFile() %></a><!-- 첨부파일 목록 -->
+				</div>
 				</td>
 			</tr>
-	
+			<% } %>
 		</table>
 		<hr class="my-hr">
 <table width="100%">
 	<tr style="vertical-align:top;">
 		<!-- 좌측 버튼 -->
 		<td>
-		<button type="button" class="btn btn-default" name="btnList" style="outline:none; padding: 7px; margin:2px;" onClick="location.href='noticeList.jsp'">목록</button>
+		<button type="button" class="btn btn-default" style="outline:none; padding: 7px; margin:2px;" onclick="window.history.back();">목록</button>
 		</td>
 
 		<!-- 우측 버튼 -->
 		<td>
-		<button type="button" class="btn btn-default pull-right" name="btnModify" style="outline:none; padding: 7px; margin:2px;">삭제</button>
-		<button type="button" class="btn btn-default pull-right" name="btnDelete" style="outline:none; padding: 7px; margin:2px;">수정</button></td>
+		<button type="button" class="btn btn-default pull-right" style="outline:none; padding: 7px; margin:2px;"
+		 onclick="location.href='/mimi/noticedelete?no=<%= notice.getNoticeNo()%>'">삭제</button>
+		<button type="submit" class="btn btn-default pull-right" style="outline:none; padding: 7px; margin:2px;"
+		 onclick="location.href='/mimi/noticeupdatepage?no=<%= notice.getNoticeNo()%>&page=<%= currentPage%>'">수정</button></td>
 	</tr>
 </table>
 	</div>

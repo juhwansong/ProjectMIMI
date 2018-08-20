@@ -165,10 +165,10 @@
                         <a href="#page-top"></a>
                     </li> 
                     <li>
-                        <a href="/mimi/views/notice/noticeList.jsp">공지사항</a>
+                        <a href="/mimi/noticelist">공지사항</a>
                     </li>
                     <li>
-                        <a href="/mimi/views/board/adminReview.jsp">MIMI 리뷰</a>
+                        <a href="/mimi/adminboardlist">MIMI 리뷰</a>
                     </li>
                     <li>
                         <a href="/mimi/views/bestReview/bestReviewList.jsp">Best리뷰</a>
@@ -226,7 +226,7 @@
 			
 				<div style="padding-top:20px;" align="center">	
 					<span style="width:100px;">
-						<a href="/mimi/views/board/favoriteList.jsp">
+						<a href="/mimi/bookmarklist">
 							<div>
 								<p style="font-size:25pt;" class="fas fa-map-marker-alt" aria-hidden="true"></p>
 								<p>즐겨찾기</p>
