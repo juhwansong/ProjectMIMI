@@ -66,6 +66,8 @@ public class AllCommentListServlet extends HttpServlet {
 			}
 			if(currentPage == maxPage) {
 				endRow = startRow + (listCount - ((maxPage - 1) * limit)) - 1;
+			} else if(listCount < limit) {
+				endRow = listCount;
 			} else {
 				endRow = startRow + limit - 1;
 			}

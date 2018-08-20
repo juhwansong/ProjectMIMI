@@ -75,6 +75,8 @@ public class MyCommentSearchServlet extends HttpServlet {
 			}
 			if(currentPage == maxPage) {
 				endRow = startRow + (searchListCount - ((maxPage - 1) * limit)) - 1;
+			} else if(searchListCount < limit) {
+				endRow = searchListCount;
 			} else {
 				endRow = startRow + limit - 1;
 			}

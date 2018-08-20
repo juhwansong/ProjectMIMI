@@ -65,6 +65,8 @@ public class MyCommentListServlet extends HttpServlet {
 			int searchListCount = service.getSearchListCount(searchMap);
 			ArrayList<Board> list = service.searchMyComment(searchMap);
 			
+			System.out.println("searchListCount : " + searchListCount);
+			
 			int maxPage = (int)((double)searchListCount / limit + 0.9);
 			int startPage = (((int)((double)currentPage / pageLimit + 0.9)) - 1) * pageLimit + 1;
 			int endPage = startPage + pageLimit - 1;
@@ -75,14 +77,21 @@ public class MyCommentListServlet extends HttpServlet {
 			}
 			if(currentPage == maxPage) {
 				endRow = startRow + (searchListCount - ((maxPage - 1) * limit)) - 1;
+			} else if(searchListCount < limit) {
+				endRow = searchListCount;
 			} else {
 				endRow = startRow + limit - 1;
 			}
-
+			
+			System.out.println("endRow : " + endRow);
+			
 			ArrayList<Board> currentList = new ArrayList<Board>();
+			System.out.println("currentList : " + currentList);
 			if(list.size() > 0) {
-				for(int i = startRow; i <= endRow; i++)
+				for(int i = startRow; i <= endRow; i++) {
+					System.out.println("i : " + i);
 					currentList.add(list.get(i - 1));
+				}
 			}
 			
 			if(currentList.size() > 0) {
