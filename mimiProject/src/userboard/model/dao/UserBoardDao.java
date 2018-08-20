@@ -202,6 +202,7 @@ public class UserBoardDao {
 				urboard.setHits(rset.getInt("HITS"));
 				urboard.setRecommed(rset.getInt("RECOMMEND"));
 				urboard.setContentsTag(rset.getString("CONTENTS_TAG"));
+				urboard.setCategoryNo(rset.getString("CATEGORY_NO"));
 				urboard.setCategoryName(rset.getString("CATEGORY_FOOD"));
 				urboard.setShopName(rset.getString("SHOP_NAME"));
 				urboard.setShopCall(rset.getString("SHOP_CALL"));
@@ -220,7 +221,7 @@ public class UserBoardDao {
 		return urboard;
 	}
 
-	public int insertBoard(Connection con, Board board) throws UserBoardException {
+	public int insertUserBoard(Connection con, Board board) throws UserBoardException {
 		int result = 0;
 		PreparedStatement pstmt = null;
 		
@@ -260,18 +261,57 @@ public class UserBoardDao {
 		
 		return result;
 	}
-
-	public int deleteBoard(Connection con, 
-			String boardNum) throws UserBoardException{
+	
+	public int updateBoard(Connection con, Board board) throws UserBoardException{
 		int result = 0;
 		PreparedStatement pstmt = null;
 		
-		String query = "delete from board "
-				+ "where board_num = ?";
+		String query = "update TB_BOARD_REVIEW set "
+						+ "CATEGORY_NO = ?, TITLE = ?, CONTENTS = ?, CONTENTS_TAG = ?, BOARD_DATE = SYSDATE, "
+						+ "SHOP_NAME = ?, SHOP_ADDRESS = ?, SHOP_CALL = ?, LATITUDE = ?, LONGITUDE = ?, "
+						+ "THUMBNAIL_NAME = ? "
+						+ "where BOARD_NO = ?";
 		
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, boardNum);
+			pstmt.setString(1, board.getCategoryNo());
+			pstmt.setString(2, board.getTitle());
+			pstmt.setString(3, board.getContents());
+			pstmt.setString(4, board.getContentsTag());
+			pstmt.setString(5, board.getShopName());
+			pstmt.setString(6, board.getShopAddress());
+			pstmt.setString(7, board.getShopCall());
+			pstmt.setInt(8, board.getLatitude());
+			pstmt.setInt(9, board.getLongitude());
+			pstmt.setString(10, board.getThumbnailName());
+			pstmt.setString(11, board.getBoardNo());
+		
+			result = pstmt.executeUpdate();
+			
+			if(result <= 0)
+				throw new UserBoardException("원글 수정 실패!");			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserBoardException(e.getMessage());
+		}finally{
+			close(pstmt);
+		}		
+		
+		return result;
+	}
+	
+	public int deleteUserBoard(Connection con, String boardNo) throws UserBoardException {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		String query = "update TB_BOARD_REVIEW set "
+						+ "STATE = 'SD' "
+						+ "where BOARD_NO = ?";
+		
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, boardNo);
 			
 			result = pstmt.executeUpdate();
 			
@@ -287,6 +327,7 @@ public class UserBoardDao {
 		
 		return result;
 	}
+
 
 	public int insertReply(Connection con, Board replyBoard) throws UserBoardException {
 		int result = 0;
@@ -338,5 +379,56 @@ public class UserBoardDao {
 		return result;
 	}
 
+	public ArrayList<Board> selectReplyList(Connection con, int currentPage, int limit) throws UserBoardException {
+		ArrayList<Board> list = new ArrayList<Board>();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		String query = "select * from ( "
+				+ "select rownum rnum, "
+				+ "COMMENT_NO, USER_ID, NICKNAME, GRADE_NAME, COMMENT_DATE, "
+				+ "COMMENT_CONTENTS, COMMENT_STATE "
+				+ "from V_USER_REVIEW_COMMENT "
+				+ "where COMMENT_STATE='SN' "
+				+ "order by COMMENT_NO desc) "
+				+ "where rnum >= ? and rnum <= ?";
+
+		int startRow = (currentPage - 1) * limit + 1;
+		int endRow = startRow + limit - 1;
+		
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setInt(1, startRow);
+			pstmt.setInt(2, endRow);
+			
+			rset = pstmt.executeQuery();
+			
+			while(rset.next()){
+				Board b = new Board();
+				b.setCommentNo(rset.getString("COMMENT_NO"));
+				b.setCommentUserId(rset.getString("USER_ID"));
+				b.setCommentNickName(rset.getString("NICKNAME"));
+				b.setCommentGradeName(rset.getString("GRADE_NAME"));
+				b.setCommentDate(rset.getDate("COMMENT_DATE"));
+				b.setCommentContents(rset.getString("COMMENT_CONTENTS"));
+				b.setCommentState(rset.getString("COMMENT_STATE"));
+				
+				list.add(b);
+			}
+			
+			if(list.size() == 0)
+				throw new UserBoardException(
+						"게시글이 존재하지 않습니다.");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserBoardException(e.getMessage());
+		}finally{
+			close(rset);
+			close(pstmt);
+		}
+		
+		return list;
+	}
 
 }

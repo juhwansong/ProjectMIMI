@@ -15,7 +15,46 @@
 
 <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.3/clipboard.min.js"></script>
 <script src="/mimi/resources/js/kakao.min.js"></script>
-
+<script src="//code.jquery.com/jquery.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$.ajax({
+			url : "/mimi/userboardreplylist",
+			type : "get",
+			dataType : "json",
+			success : function(data){				
+				//console.log("success : " + data);			
+				var jsonStr = JSON.stringify(data);
+				//console.log(jsonStr);
+				var json = JSON.parse(jsonStr);
+				//console.log(json);
+				
+				var values = "";
+				for(var i in json.list){
+					values += "<tr>"
+						+ "<td><table id='comment' style='width:100%'>"
+							+ "<tr>"
+								+ "<td style='width: 40px'><img src='/mimi/resources/images/icon/icon_human.ico' width=40 height=40></td>"
+								+ "<td class='text-left'>&nbsp;" + json.list[i].cmtNo + "<span style='font-size: 8px'>&nbsp;&nbsp;" + json.list[i].cmtDate + "</span></td>"
+								+ "<td style='width: 50px' class='text-center'><a href='/mimi/views/userReview/userReviewList.jsp'>수정</a></td>"
+								+ "<td style='width: 50px' class='text-center'><a href='#'>삭제</a></td>"
+							+"</tr>"
+						+"<tr>"
+							+"<td colspan='4' class='text-left'><div class='margin5'>" + json.list[i].cmtContents + "</div></td>"
+						+"</tr>"
+						+"</table></td>"
+					+"</tr>"
+				}
+				
+				$("#cmtlist").html(values);
+			},
+			error : function(jqXHR, textstatus, errorThrown){
+				console.log("error : " + jqXHR + ", " + 
+						textstatus + ", " + errorThrown);
+			}
+		});  //ajax close
+	});
+</script>
 <style type="text/css">
 
 #text_context {
@@ -67,8 +106,9 @@
 		});
 	});//onload
 	
-	
 </script>
+
+
 
 <!-- <title>유저리뷰보기</title> -->
 <div class="container" style="width:1150px;">
@@ -152,8 +192,8 @@
 	<!-- comment -->
 	<div style="text-align: center;">
 		<!-- 기존 댓글 -->
-		<table class="table table-borderless" style="width:100%">
-			<tr>
+		<table class="table table-borderless" style="width:100%" id="cmtlist">
+			 <!-- <tr>
 				<td><table id="comment" style="width:100%">
 					<tr>
 						<td style="width: 40px"><img src="/mimi/resources/images/icon/icon_human.ico" width=40 height=40></td>
@@ -161,80 +201,12 @@
 						<td style="width: 50px" class="text-center"><a href="/mimi/views/userReview/userReviewList.jsp">수정</a></td>
 						<td style="width: 50px" class="text-center"><a href="#">삭제</a></td>
 					</tr>
-					<tr><!-- 댓글 본문 -->
-						<td colspan="4" class="text-left"><div class="margin5">추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? ??fffffffffffffffff아니 왤케 끝없이 늘어나??????</div></td>
-					</tr>
-				</table></td>
-			</tr>
-			<tr>
-				<td><table id="comment" style="width:100%">
 					<tr>
-						<td style="width: 40px"><img src="/mimi/resources/images/icon/icon_human.ico" width=40 height=40></td>
-						<td class="text-left">&nbsp;user01 <span style="font-size: 8px">&nbsp;&nbsp;2018-08-02 00:02:25</span></td>
-						<td style="width: 50px" class="text-center"><a href="/mimi/views/userReview/userReviewList.jsp">수정</a></td>
-						<td style="width: 50px" class="text-center"><a href="#">삭제</a></td>
-					</tr>
-					<tr><!-- 댓글 본문 -->
-						<td colspan="4" class="text-left"><div class="margin5">추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? ??fffffffffffffffff아니 왤케 끝없이 늘어나??????</div></td>
+					 	<td colspan="4" class="text-left"><div class="margin5">추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? ??fffffffffffffffff아니 왤케 끝없이 늘어나??????</div></td>
 					</tr>
 				</table></td>
-			</tr>
-			<tr>
-				<td><table id="comment" style="width:100%">
-					<tr>
-						<td style="width: 40px"><img src="/mimi/resources/images/icon/icon_human.ico" width=40 height=40></td>
-						<td class="text-left">&nbsp;user01 <span style="font-size: 8px">&nbsp;&nbsp;2018-08-02 00:02:25</span></td>
-						<td style="width: 50px" class="text-center"><a href="/mimi/views/userReview/userReviewList.jsp">수정</a></td>
-						<td style="width: 50px" class="text-center"><a href="#">삭제</a></td>
-					</tr>
-					<tr><!-- 댓글 본문 -->
-						<td colspan="4" class="text-left"><div class="margin5">추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? ??fffffffffffffffff아니 왤케 끝없이 늘어나??????</div></td>
-					</tr>
-				</table></td>
-			</tr>
-			<tr>
-				<td><table id="comment" style="width:100%">
-					<tr>
-						<td style="width: 40px"><img src="/mimi/resources/images/icon/icon_human.ico" width=40 height=40></td>
-						<td class="text-left">&nbsp;user01 <span style="font-size: 8px">&nbsp;&nbsp;2018-08-02 00:02:25</span></td>
-						<td style="width: 50px" class="text-center"><a href="/mimi/views/userReview/userReviewList.jsp">수정</a></td>
-						<td style="width: 50px" class="text-center"><a href="#">삭제</a></td>
-					</tr>
-					<tr><!-- 댓글 본문 -->
-						<td colspan="4" class="text-left"><div class="margin5">추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? ??fffffffffffffffff아니 왤케 끝없이 늘어나??????</div></td>
-					</tr>
-				</table></td>
-			</tr>
-			<tr>
-				<td><table id="comment" style="width:100%">
-					<tr>
-						<td style="width: 40px"><img src="/mimi/resources/images/icon/icon_human.ico" width=40 height=40></td>
-						<td class="text-left">&nbsp;user01 <span style="font-size: 8px">&nbsp;&nbsp;2018-08-02 00:02:25</span></td>
-						<td style="width: 50px" class="text-center"><a href="/mimi/views/userReview/userReviewList.jsp">수정</a></td>
-						<td style="width: 50px" class="text-center"><a href="#">삭제</a></td>
-					</tr>
-					<tr><!-- 댓글 본문 -->
-						<td colspan="4" class="text-left"><div class="margin5">추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? ??fffffffffffffffff아니 왤케 끝없이 늘어나??????</div></td>
-					</tr>
-				</table></td>
-			</tr>
-			<tr>
-				<td><table id="comment" style="width:100%">
-					<tr>
-						<td style="width: 40px"><img src="/mimi/resources/images/icon/icon_human.ico" width=40 height=40></td>
-						<td class="text-left">&nbsp;user01 <span style="font-size: 8px">&nbsp;&nbsp;2018-08-02 00:02:25</span></td>
-						<td style="width: 50px" class="text-center"><a href="/mimi/views/userReview/userReviewList.jsp">수정</a></td>
-						<td style="width: 50px" class="text-center"><a href="#">삭제</a></td>
-					</tr>
-					<tr><!-- 댓글 본문 -->
-						<td colspan="4" class="text-left"><div class="margin5">추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? ??fffffffffffffffff아니 왤케 끝없이 늘어나??????</div></td>
-					</tr>
-				</table></td>
-			</tr>
-
+			</tr>  -->
 		</table>
-				
-
 
 		<hr class="margin2">
 		
@@ -256,11 +228,11 @@
 	<div class="row">
 		<div class="col-xs-6 text-left">
 			<input type="button" class="btn btn-default"
-				onClick="location.href='/mimi/userboardlist?page=<%= currentPage %>'" value="목록">
+				onClick="window.history.back();" value="목록">
 		</div>
 		<div class="col-xs-6 text-right">
-			<input type="submit" class="btn btn-default" value="수정" style="outline: none;"> <input
-				type="submit" class="btn btn-default" value="삭제" style="outline: none;">
+			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/userboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>'">
+			<input type="submit" class="btn btn-default" value="삭제" style="outline: none;" onClick="location.href='/mimi/userboarddelete?bnum=<%= board.getBoardNo() %>'">
 		</div>
 	</div>
 	<br>

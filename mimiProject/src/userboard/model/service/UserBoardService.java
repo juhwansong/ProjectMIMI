@@ -32,7 +32,14 @@ public class UserBoardService {	//유저 리뷰 게시판 기능
 		return 0;
 	}
 	public int deleteUserBoard(String boardNo) throws UserBoardException{//게시물 삭제
-		return 0;
+		Connection con = getConnection();
+		int result = new UserBoardDao().deleteUserBoard(con, boardNo);
+		if(result > 0)
+			commit(con);
+		else
+			rollback(con);
+		close(con);
+		return result;
 	}
 	public Board selectUserBoard(String boardNo) throws UserBoardException{//해당 게시물 클릭
 		Connection con = getConnection();
@@ -42,7 +49,14 @@ public class UserBoardService {	//유저 리뷰 게시판 기능
 	}
 	
 	public int insertUserBoard(Board board) throws UserBoardException{ //게시물 추가
-		return 0;
+		Connection con = getConnection();
+		int result = new UserBoardDao().insertUserBoard(con, board);
+		if(result > 0)
+			commit(con);
+		else
+			rollback(con);
+		close(con);
+		return result;
 	}
 	public ArrayList<Board> selectUserBoardList() throws UserBoardException{//전체 게시물 조회
 		return null;
@@ -60,18 +74,8 @@ public class UserBoardService {	//유저 리뷰 게시판 기능
 		return list;
 	}
 	public int updateUserBoard(Board board) throws UserBoardException{ //게시물 수정
-		return 0;
-	}
-	
-	public ArrayList<Board> searchUserBoard(HashMap<String, String> keword) throws UserBoardException{//게시물 정렬,키워드 검색 등 필요 데이터를 map에 다 넣음(key는 쿼리문,value는 ?값)
-		return null;
-	}
-	public int deleteUserBoardReply(String commentNo) throws UserBoardException{//게시물 댓글 삭제
-		return 0;
-	}
-	public int insertUserBoardReply(Board board) throws UserBoardException{//게시물 댓글 추가
 		Connection con = getConnection();
-		int result = new UserBoardDao().insertBoard(con, board);
+		int result = new UserBoardDao().updateBoard(con, board);
 		if(result > 0)
 			commit(con);
 		else
@@ -79,10 +83,29 @@ public class UserBoardService {	//유저 리뷰 게시판 기능
 		close(con);
 		return result;
 	}
+	
+	public ArrayList<Board> searchUserBoard(HashMap<String, String> keword) throws UserBoardException{//게시물 정렬,키워드 검색 등 필요 데이터를 map에 다 넣음(key는 쿼리문,value는 ?값)
+		return null;
+	}
+	public int getListReplyCount() throws UserBoardException{//게시물 총 갯수(페이지네이션 관리 시 필요)
+		Connection con = getConnection();
+		int listCount = new UserBoardDao().getListCount(con);
+		close(con);
+		return listCount;
+	}
+	public int deleteUserBoardReply(String commentNo) throws UserBoardException{//게시물 댓글 삭제
+		return 0;
+	}
+	public int insertUserBoardReply(Board board) throws UserBoardException{//게시물 댓글 추가
+		return 0;
+	}
 	public int updateUserBoardReply(Board board) throws UserBoardException{//게시물 댓글 수정
 		return 0;
 	}
-	public ArrayList<Board> selectUserBoardReplyList(String boardNo) throws UserBoardException{//해당 게시물의 전체 댓글 조회
-		return null;
+	public ArrayList<Board> selectUserBoardReplyList(int currentPage, int limit) throws UserBoardException{//해당 게시물의 전체 댓글 조회
+		Connection con = getConnection();
+		ArrayList<Board> list = new UserBoardDao().selectReplyList(con, currentPage, limit);
+		close(con);
+		return list;
 	}
 }
