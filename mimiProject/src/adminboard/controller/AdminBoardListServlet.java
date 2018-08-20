@@ -44,7 +44,7 @@ public class AdminBoardListServlet extends HttpServlet {
 		
 		RequestDispatcher view = null;
 		try {
-			ArrayList<Board> boardList = new AdminBoardService().selectAdminBoardList();
+			ArrayList<Board> boardList = new AdminBoardService().selectAdminBoardList(currentPage, countList);//다시해야함
 			
 			int totalCount = new AdminBoardService().getListCount();
 			int maxPage = totalCount / countList;
@@ -62,7 +62,7 @@ public class AdminBoardListServlet extends HttpServlet {
 				endPage = maxPage;
 
 			
-			if(boardList.size() > 0){
+//			if(boardList.size() > 0){
 				view = request.getRequestDispatcher("views/board/adminReview.jsp");
 				request.setAttribute("boardList", boardList);
 				request.setAttribute("currentPage", currentPage);
@@ -71,11 +71,11 @@ public class AdminBoardListServlet extends HttpServlet {
 				request.setAttribute("endPage", endPage);
 				request.setAttribute("totalCount", totalCount);
 				view.forward(request, response);
-			}else{
-				view = request.getRequestDispatcher("views/board/boardError.jsp");
-				request.setAttribute("message", "게시글이 없습니다...!");
-				view.forward(request, response);
-			}
+//			}else{
+//				view = request.getRequestDispatcher("views/board/boardError.jsp");
+//				request.setAttribute("message", "게시글이 없습니다...!");
+//				view.forward(request, response);
+//			}
 		} catch (AdminBoardException e) {
 			view = request.getRequestDispatcher("views/board/boardError.jsp");
 			request.setAttribute("message", e.getMessage());

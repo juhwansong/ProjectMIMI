@@ -34,9 +34,9 @@ public class AdminBoardService {//미미 리뷰 게시판 기능
 	public int insertAdminBoard(Board board) throws AdminBoardException{ //게시물 추가
 		return 0;
 	}
-	public ArrayList<Board> selectAdminBoardList() throws AdminBoardException{//전체 게시물 조회
+	public ArrayList<Board> selectAdminBoardList(int currentPage, int countList) throws AdminBoardException{//전체 게시물 조회
 		Connection conn = getConnection();
-		ArrayList<Board> list = new AdminBoardDao().selectAdminList(conn);
+		ArrayList<Board> list = new AdminBoardDao().selectAdminList(conn, currentPage, countList);
 		close(conn);
 		return list;
 	}
@@ -59,6 +59,15 @@ public class AdminBoardService {//미미 리뷰 게시판 기능
 	
 	public ArrayList<Board> selectAdminBoardReplyList(String boardNo) throws AdminBoardException{//해당 게시물의 전체 댓글 조회
 		return null;
+	}
+
+	
+	//카테고리 검색..ajax
+	public ArrayList<Board> searchAdminBoard(String category, int currentPage, int countList) throws AdminBoardException{
+		Connection conn = getConnection();
+		ArrayList<Board> list = new AdminBoardDao().searchAdminBoard(conn, category, currentPage, countList);
+		close(conn);
+		return list;
 	}
 
 }
