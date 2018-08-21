@@ -32,7 +32,7 @@ public class MyBoardDeleteServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-String boardNoStr = (String)request.getParameter("boardNoStr");
+		String boardNoStr = (String)request.getParameter("boardNoStr");
 		
 		String[] boardNoArr = boardNoStr.split(" ");
 		ArrayList<String> boardNoList = new ArrayList<String>();

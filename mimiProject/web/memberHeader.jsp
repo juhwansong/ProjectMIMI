@@ -208,7 +208,7 @@
 				<div style="padding-top:20px;" align="center">	
 					<span style="width:100px;">	
 						<!-- <a href="/mimi/views/board/myContent.jsp"> -->
-						<a href="/mimi/myboardlist?nickname=NICKNAME&user=유저">
+						<a href="/mimi/myboardlist?nickname=70억&user=user04">
 							<div>
 								<p style="font-size:25pt;" class="far fa-file-alt" aria-hidden="true"></p>
 								<p>작성한 글</p>	

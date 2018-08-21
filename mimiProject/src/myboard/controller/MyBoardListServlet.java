@@ -34,14 +34,14 @@ public class MyBoardListServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-response.setContentType("text/html; charset=utf-8");
+		response.setContentType("text/html; charset=utf-8");
 		
 		String category = request.getParameter("category");
 		String searchText = request.getParameter("searchText");
 		String nickname = request.getParameter("nickname");
 		String user = request.getParameter("user");
 		
-		if(searchText == null)
+		if(searchText == null) 
 			searchText = request.getParameter("searchText");
 		
 		HashMap<String, String> searchMap = new HashMap<String, String>();
