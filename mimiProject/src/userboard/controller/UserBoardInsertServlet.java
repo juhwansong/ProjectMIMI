@@ -55,7 +55,7 @@ public class UserBoardInsertServlet extends HttpServlet {
 		}
 		*/
 		// 파일이 업로드되어 저장될 폴더 지정
-		String savePath = request.getSession().getServletContext().getRealPath("/bupfiles");
+		String savePath = request.getSession().getServletContext().getRealPath("/resources/files/userboard");
 
 		// request 를 MultipartRequest 로 변환함
 		MultipartRequest mrequest = new MultipartRequest(request, savePath, maxSize, "UTF-8",
