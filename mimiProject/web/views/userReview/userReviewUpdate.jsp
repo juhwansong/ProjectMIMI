@@ -1,10 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import="common.model.vo.Board" %>
+<%
+	Board board = (Board)request.getAttribute("board");
+	int currentPage = ((Integer)request.getAttribute("currentPage")).intValue();
+	//String userId = (String)session.getAttribute("userId");
+%>
 
 <%@include file="../../head.jsp"%>
+<%-- <%@include file="../../header.jsp"%> --%>
 <script type="text/javascript">
 var openWin;
-//var cateVal = "카페";
+
+$(function cateread(){	//카테고리 받아오기
+	$("#" + "<%= board.getCategoryNo() %>").addClass("btn-success");
+	document.getElementById("categoryNo").value = "<%= board.getCategoryNo() %>";
+});
 
 function openAddress()
 {
@@ -21,7 +32,6 @@ function cateSelect(btnVal){
 	
 </script>
 
-
 <style type="text/css">
 
 #text_store {
@@ -34,15 +44,15 @@ function cateSelect(btnVal){
 
 <div class="container" style="width:1150px;">
 	<h3>리뷰 작성</h3>
-	<form action="/mimi/userboardinsert" method="post" enctype="multipart/form-data">
+	<form action="/mimi/userboardupdateorigin?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>" method="post" enctype="multipart/form-data">
 	<div id="inner">
 		<table class="table table-borderless" id="table-css3">
 			<tr>
 				<th width="15%">제목</th>
 				<td width="*"><input type="text" class="form-control"
-					id="user_title" placeholder="제목" name="title"></td>
+					id="user_title" placeholder="제목" name="title" value="<%= board.getTitle() %>"></td>
 				<th width="15%">작성자</th>
-				<td width="15%">NICKNAME</td>
+				<td width="15%"><%= board.getNickName() %></td>
 			</tr>
 			<tr>
 				<th><label for="text_category" class="control-label">카테고리</label></th>
@@ -50,7 +60,7 @@ function cateSelect(btnVal){
 					<input type="hidden" readonly="readonly" name="categoryNo" id="categoryNo" value="C1">
 					<div class="btn-toolbar" role="toolbar" aria-label="버튼 그룹이 있는 툴바">
 						<div class="btn-group mr-2" role="group" aria-label="카테고리1">
-							<button type="button" class="btn btn-success" style="width: 110px" id="C1" onclick="cateSelect('C1')">커피/디저트</button>
+							<button type="button" class="btn" style="width: 110px" id="C1" onclick="cateSelect('C1')">커피/디저트</button>
 						</div>
 						<div class="btn-group mr-2" role="group" aria-label="카테고리2">
 							<button type="button" class="btn" style="width: 110px" id="C2" onclick="cateSelect('C2')">패스트푸드</button>
@@ -87,26 +97,26 @@ function cateSelect(btnVal){
 				<th><label for="text_store" class="control-label">매장명</label></th>
 				<td><input type="text" class="form-control"
 					placeholder="내용을 입력하세요" id="store_name" readonly
-					onClick="openAddress()" name="shopName"></td>
+					onClick="openAddress()" name="shopName" value="<%= board.getShopName() %>"></td>
 			</tr>
 			<tr>
 				<th><label for="text_store_phone" class="control-label">매장연락처</label></th>
 				<td><input type="text" class="form-control"
 					placeholder="내용을 입력하세요" id="store_phone" readonly
-					onClick="openAddress()" name="shopCall"></td>
+					onClick="openAddress()" name="shopCall" value="<%= board.getShopCall() %>"></td>
 			</tr>
 			<tr>
 				<th><label for="text_store_address" class="control-label">매장주소</label></th>
 				<td><input type="text" class="form-control"
 					placeholder="내용을 입력하세요" id="store_address" readonly
-					onClick="openAddress()" name="shopAddress"></td>
+					onClick="openAddress()" name="shopAddress" value="<%= board.getShopAddress()%>"></td>
 			</tr>
 			<tr>
 				<th>내용</th>
 				<td colspan="3">
 				<input type="hidden" readonly="readonly" name="thumbnailName" id="thumbnailName" value="썸네일">
 				<textarea class="form-control" rows="20"
-						id="texta_content" name="content_tag"></textarea>
+						id="texta_content" name="content_tag"><%= board.getContentsTag()%></textarea>
 				</td>
 			</tr>
 		</table>

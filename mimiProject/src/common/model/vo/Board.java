@@ -14,8 +14,8 @@ public class Board implements Serializable {
 	private String nickName; // 닉네임
 	private String gradeName; // 사용자등급
 	private String title; // 제목
-	private String contents; // html 태그 포함 내용
-	private String contentsTag; // 텍스트만 뺀 내용
+	private String contents; // 텍스트만 뺀 내용
+	private String contentsTag; // html 태그 포함 내용텍스트만 뺀 내용
 	private Date boardDate; // 작성일
 	private String shopName; // 가게이름
 	private String shopAddress; // 가게주소

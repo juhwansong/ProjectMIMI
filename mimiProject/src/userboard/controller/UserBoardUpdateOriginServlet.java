@@ -1,10 +1,6 @@
 package userboard.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,8 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-
 import com.oreilly.servlet.MultipartRequest;
 import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
@@ -22,17 +16,14 @@ import common.model.vo.Board;
 import userboard.exception.UserBoardException;
 import userboard.model.service.UserBoardService;
 
-/**
- * Servlet implementation class UserBoardInsertServlet
- */
-@WebServlet("/userboardinsert")
-public class UserBoardInsertServlet extends HttpServlet {
+@WebServlet("/userboardupdateorigin")
+public class UserBoardUpdateOriginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public UserBoardInsertServlet() {
+    public UserBoardUpdateOriginServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -42,7 +33,10 @@ public class UserBoardInsertServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html; charset=utf-8");
-						
+		
+		String boardNum = request.getParameter("bnum");
+		int currentPage = Integer.parseInt(request.getParameter("page"));
+		
 		int maxSize = 1024 * 1024 * 10;
 		
 		RequestDispatcher view = null;
@@ -63,6 +57,7 @@ public class UserBoardInsertServlet extends HttpServlet {
 
 		// 전송온 값 꺼내서 변수/객체에 저장하기
 		Board board = new Board();
+		board.setBoardNo(boardNum);	//카테고리 연결필요
 		board.setCategoryNo(mrequest.getParameter("categoryNo"));	//카테고리 연결필요
 		//board.setUserId(mrequest.getParameter("userId")); 세션에서 아이디 획득 필요
 		board.setUserId("user04");
@@ -117,9 +112,9 @@ public class UserBoardInsertServlet extends HttpServlet {
 		}
 		*/
 		try {
-			if (new UserBoardService().insertUserBoard(board) > 0) {
-				//response.sendRedirect("/mimi/userboarddetailview?bnum="+bnum+"&page="+1);
-				response.sendRedirect("/mimi/userboardlist?page=1");
+			if (new UserBoardService().updateUserBoard(board) > 0) {
+				response.sendRedirect("/mimi/userboarddetailview?bnum="+ boardNum+"&page="+currentPage);
+				//response.sendRedirect("/mimi/userboardlist");
 			} else {
 				view = request.getRequestDispatcher("views/userReview/userReviewError.jsp");
 				request.setAttribute("message", "게시 원글 등록 실패");
@@ -141,5 +136,3 @@ public class UserBoardInsertServlet extends HttpServlet {
 	}
 
 }
-
-

@@ -2,6 +2,21 @@
     pageEncoding="UTF-8"%>
 
 <%@include file="../../head.jsp" %> 
+<script type="text/javascript">
+$(function getParentText(){
+	document.getElementById("store_name").value = opener.document.getElementById("store_name").value;
+	document.getElementById("store_phone").value = opener.document.getElementById("store_phone").value;
+	document.getElementById("store_address").value = opener.document.getElementById("store_address").value;
+ });
+ 
+function setParentText(){
+	opener.document.getElementById("store_name").value = document.getElementById("store_name").value;
+	opener.document.getElementById("store_phone").value = document.getElementById("store_phone").value;
+	opener.document.getElementById("store_address").value = document.getElementById("store_address").value;
+	self.close()
+ }
+</script>
+
 
 <title>상세 주소</title>
 
@@ -13,7 +28,7 @@
 		<img src="/mimi/resources/images/userReview/map.jpg" width=100% height=100%>
 	</div>
 <hr>
-		<form>
+		<form action="getParentText()">
 			<div class="row">
 				<div class="col-xs-6">
 					<label for="store_name">매장명</label> <input type="text" class="form-control" id="store_name"  placeholder="미미 카페">
@@ -28,7 +43,7 @@
 			</div>
 			<br>
 			<div style="text-align:center;">
-			<button type="submit" class="btn btn-default">확인</button>
+			<input type="button" class="btn btn-default" onclick="setParentText()" value="확인">
 			<input type="button" class="btn btn-default"
 				onClick='self.close()'
 				value="취소">

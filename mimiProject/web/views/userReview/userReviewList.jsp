@@ -1,6 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-
+	pageEncoding="UTF-8" errorPage="./userReviewError.jsp"%>
+<%@ page import="common.model.vo.Board, java.util.ArrayList" %>
+<%
+	ArrayList<Board> list = (ArrayList<Board>)request.getAttribute("list");
+	int listCount = ((Integer)request.getAttribute("listCount")).intValue();
+	int startPage = ((Integer)request.getAttribute("startPage")).intValue();
+	int endPage = ((Integer)request.getAttribute("endPage")).intValue();
+	int maxPage = ((Integer)request.getAttribute("maxPage")).intValue();
+	int currentPage = ((Integer)request.getAttribute("currentPage")).intValue();
+	//String userId = (String)session.getAttribute("userId");
+%>
 <%@include file="../../head.jsp"%>
 
 
@@ -46,7 +55,6 @@ table {
 	<hr class="margin2">
 	<!-- 게시물 시작 -->
 	<form>
-
 		<table class="table table-hover" id="table-css">
 			<thead>
 				<tr>
@@ -59,99 +67,19 @@ table {
 				</tr>
 			</thead>
 			<tbody>
+				<% for(Board rb : list){ %>
 				<tr>
-					<td>10</td>
+					<td><%= rb.getBoardNo() %></td>
 					<td style="width: 90px"><a href="#"><img class="img-thumb img-mover"
 							src="/mimi/resources/images/userReview/s_1.jpg"></a></td>
-					<td class="tbl-td-title" style="vertical-align: middle;"><a href="/mimi/views/userReview/userReviewView.jsp">맛집맛집&nbsp;&nbsp;
-					<span class="span-c"><i class="fas fa-comments"></i>&nbsp;999</span></a></td>
-					<td>유저</td>
-					<td>07-22</td>
-					<td>9999</td>
-					<td>999</td>
+					<td class="tbl-td-title" style="vertical-align: middle;"><a href="/mimi/userboarddetailview?bnum=<%= rb.getBoardNo() %>&page=<%= currentPage %>"><%= rb.getTitle() %>&nbsp;&nbsp;
+					<span class="span-c"><i class="fas fa-comments"></i>&nbsp;<%= rb.getCommentNum() %></span></a></td>
+					<td><%= rb.getNickName() %></td>
+					<td><%= rb.getBoardDate() %></td>
+					<td><%= rb.getHits() %></td>
+					<td><%= rb.getRecommed() %></td>
 				</tr>
-				<tr>
-					<td>10</td>
-					<td style="width: 90px"><a href="#"><img class="img-thumb img-mover"
-							src="/mimi/resources/images/userReview/s_1.jpg"></a></td>
-					<td class="tbl-td-title" style="vertical-align: middle;"><a
-						href="/mimi/views/userReview/userReviewView.jsp">맛집맛집&nbsp;&nbsp;<span
-							class="span-c"><i class="fas fa-comments"></i>&nbsp;999</span></a></td>
-					<td>유저</td>
-					<td>07-22</td>
-					<td>9999</td>
-					<td>999</td>
-				</tr>
-				<tr>
-					<td>10</td>
-					<td style="width: 90px"><a href="#"><img class="img-thumb img-mover" src="/mimi/resources/images/userReview/s_1.jpg"></a></td>
-					<td class="tbl-td-title" style="vertical-align: middle;"><a href="/mimi/views/userReview/userReviewView.jsp">맛집맛집&nbsp;&nbsp;
-					<span class="span-c"><i class="fas fa-comments"></i>&nbsp;999</span></a></td>
-					<td>유저</td>
-					<td>07-22</td>
-					<td>9999</td>
-					<td>999</td>
-				</tr>
-				<tr>
-					<td>10</td>
-					<td style="width: 90px"><a href="#"><img class="img-thumb img-mover"
-							src="/mimi/resources/images/userReview/s_1.jpg"></a></td>
-					<td class="tbl-td-title" style="vertical-align: middle;"><a
-						href="/mimi/views/userReview/userReviewView.jsp">맛집맛집&nbsp;&nbsp;<span
-							class="span-c"><i class="fas fa-comments"></i>&nbsp;999</span></a></td>
-					<td>유저</td>
-					<td>07-22</td>
-					<td>9999</td>
-					<td>999</td>
-				</tr>
-				<tr>
-					<td>10</td>
-					<td style="width: 90px"><a href="#"><img class="img-thumb img-mover"
-							src="/mimi/resources/images/userReview/s_1.jpg"></a></td>
-					<td class="tbl-td-title" style="vertical-align: middle;"><a
-						href="/mimi/views/userReview/userReviewView.jsp">맛집맛집&nbsp;&nbsp;<span
-							class="span-c"><i class="fas fa-comments"></i>&nbsp;999</span></a></td>
-					<td>유저</td>
-					<td>07-22</td>
-					<td>9999</td>
-					<td>999</td>
-				</tr>
-				<tr>
-					<td>10</td>
-					<td style="width: 90px"><a href="#"><img class="img-thumb img-mover"
-							src="/mimi/resources/images/userReview/s_1.jpg"></a></td>
-					<td class="tbl-td-title" style="vertical-align: middle;"><a
-						href="/mimi/views/userReview/userReviewView.jsp">맛집맛집&nbsp;&nbsp;<span
-							class="span-c"><i class="fas fa-comments"></i>&nbsp;999</span></a></td>
-					<td>유저</td>
-					<td>07-22</td>
-					<td>9999</td>
-					<td>999</td>
-				</tr>
-				<tr>
-					<td>10</td>
-					<td style="width: 90px"><a href="#"><img class="img-thumb img-mover"
-							src="/mimi/resources/images/userReview/s_1.jpg"></a></td>
-					<td class="tbl-td-title" style="vertical-align: middle;"><a
-						href="/mimi/views/userReview/userReviewView.jsp">맛집맛집&nbsp;&nbsp;<span
-							class="span-c"><i class="fas fa-comments"></i>&nbsp;999</span></a></td>
-					<td>유저</td>
-					<td>07-22</td>
-					<td>9999</td>
-					<td>999</td>
-				</tr>
-				<tr>
-					<td>10</td>
-					<td style="width: 90px"><a href="#"><img class="img-thumb img-mover"
-							src="/mimi/resources/images/userReview/s_1.jpg"></a></td>
-					<td class="tbl-td-title" style="vertical-align: middle;"><a
-						href="/mimi/views/userReview/userReviewView.jsp">맛집맛집&nbsp;&nbsp;<span
-							class="span-c"><i class="fas fa-comments"></i>&nbsp;999</span></a></td>
-					<td>유저</td>
-					<td>07-22</td>
-					<td>9999</td>
-					<td>999</td>
-				</tr>
+				<% } %>													
 			</tbody>
 		</table>
 		<hr class="margin1" style="margin: 0px auto 5px auto;">
@@ -164,21 +92,30 @@ table {
 		<td width="*"><!-- 페이지 -->
 	<!-- Pagination -->
 		<ul class="pagination" style="float: center; display: flex; justify-content: center;">
+		<% if((currentPage - 10) < startPage && 
+				(currentPage - 10) > 1){ %>
 			<li>
-				<a href="#" aria-label="Previous">
+				<a href="/mimi/userboardlist?page=<%= startPage - 10 %>" aria-label="Previous">
 				<span aria-hidden="true">&laquo;</span>
 				<span class="sr-only">Previous</span>
 				</a>
 			</li>
-			<li><a href="#">1</a></li>
-			<li><a href="#">2</a></li>
-			<li><a href="#">3</a></li>
+		<% } %>
+		<% for(int p = startPage; p <= endPage; p++){ 
+				if(p == currentPage){ %>
+			<li><a href="/mimi/userboardlist?page=<%= p %>"><span style="color:red"><%= p %></a></li>
+		<% }else{ %>
+			<li><a href="/mimi/userboardlist?page=<%= p %>"><%= p %></a></li>
+			<% }} %>
+		<% if((currentPage + 10) > endPage && 
+				(currentPage + 10) < maxPage){ %>
 			<li>
-				<a href="#" aria-label="Next">
+				<a href="/mimi/userboardlist?page=<%= maxPage %>" aria-label="Next">
 				<span aria-hidden="true">&raquo;</span>
 				<span class="sr-only">Next</span>
 				</a>
 			</li>
+		<% } %>
 		</ul>	
 	</td>
 		<!-- 버튼 -->
@@ -186,8 +123,43 @@ table {
 			<input type="button" class="btn btn-default pull-right"
 			onClick="location.href='/mimi/views/userReview/userReviewInsert.jsp'" value="글쓰기" style="outline: none;"></td>
 	</tr>
-</table>
-		
+</table>		
+</div>
+<!-- 페이징 처리 -->
+<div style="text-align: center">
+<% if(currentPage <= 1){ %>
+	[맨처음]&nbsp;
+<% }else{ %>
+	<a href="/mimi/userboardlist?page=1">[맨처음]</a>
+<% } %>
+<% if((currentPage - 10) < startPage && 
+		(currentPage - 10) > 1){ %>
+	<a href="/mimi/userboardlist?page=<%= startPage - 10 %>">[이전]</a>
+<% }else{ %>
+	[이전]&nbsp;
+<% } %>
+<%-- startPage ~ endPage 출력 --%>
+<% for(int p = startPage; p <= endPage; p++){ 
+		if(p == currentPage){ 
+%>
+	<font color="red" size="4">[<%= p %>]</font>
+<%      }else{ %>
+	<a href="/mimi/userboardlist?page=<%= p %>"><%= p %></a>
+<% }} %>
+<%-- ---------------- --%>
+<% if((currentPage + 10) > endPage && 
+		(currentPage + 10) < maxPage){ %>
+	<a href="/mimi/userboardlist?page=<%= endPage + 10 %>">[다음]</a>
+<% }else{ %>
+	[다음]&nbsp;
+<% } %>
+
+<% if(currentPage >= maxPage){ %>
+	[맨끝]&nbsp;
+<% }else{ %>
+	<a href="/mimi/userboardlist?page=<%= maxPage %>">
+	[맨끝]</a>
+<% } %>
 </div>
 
 <%@include file="../../footer.jsp"%>
