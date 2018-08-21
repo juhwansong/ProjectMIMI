@@ -1,5 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8" errorPage="boardError.jsp"%>
+<%@ page import="common.model.vo.Board, java.util.ArrayList" %>
+<%
+	ArrayList<Board> list = (ArrayList<Board>)request.getAttribute("list");
+	int listCount = ((Integer)request.getAttribute("listCount")).intValue();
+	int startPage = ((Integer)request.getAttribute("startPage")).intValue();
+	int endPage = ((Integer)request.getAttribute("endPage")).intValue();
+	int maxPage = ((Integer)request.getAttribute("maxPage")).intValue();
+	int currentPage = ((Integer)request.getAttribute("currentPage")).intValue();
+	
+	String category = (String)request.getAttribute("category");
+	String searchText = (String)request.getAttribute("searchText");
+	String nickname = (String)request.getAttribute("nickname");
+	String user = (String)request.getAttribute("user");
+%>
 
 <%@include file="../../head.jsp" %>
 <!-- ----------- -->
@@ -153,8 +167,31 @@
 			all.checked = len === total;
 		}
 	});
+	
+	function deleteRow() {
+		var selected = new String();
+		
+		$("input.select-item").each(function(index, item) {
+			if($(this).is(':checked')) {
+				selected += $(this).val() + " ";
+			}
+		});
+		
+		$.get("/mimi/mycommentdelete", {boardNoStr: selected}, function() {
+			location.href="/mimi/mycommentlist?page=1&nickname=<%=nickname%>&user=<%=user%>";
+		});
+		
+		<%-- $.ajax({
+			url: "/mimi/allboarddelete",
+			type: "get",
+			data: {boardNoStr: selected},
+			success: function(data) {
+				console.log(selected);
+			}
+		}); --%>
+	};
 </script>
-
+	
 <!-- body -->
 
 
@@ -168,16 +205,19 @@
 			<td style="text-align: right; vertical-align: bottom; color: #777">
 				<!-- 카테고리 -->
 				<form class="form-inline" name="select-category"
-					id="select-category" method="get" action="#">
+					id="select-category" method="get" action="/mimi/mycommentsearch?page=1">
 					<div class="form-group" style="float: right; margin: 3px;">
-						<select class="form-control">
-							<option value="1" selected>전체</option>
-							<option value="2">제목</option>
-							<option value="3">내용</option>
-							<option value="4">글번호</option>
+						<select name="category" class="form-control">
+							<option value="ALL" selected>전체</option>
+							<option value="BOARD_NO">글번호</option>
+							<option value="NICKNAME">작성자</option>
+							<option value="COMMENT_CONTENTS">댓글내용</option>
+							<option value="TITLE">리뷰제목</option>
+							<input type=hidden name="nickname" value="<%= nickname %>">
+							<input type=hidden name="user" value="<%= user %>">
 						</select> <input type="text" class="form-control" name="search-text"
 							id="search-text" size="8" placeholder=" ">&nbsp; ​​​​​​​
-						<button type="button" class="btn" name="btn">
+						<button type="submit" class="btn" name="btn">
 							검색&nbsp;<i class="fas fa-search"></i>
 						</button>
 					</div>
@@ -194,12 +234,23 @@
 					name="select-all" /></th>
 					<th width="8%">글번호</th>
 					<th width="8%">작성자</th>
-					<th width="*">댓글내용</th>
+					<th width="40%">댓글내용</th>
 					<th width="8%">작성일</th>
 					<th width="30%">글제목</th>
 				</tr>
     			<tbody>
-	   				<tr>
+    				<% for(Board b : list) { %>
+						<tr>
+							<td><input type="checkbox" class="select-item checkbox"
+								name="select-item" id="select-item" value="<%= b.getBoardLink() %>" /></td>
+							<td><%= b.getBoardNo().substring(2).replaceAll("^0*", "") %></td>
+							<td><%= b.getNickName() %></td>
+							<td class="tbl-td-title"><%= b.getCommentContents() %></td>
+							<td><%= b.getCommentDate() %></td>
+							<td><%= b.getTitle() %></td>
+						</tr>
+					<% } %>
+	   				<!-- <tr>
 						<td>
 							<input type="checkbox" class="select-item checkbox" name="select-item" value="1000" />
 						</td>
@@ -238,7 +289,7 @@
 						<td class="tbl-td-title">Contensssssssssssssss</td>
 						<td>18-07-31</td>
 						<td class="left">titleeeeeeeeeeeeeeeeeeeeeeee</td>
-					</tr>
+					</tr> -->
     			</tbody>
 			</table>
 <hr class="margin1" style="margin: 0px auto 5px auto;">
@@ -248,7 +299,7 @@
 		<td width="10%"></td><!-- 빈칸 -->
 		<td width="*"><!-- 페이지 -->
 	<!-- Pagination -->
-		<ul class="pagination" style="float: center; display: flex; justify-content: center;">
+		<!-- <ul class="pagination" style="float: center; display: flex; justify-content: center;">
 			<li>
 				<a href="#" aria-label="Previous">
 				<span aria-hidden="true">&laquo;</span>
@@ -264,11 +315,75 @@
 				<span class="sr-only">Next</span>
 				</a>
 			</li>
-		</ul>	
+		</ul> -->
+		<ul class="pagination" style="float: center; display: flex; justify-content: center;">
+         <!-- 맨앞으로 -->
+         <li>
+         <% if(currentPage <= 1){ %>
+            <span style="color:#ccc;">&laquo;</span>
+         <% }else{ %>
+         	<% if(category == null || category.equals("ALL")) { %>
+         		<a href="/mimi/mycommentlist?page=1&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="맨처음"><span style="color:#444;">&laquo;</span></a>
+         	<% } else { %>
+            	<a href="/mimi/mycommentsearch?page=1&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="맨처음"><span style="color:#444;">&laquo;</span></a>
+         	<% } %>
+         <% } %>
+         </li>
+         
+         <!-- 하나 앞 -->
+         <li>
+         <% if((currentPage - 10) < startPage && (currentPage - 10) > 1){ %>
+			<% if(category == null || category.equals("ALL")) { %>
+         		<a href="/mimi/mycommentlist?page=<%=startPage - 10%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="이전"><span style="color:#444;">&lt;</span></a>
+         	<% } else { %>
+				<a href="/mimi/mycommentsearch?page=<%=startPage - 10%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="이전"><span style="color:#444;">&lt;</span></a>  
+         	<% } %>
+         <% }else{ %>
+            <span style="color:#ccc;">&lt;</span>
+         <% } %>
+         </li>
+         
+         <% for(int p = startPage; p <= endPage; p++){
+               if(p == currentPage){%>
+         <li><span style="color:#ccc;"><%=p %></span></li>
+         <% }else{ %>
+            <% if(category == null || category.equals("ALL")) { %>
+         		<li><a href="/mimi/mycommentlist?page=<%=p%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>"><span style="color:#444;"><%=p %></span></a></li>
+         	<% } else { %>
+            	<li><a href="/mimi/mycommentsearch?page=<%=p%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>"><span style="color:#444;"><%=p %></span></a></li>
+         	<% } %>
+         <% }} %>
+         
+         <!-- 하나 뒤 -->
+         <% if((currentPage + 10) > endPage && (currentPage + 10) < maxPage){ %>
+         <li>
+         	<% if(category == null || category.equals("ALL")) { %>
+         		<a href="/mimi/mycommentlist?page=<%=endPage + 10%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="다음"><span style="color:#444;">&gt;</span></a>
+         	<% } else { %>
+				<a href="/mimi/mycommentsearch?page=<%=endPage + 10%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="다음"><span style="color:#444;">&gt;</span></a>							                 
+         	<% } %>
+         </li>
+         <% }else{ %>
+         <li><span style="color:#ccc;">&gt;</span></li>
+         <!-- 맨뒤 -->
+         <% }
+ 			if(currentPage >= maxPage){%>
+            <li><span style="color:#ccc;">&raquo;</span></li>
+         <% }else{ %>
+         <li>
+         	<% if(category == null || category.equals("ALL")) { %>
+         		<a href="/mimi/mycommentlist?page=<%=maxPage%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
+         	<% } else { %>
+            	<a href="/mimi/mycommentsearch?page=<%=maxPage%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
+         	<% } %>
+         </li>
+         <% } %>
+         
+      </ul>		
 	</td>
 		<!-- 삭제버튼 -->
 			<td width="10%" style="vertical-align: top;">
-			<input type="button" class="btn btn-default pull-right" onClick="#" value="삭제" style="outline: none;"></td>
+			<input type="button" class="btn btn-default pull-right" onClick="deleteRow();" value="삭제" style="outline: none;"></td>
 		</tr>
 </table>
 </div><!-- /container -->
