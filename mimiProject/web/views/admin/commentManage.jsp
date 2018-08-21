@@ -241,17 +241,21 @@
 					<th width="30%">글제목</th>
 				</tr>
     			<tbody>
-    				<% for(Board b : list) { %>
-						<tr>
-							<td><input type="checkbox" class="select-item checkbox"
-								name="select-item" id="select-item" value="<%= b.getBoardLink() %>" /></td>
-							<td><%= b.getBoardNo().substring(2).replaceAll("^0*", "") %></td>
-							<td><%= b.getNickName() %></td>
-							<td class="tbl-td-title"><%= b.getCommentContents() %></td>
-							<td><%= b.getCommentDate() %></td>
-							<td><%= b.getTitle() %></td>
-						</tr>
-					<% } %> 
+    				<% if(list.size() != 0) { %>
+	    				<% for(Board b : list) { %>
+							<tr>
+								<td><input type="checkbox" class="select-item checkbox"
+									name="select-item" id="select-item" value="<%= b.getBoardLink() %>" /></td>
+								<td><%= b.getBoardNo().substring(2).replaceAll("^0*", "") %></td>
+								<td><%= b.getNickName() %></td>
+								<td class="tbl-td-title"><%= b.getCommentContents() %></td>
+								<td><%= b.getCommentDate() %></td>
+								<td><%= b.getTitle() %></td>
+							</tr>
+						<% } %> 
+					<% } else { %>
+						<tr><td colspan="6"><h4>검색 결과가 없습니다</h4></td></tr>
+					<% } %>
 	   				<!-- <tr>
 						<td>
 							<input type="checkbox" class="select-item checkbox" name="select-item" value="1000" />

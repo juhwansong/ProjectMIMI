@@ -73,6 +73,9 @@ public class MyBoardListServlet extends HttpServlet {
 			if(maxPage < endPage) {
 				endPage = maxPage;
 			}
+			if(endPage == 0)
+				endPage = 1;
+			
 			if(currentPage == maxPage) {
 				endRow = startRow + (searchListCount - ((maxPage - 1) * limit)) - 1;
 			} else if(searchListCount < limit) {
@@ -87,24 +90,18 @@ public class MyBoardListServlet extends HttpServlet {
 					currentList.add(list.get(i - 1));
 			}
 			
-			if(currentList.size() > 0) {
-				view = request.getRequestDispatcher("views/board/myContent.jsp");
-				request.setAttribute("list", currentList);
-				request.setAttribute("currentPage", currentPage);
-				request.setAttribute("maxPage", maxPage);
-				request.setAttribute("startPage", startPage);
-				request.setAttribute("endPage", endPage);
-				request.setAttribute("listCount", searchListCount);
-				request.setAttribute("category", category);
-				request.setAttribute("searchText", searchText);
-				request.setAttribute("nickname", nickname);
-				request.setAttribute("user", user);
-				view.forward(request, response);
-			} else {
-				view = request.getRequestDispatcher("views/board/boardError.jsp");
-				request.setAttribute("message", "조건에 맞는 목록이 존재하지 않습니다.");
-				view.forward(request, response);
-			}
+			view = request.getRequestDispatcher("views/board/myContent.jsp");
+			request.setAttribute("list", currentList);
+			request.setAttribute("currentPage", currentPage);
+			request.setAttribute("maxPage", maxPage);
+			request.setAttribute("startPage", startPage);
+			request.setAttribute("endPage", endPage);
+			request.setAttribute("listCount", searchListCount);
+			request.setAttribute("category", category);
+			request.setAttribute("searchText", searchText);
+			request.setAttribute("nickname", nickname);
+			request.setAttribute("user", user);
+			view.forward(request, response);
 		} catch (MyBoardException e) {
 			view = request.getRequestDispatcher("views/board/boardError.jsp");
 			request.setAttribute("message", e.getMessage());

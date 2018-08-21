@@ -223,17 +223,21 @@
 			</tr>
 		</thead>
 		<tbody>
-			<% for(Board b : list) { %>
-				<tr>
-				<td><input type="checkbox" class="select-item checkbox"
-					name="select-item" value="<%= b.getBoardNo() %>" /></td>
-				<td><%= b.getBoardNo().substring(2).replaceAll("^0*", "") %></td>
-				<td class="tbl-td-title"><%= b.getTitle() %></td>
-				<td><%= b.getNickName() %></td>
-				<td><%= b.getBoardDate() %></td>
-				<td><%= b.getHits() %></td>
-				<td><%= b.getRecommed() %></td>
-				</tr>
+			<% if(list.size() != 0) { %>
+				<% for(Board b : list) { %>
+					<tr>
+					<td><input type="checkbox" class="select-item checkbox"
+						name="select-item" value="<%= b.getBoardNo() %>" /></td>
+					<td><%= b.getBoardNo().substring(2).replaceAll("^0*", "") %></td>
+					<td class="tbl-td-title"><%= b.getTitle() %></td>
+					<td><%= b.getNickName() %></td>
+					<td><%= b.getBoardDate() %></td>
+					<td><%= b.getHits() %></td>
+					<td><%= b.getRecommed() %></td>
+					</tr>
+				<% } %>
+			<% } else { %>
+				<tr><td colspan="7"><h4>검색 결과가 없습니다</h4></td></tr>
 			<% } %> 
 			<!-- <tr>
 				<td><input type="checkbox" class="select-item checkbox"
