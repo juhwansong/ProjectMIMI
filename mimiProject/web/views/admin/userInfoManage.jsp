@@ -6,6 +6,7 @@
 %>
 <!-- head -->
 <%@include file="../../head.jsp" %>
+
 <style>
 .sidenav {
     height: 35%; /* 변경 */
@@ -95,7 +96,7 @@
 		})
 		
 		
-	});//document
+	});//document 
 
 	
 </script>

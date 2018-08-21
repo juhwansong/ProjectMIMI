@@ -2,9 +2,6 @@ package member.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.util.Base64;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import common.model.vo.Member;
 import member.exception.MemberException;
 import member.model.service.MemberService;
-import member.wrapper.MemberPasswordWrapper;
 
 /**
  * Servlet implementation class MemberLoginServlet
@@ -39,15 +36,17 @@ public class MemberLoginServlet extends HttpServlet {
 		String userId = request.getParameter("userid");
 		String userPassword = request.getParameter("userpassword");
 		String message = null;
+		Member member = null;
 		
 		try{
 			//결과값으로 해당 유저의 권한을 갖고 옴.
-			String authority = new MemberService().loginCheck(userId, userPassword);
-			if(authority != null){
+			member = new MemberService().loginCheck(userId, userPassword);
+			if(member != null){
 				HttpSession session = request.getSession();
 				//자동 로그 아웃 시간 설정할거면 여기서도 가능
 				session.setAttribute("userId", userId);
-				session.setAttribute("authority", authority);
+				session.setAttribute("authority", member.getAuthority());
+				session.setAttribute("nickName", member.getNickName());
 				
 				message = "success";
 			}

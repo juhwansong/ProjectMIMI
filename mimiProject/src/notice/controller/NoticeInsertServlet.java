@@ -52,7 +52,7 @@ public class NoticeInsertServlet extends HttpServlet {
 		
 		int maxSize = 1024 * 1024 * 10; //최대용량 10Mb
 		
-		String savePath = request.getSession().getServletContext().getRealPath("/files/notice");
+		String savePath = request.getSession().getServletContext().getRealPath("/resources/files/notice");  //경로 수정했습니다.
 		MultipartRequest mrequest = new MultipartRequest(request, savePath, maxSize, "utf-8", new DefaultFileRenamePolicy());
 		
 		Notice n = new Notice();

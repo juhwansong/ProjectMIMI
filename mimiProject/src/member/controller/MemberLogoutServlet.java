@@ -34,6 +34,7 @@ public class MemberLogoutServlet extends HttpServlet {
 			//로그인 상태라면
 			session.removeAttribute("userId");
 			session.removeAttribute("authority");
+			session.removeAttribute("nickName");
 			
 			session.invalidate(); //섹션 삭제
 				

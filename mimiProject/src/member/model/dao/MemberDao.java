@@ -107,13 +107,13 @@ public class MemberDao {
 		return member;
 	}
 
-	public String loginCheck(Connection con, String userId, String userPwd) throws MemberException{
-		String authority = null;
+	public Member loginCheck(Connection con, String userId, String userPwd) throws MemberException{
+		Member member = null;
 		
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
-		String query = "select authority from tb_user where user_id = ? and user_pwd = ? and state = 'SN' ";
+		String query = "select * from tb_user where user_id = ? and user_pwd = ? and state = 'SN' ";
 		
 		try {
 			pstmt = con.prepareStatement(query);
@@ -123,7 +123,9 @@ public class MemberDao {
 			rset = pstmt.executeQuery();
 			
 			if(rset.next()){
-				authority = rset.getString("authority");
+				member = new Member();
+				member.setNickName(rset.getString("nickname"));
+				member.setAuthority(rset.getString("authority"));
 			}
 			else{
 				throw new MemberException("아이디나 암호가 일치하지 않습니다.!");
@@ -137,7 +139,7 @@ public class MemberDao {
 			close(rset);
 		}
 		
-		return authority;
+		return member;
 	}
 
 	public int updateMember(Connection con, Member member) throws MemberException{

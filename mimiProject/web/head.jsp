@@ -23,6 +23,7 @@
 <%
 	String userId = (String)session.getAttribute("userId");
 	String authority = (String)session.getAttribute("authority");
+	String nickName = (String)session.getAttribute("nickName");
 	
 	if(userId == null){
 %>		

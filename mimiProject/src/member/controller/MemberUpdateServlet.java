@@ -57,7 +57,7 @@ public class MemberUpdateServlet extends HttpServlet {
 		try{
 			result = new MemberService().updateMember(member);
 			if(result > 0){
-				
+				request.getSession().setAttribute("nickName", nickName);//섹션으로 닉네임을 저장중이므로 수정하고 난 후 업데이트 해줘야함
 				message = String.valueOf(result);
 				
 			}

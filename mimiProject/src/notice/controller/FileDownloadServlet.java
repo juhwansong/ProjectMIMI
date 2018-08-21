@@ -33,7 +33,7 @@ public class FileDownloadServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		
-		String readFolder = request.getSession().getServletContext().getRealPath("/files/notice");
+		String readFolder = request.getSession().getServletContext().getRealPath("/resources/files/notice"); //경로 수정했습니다.
 		String noticeRealFile = request.getParameter("ofile");
 		String noticeRenameFile = request.getParameter("rfile");
 		

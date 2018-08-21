@@ -11,12 +11,12 @@ import member.model.dao.MemberDao;
 public class MemberService {	//회원 가입 및 정보 수정 관련 기능
 	public MemberService(){}
 	
-	public String loginCheck(String userId, String userPwd) throws MemberException{//로그인 할때 기능 아이디를 반환받음
+	public Member loginCheck(String userId, String userPwd) throws MemberException{//로그인 할때 기능 아이디를 반환받음
 		Connection con = getConnection();			//회원정보수정 페이지 들어가기 전 비밀번호 재확인 인증 시에도 같은 메소드 이용
-		String authority = new MemberDao().loginCheck(con, userId, userPwd);
+		Member member = new MemberDao().loginCheck(con, userId, userPwd);
 		close(con);
 		
-		return authority;
+		return member;
 	}
 
 	public int insertMember(Member member) throws MemberException{ //회원가입

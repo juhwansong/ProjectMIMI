@@ -5,14 +5,14 @@
 <%
 	Notice notice = (Notice)request.getAttribute("notice");
 	int currentPage = ((Integer)request.getAttribute("page")).intValue();
-	String nickName = (String)session.getAttribute("nickname");
-	String userId = (String)session.getAttribute("userid");
+	//String nickName = (String)session.getAttribute("nickname");  //header.jsp 에서 ajax로 가져옴
+	//String userId = (String)session.getAttribute("userid");  //head.jsp에 있음
 %>
 
 <%@include file="../../head.jsp" %>
 <%-- <%@include file="../../header.jsp" %> --%>
 <%-- <%@include file="../../memberHeader.jsp" %> --%>
-<%@include file="../../adminHeader.jsp" %>
+<%-- <%@include file="../../adminHeader.jsp" %> --%>
 
 
 <style type="text/css">

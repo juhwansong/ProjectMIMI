@@ -45,7 +45,7 @@
 	<hr>
 	<div class="row">
 		<div class="col-sm-6 col-md-4">
-		    <div class="thumbnail" style="cursor: pointer;" onclick="location.href='userInfoManage.jsp'">
+		    <div class="thumbnail" style="cursor: pointer;" onclick="location.href='/mimi/customerlist'">
 		    	<img src="../../resources/images/admin/address-card-solid.svg" id="img" alt="회원정보 관리">
 			    <div class="caption">
 			        <h4>전체 회원 관리</h4>

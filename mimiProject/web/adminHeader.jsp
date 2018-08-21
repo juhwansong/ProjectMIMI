@@ -191,7 +191,7 @@
 					<p id="menu-userid" align="center" style="font-size:7pt;"><%=session.getAttribute("userId") %></p>
 				</div>
 				<div align="center">
-					<a href="#">로그아웃</a>
+					<a href="/mimi/memberlogout">로그아웃</a>
 				</div>
 				<hr style="border: thin 1px black;">
 			

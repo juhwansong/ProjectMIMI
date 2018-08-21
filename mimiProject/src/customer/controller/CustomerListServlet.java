@@ -41,7 +41,6 @@ public class CustomerListServlet extends HttpServlet {
 		if(request.getParameter("page") != null) {
 			currentPage = Integer.parseInt(request.getParameter("page"));
 		}
-		
 		RequestDispatcher view = null;
 		try {
 			ArrayList<Member> memberList = new CustomerService().selectAllCustomerList(currentPage, countList); //전체회원조회

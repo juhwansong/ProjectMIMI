@@ -2,8 +2,8 @@
     pageEncoding="UTF-8"%>
     
 <%
-	String nickName = (String)session.getAttribute("nickname");
-	String userId = (String)session.getAttribute("userid");
+	//String nickName = (String)session.getAttribute("nickname"); //head.jsp 에 있음
+	//String userId = (String)session.getAttribute("userid");  //head.jsp 에 있음
 %>
 
 <%@include file="../../head.jsp" %>
@@ -76,7 +76,7 @@
 				<th width="15%">제목</th>
 				<td><input type="text" name="title" class="form-control" placeholder="제목 입력"></td>
 				<th width="15%">작성자</th>
-				<td width="20%"><%=nickName%><!-- 닉네임 --></td>
+				<td id="notice-nickname-input" width="20%"><%=nickName%><!-- 닉네임 --></td>
 			</tr>
 			<tr>
 				<th>내용</th>
@@ -99,7 +99,6 @@
 		</form>
 	</div>
 </div><!-- /container -->
-
 
 
 <%@include file="../../footer.jsp" %> 	
