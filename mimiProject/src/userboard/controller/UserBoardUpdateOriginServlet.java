@@ -68,8 +68,8 @@ public class UserBoardUpdateOriginServlet extends HttpServlet {
 		board.setShopName(mrequest.getParameter("shopName"));
 		board.setShopAddress(mrequest.getParameter("shopAddress"));
 		board.setShopCall(mrequest.getParameter("shopCall"));
-		board.setLatitude(Integer.parseInt(mrequest.getParameter("latitude")));
-		board.setLongitude(Integer.parseInt(mrequest.getParameter("longitude")));
+		board.setLatitude(Double.parseDouble(mrequest.getParameter("latitude")));
+		board.setLongitude(Double.parseDouble(mrequest.getParameter("longitude")));
 		board.setThumbnailName(mrequest.getParameter("thumbnailName"));
 
 		// 저장폴더에 기록된 원래 파일명 조회

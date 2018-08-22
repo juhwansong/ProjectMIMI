@@ -239,6 +239,7 @@
 					<th width="30%">글제목</th>
 				</tr>
     			<tbody>
+    			
     				<% for(Board b : list) { %>
 						<tr>
 							<td><input type="checkbox" class="select-item checkbox"

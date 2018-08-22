@@ -60,7 +60,7 @@ public class UserBoardInsertServlet extends HttpServlet {
 		// request 를 MultipartRequest 로 변환함
 		MultipartRequest mrequest = new MultipartRequest(request, savePath, maxSize, "UTF-8",
 				new DefaultFileRenamePolicy());
-
+		
 		// 전송온 값 꺼내서 변수/객체에 저장하기
 		Board board = new Board();
 		board.setCategoryNo(mrequest.getParameter("categoryNo"));	//카테고리 연결필요
@@ -73,8 +73,8 @@ public class UserBoardInsertServlet extends HttpServlet {
 		board.setShopName(mrequest.getParameter("shopName"));
 		board.setShopAddress(mrequest.getParameter("shopAddress"));
 		board.setShopCall(mrequest.getParameter("shopCall"));
-		board.setLatitude(Integer.parseInt(mrequest.getParameter("latitude")));
-		board.setLongitude(Integer.parseInt(mrequest.getParameter("longitude")));
+		board.setLatitude(Double.parseDouble(mrequest.getParameter("latitude")));
+		board.setLongitude(Double.parseDouble(mrequest.getParameter("longitude")));
 		board.setThumbnailName(mrequest.getParameter("thumbnailName"));
 
 		// 저장폴더에 기록된 원래 파일명 조회

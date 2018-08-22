@@ -16,6 +16,9 @@
 <link rel="stylesheet" href="/mimi/resources/css/bootstrap.css">
 <script type="text/javascript" src="/mimi/resources/js/jquery-3.3.1.min.js"></script>
 <link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
+<!-- 다음맵 인증키 (직접 발급받아야됨) -->
+<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=795b33c97453a44f73949c94f447f347&libraries=services,clusterer,drawing"></script>
+<link rel="stylesheet" type = "text/css" href = "/mimi/resources/css/mapPage.css">
 </head>
 <body>
 <!-- 바디 태그 시작 -->

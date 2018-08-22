@@ -37,7 +37,7 @@ public class MemberLoginServlet extends HttpServlet {
 		String userPassword = request.getParameter("userpassword");
 		String message = null;
 		Member member = null;
-		
+
 		try{
 			//결과값으로 해당 유저의 권한을 갖고 옴.
 			member = new MemberService().loginCheck(userId, userPassword);

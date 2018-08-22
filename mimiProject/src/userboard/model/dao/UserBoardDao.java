@@ -208,6 +208,9 @@ public class UserBoardDao {
 				urboard.setShopCall(rset.getString("SHOP_CALL"));
 				urboard.setShopAddress(rset.getString("SHOP_ADDRESS"));
 				urboard.setState(rset.getString("STATE"));
+				urboard.setLatitude(rset.getDouble("latitude"));
+				urboard.setLongitude(rset.getDouble("longitude"));
+				
 			}else {
 				throw new UserBoardException(boardNo + "번 글 조회 실패");
 			}
@@ -243,8 +246,8 @@ public class UserBoardDao {
 			pstmt.setString(6, board.getShopName());
 			pstmt.setString(7, board.getShopAddress());
 			pstmt.setString(8, board.getShopCall());
-			pstmt.setInt(9, board.getLatitude());
-			pstmt.setInt(10, board.getLongitude());
+			pstmt.setDouble(9, board.getLatitude());
+			pstmt.setDouble(10, board.getLongitude());
 			pstmt.setString(11, board.getThumbnailName());
 		
 			result = pstmt.executeUpdate();
@@ -281,8 +284,8 @@ public class UserBoardDao {
 			pstmt.setString(5, board.getShopName());
 			pstmt.setString(6, board.getShopAddress());
 			pstmt.setString(7, board.getShopCall());
-			pstmt.setInt(8, board.getLatitude());
-			pstmt.setInt(9, board.getLongitude());
+			pstmt.setDouble(8, board.getLatitude());
+			pstmt.setDouble(9, board.getLongitude());
 			pstmt.setString(10, board.getThumbnailName());
 			pstmt.setString(11, board.getBoardNo());
 		
