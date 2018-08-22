@@ -96,12 +96,12 @@ public class CustomerSearchServlet extends HttpServlet {
 
 //			}else{
 //				//목록이 없을때...
-//				view = request.getRequestDispatcher("view/admin/adminError.jsp");
+//				view = request.getRequestDispatcher("view/admin/adminPageError.jsp");
 //				request.setAttribute("message", "회원이 존재하지 않습니다.");
 //				view.forward(request, response);
 //			}
 		} catch (CustomerException e) {
-			view = request.getRequestDispatcher("view/admin/adminError.jsp");
+			view = request.getRequestDispatcher("view/admin/adminPageError.jsp");
 			request.setAttribute("message", e.getMessage());
 		}
 	}

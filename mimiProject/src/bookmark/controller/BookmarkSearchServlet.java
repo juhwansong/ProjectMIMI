@@ -66,7 +66,7 @@ public class BookmarkSearchServlet extends HttpServlet {
 		try {
 			ArrayList<Board> list = new BookmarkService().searchBookmark(userId, gb, keyword, currentPage, countList);
 			
-			int totalCount = list.size();
+			int totalCount = new BookmarkService().getSearchListCount(userId, gb, keyword);
 			int maxPage = totalCount / countList;
 			if(totalCount % countList > 0)
 				maxPage++;

@@ -44,7 +44,7 @@ public class AdminBoardListServlet extends HttpServlet {
 		
 		RequestDispatcher view = null;
 		try {
-			ArrayList<Board> boardList = new AdminBoardService().selectAdminBoardList(currentPage, countList);//다시해야함
+			ArrayList<Board> boardList = new AdminBoardService().selectAdminBoardList(currentPage, countList);
 			
 			int totalCount = new AdminBoardService().getListCount();
 			int maxPage = totalCount / countList;

@@ -49,14 +49,11 @@ public class BookmarkService {	//즐겨찾기 기능
 	}
 	
 	
-//	public int getSearchListCount(String userId, String board_gb, String keyword) throws BookmarkException{//검색한 게시물 총 갯수(페이지네이션 관리 시 필요)
-//	Connection conn = getConnection();
-//	int listCount = new BookmarkDao().getSearchListCount(conn, userId, board_gb, keyword);
-//	close(conn);
-//	return listCount;
-//}
+	public int getSearchListCount(String userId, String board_gb, String keyword) throws BookmarkException{//검색한 게시물 총 갯수(페이지네이션 관리 시 필요)
+	Connection conn = getConnection();
+	int listCount = new BookmarkDao().getSearchListCount(conn, userId, board_gb, keyword);
+	close(conn);
+	return listCount;
+}
 
-//public int deleteBookmark(ArrayList<String> BoardNoList) throws BookmarkException{//체크박스에 체크한 게시물 삭제
-//	return 0;
-//}
 }

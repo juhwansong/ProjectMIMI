@@ -61,7 +61,7 @@ public class CustomerListServlet extends HttpServlet {
 				endPage = maxPage;
 		
 			
-			if(memberList.size() > 0){
+//			if(memberList.size() > 0){
 				view = request.getRequestDispatcher("views/admin/userInfoManage.jsp");
 				request.setAttribute("customerList", memberList);
 				request.setAttribute("currentPage", currentPage);
@@ -70,14 +70,14 @@ public class CustomerListServlet extends HttpServlet {
 				request.setAttribute("endPage", endPage);
 				request.setAttribute("totalCount", totalCount);
 				view.forward(request, response);
-			}else{
-				view = request.getRequestDispatcher("view/admin/adminError.jsp");
-				request.setAttribute("message", "회원 정보가 없습니다.");
-				view.forward(request, response);
-			}
+//			}else{ //정보 없을때
+//				view = request.getRequestDispatcher("view/admin/adminPageError.jsp");
+//				request.setAttribute("message", "회원 정보가 없습니다.");
+//				view.forward(request, response);
+//			}
 			
 		} catch (CustomerException e) {
-			view = request.getRequestDispatcher("view/admin/adminError.jsp");
+			view = request.getRequestDispatcher("view/admin/adminPageError.jsp");
 			request.setAttribute("message", e.getMessage());
 		}
 	}
