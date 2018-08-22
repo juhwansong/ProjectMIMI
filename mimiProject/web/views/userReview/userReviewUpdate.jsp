@@ -8,7 +8,7 @@
 %>
 
 <%@include file="../../head.jsp"%>
-<%@include file="../../header.jsp"%>
+<%-- <%@include file="../../header.jsp"%> --%>
 <script type="text/javascript">
 var openWin;
 

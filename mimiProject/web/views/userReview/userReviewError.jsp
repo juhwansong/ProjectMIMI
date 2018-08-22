@@ -2,7 +2,7 @@
 	pageEncoding="UTF-8" isErrorPage="true"%>
 	
 <%@include file="../../head.jsp"%>
-<%@include file="../../header.jsp"%>
+<%-- <%@include file="../../header.jsp"%> --%>
 
 <% if(exception != null){ %>
 <%-- jsp 파일에서 예외 발생한 경우 --%>

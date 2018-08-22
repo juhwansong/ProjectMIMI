@@ -2,10 +2,7 @@
     pageEncoding="UTF-8"%>
 
 <%@include file="../../head.jsp" %>
-<!-- body -->
-<%-- <%@include file="../../header.jsp" %>
-<%@include file="../../memberHeader.jsp" %> --%>
-<%@include file="../../adminHeader.jsp" %>
+
 
 <!-- ----------- -->
 <!-- <title>adminPage</title> -->
@@ -48,7 +45,7 @@
 	<hr>
 	<div class="row">
 		<div class="col-sm-6 col-md-4">
-		    <div class="thumbnail" style="cursor: pointer;" onclick="location.href='userInfoManage.jsp'">
+		    <div class="thumbnail" style="cursor: pointer;" onclick="location.href='/mimi/customerlist'">
 		    	<img src="../../resources/images/admin/address-card-solid.svg" id="img" alt="회원정보 관리">
 			    <div class="caption">
 			        <h4>전체 회원 관리</h4>
@@ -56,7 +53,8 @@
 	    	</div>
 	  	</div>
 	  	<div class="col-sm-6 col-md-4">
-	    	<div class="thumbnail" style="cursor: pointer;" onclick="location.href='contentManage.jsp'">
+	    	<!-- <div class="thumbnail" style="cursor: pointer;" onclick="location.href='contentManage.jsp'"> -->
+	    	<div class="thumbnail" style="cursor: pointer;" onclick="location.href='/mimi/allboardlist'">
 	      		<img src="../../resources/images/admin/align-left-solid.svg" id="img" alt="게시물 관리">
 	      		<div class="caption">
 	        		<h4>전체 게시물 관리</h4>
@@ -64,7 +62,8 @@
 	    	</div>
 	  	</div>
 	  	<div class="col-sm-6 col-md-4">
-	    	<div class="thumbnail" style="cursor: pointer;" onclick="location.href='commentManage.jsp'">
+	    	<!-- <div class="thumbnail" style="cursor: pointer;" onclick="location.href='commentManage.jsp'"> -->
+	    	<div class="thumbnail" style="cursor: pointer;" onclick="location.href='/mimi/allcommentlist'">
 	      		<img src="../../resources/images/admin/comments-solid.svg" id="img" alt="댓글 관리">
 	      		<div class="caption">
 	        		<h4>전체 댓글 관리</h4>

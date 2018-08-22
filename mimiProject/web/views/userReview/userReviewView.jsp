@@ -8,18 +8,22 @@
 %>
 
 <%@include file="../../head.jsp"%>
-<%@include file="../../header.jsp"%>
 
 
 <!-- ---------------------- -->
 
-<script src="https://cdn.jsdelivr.net/clipboard.js/1.5.3/clipboard.min.js"></script>
-<script src="/mimi/resources/js/kakao.min.js"></script>
 <script src="//code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript">
-	$(function(){
+var listCount = json.listCount;
+var startPage = json.startPage;
+var endPage = json.endPage;
+var maxPage = json.maxPage;
+var currentPage = json.currentPage;
+</script>
+<script type="text/javascript">
+	$(function commentList(){
 		$.ajax({
-			url : "/mimi/userboardreplylist",
+			url : "/mimi/userboardreplylist?bnum=<%= board.getBoardNo() %>",
 			type : "get",
 			dataType : "json",
 			success : function(data){				
@@ -28,14 +32,18 @@
 				//console.log(jsonStr);
 				var json = JSON.parse(jsonStr);
 				//console.log(json);
-				
+				listCount = json.listCount;
+				startPage = json.startPage;
+				endPage = json.endPage;
+				maxPage = json.maxPage;
+				currentPage = json.currentPage;
 				var values = "";
 				for(var i in json.list){
 					values += "<tr>"
 						+ "<td><table id='comment' style='width:100%'>"
 							+ "<tr>"
 								+ "<td style='width: 40px'><img src='/mimi/resources/images/icon/icon_human.ico' width=40 height=40></td>"
-								+ "<td class='text-left'>&nbsp;" + json.list[i].cmtNo + "<span style='font-size: 8px'>&nbsp;&nbsp;" + json.list[i].cmtDate + "</span></td>"
+								+ "<td class='text-left'>&nbsp;" + json.list[i].cmtNickname + "<span style='font-size: 8px'>&nbsp;&nbsp;" + json.list[i].cmtDate + "</span></td>"
 								+ "<td style='width: 50px' class='text-center'><a href='/mimi/views/userReview/userReviewList.jsp'>수정</a></td>"
 								+ "<td style='width: 50px' class='text-center'><a href='#'>삭제</a></td>"
 							+"</tr>"
@@ -47,6 +55,7 @@
 				}
 				
 				$("#cmtlist").html(values);
+				//$("#paging").paging();
 			},
 			error : function(jqXHR, textstatus, errorThrown){
 				console.log("error : " + jqXHR + ", " + 
@@ -55,6 +64,54 @@
 		});  //ajax close
 	});
 </script>
+
+<script type="text/javascript">
+function cmtsubmit2(){
+	var userid = $("#userid").value;
+    var bnum = $("#bnum").value;
+    var cmtContent = $("#cmtContent").value;
+    alert("alert 테스트");
+	$.ajax({
+		url : "/mimi/userboardreplyinsert",
+		type : "post",
+		dataType : "json",
+		data : {userid : userid, bnum : bnum, cmtContent : cmtContent},
+		success : function(data){				
+			commentList();
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
+</script>
+
+
+<script type="text/javascript">
+function cmtContent(){
+  	var userid = $("#userid").val();
+    var bnum = $("#bnum").val();
+    var cmtContent = $("#cmtContent").val();
+    alert($("#userid").val()+" "+bnum+" "+cmtContent);
+	$.ajax({
+		url : "/mimi/userboardreplyinsert",
+		type : "post",
+		data : {userid : $("#userid").val(), bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
+		success : function(data){				
+		    alert(data);
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+	
+	return false;  //submit 안 되게 처리함
+}
+
+</script>
+
 <style type="text/css">
 
 #text_context {
@@ -167,28 +224,6 @@
 	<br>
 	<hr>
 	</div>
-	<!--  이미지영역
-	<div id="image_l" style="text-align: center;">
-		<img src="/mimi/resources/images/userReview/s_1.jpg" width=400
-			height=300><br>
-	</div>
-	<br>
-	<div id="image_s" style="text-align: center;">
-		<img src="/mimi/resources/images/userReview/s_1.jpg" width=150
-			height=100> <img
-			src="/mimi/resources/images/userReview/s_3.jpg" width=150 height=100>
-		<img src="/mimi/resources/images/userReview/s_1.jpg" width=150
-			height=100>
-	</div>
-	<br>
-	<hr>
-	<div style="text-align: center;">
-			<img class="btn-img"
-				src="/mimi/resources/images/icon/icon_thumb_up.png" width=100
-				 onclick="#">
-		<p id="good_qta">111</p>
-	</div>
-	-->
 	<!-- comment -->
 	<div style="text-align: center;">
 		<!-- 기존 댓글 -->
@@ -212,16 +247,18 @@
 		
 		
 		<!-- 댓글 작성부분 -->
-		<form>
+		<!--<form>-->
+		<input type="hidden" id="bnum" name="bnum" value="<%= board.getBoardNo() %>">
+		<input type="hidden" id="userid" name="userid" value="user02">
 		<table style="width:100%;">
 			<tr>
 				<td width="15%"><img src="/mimi/resources/images/icon/icon_human.ico" width=40
 				height=40>&nbsp;&nbsp;<label>user03</label></td>
-				<td width="*"><textarea style="width: 100%;" rows="3" id="texta_content"></textarea></td>
-				<td width="8%"><button type="submit" class="btn btn-default" style="outline: none;">등록</button></td>
+				<td width="*"><textarea style="width: 100%;" rows="3" id="cmtContent" name="cmtContent"></textarea></td>
+				<td width="8%"><button class="btn btn-default" style="outline: none;" value="등록" id="cmtsubmit" onclick="cmtContent()">등록</button></td>
 			</tr>
 		</table>
-		</form>
+		<!--</form>->
 		<!-- /댓글 작성부분 -->
 	</div>
 	<hr>
@@ -236,6 +273,10 @@
 		</div>
 	</div>
 	<br>
+</div>
+<!-- 페이징 처리 -->
+<div style="text-align: center" id="paging">
+
 </div>
 
 <!-- 카톡공유용 -->

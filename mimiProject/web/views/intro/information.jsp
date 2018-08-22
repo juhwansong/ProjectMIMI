@@ -2,7 +2,6 @@
 	pageEncoding="UTF-8"%>
 
 <%@include file="../../head.jsp"%>
-<%@include file="../../header.jsp"%>
 <!-- head부분 -->
 
 <!-- <title>information</title> -->

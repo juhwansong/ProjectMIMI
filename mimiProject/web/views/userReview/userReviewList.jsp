@@ -11,7 +11,7 @@
 	//String userId = (String)session.getAttribute("userId");
 %>
 <%@include file="../../head.jsp"%>
-<%@include file="../../header.jsp"%>
+
 
 <style>
 table {
@@ -79,10 +79,9 @@ table {
 					<td><%= rb.getHits() %></td>
 					<td><%= rb.getRecommed() %></td>
 				</tr>
-				<% } %>
+				<% } %>													
 			</tbody>
 		</table>
-
 		<hr class="margin1" style="margin: 0px auto 5px auto;">
 
 
@@ -124,8 +123,7 @@ table {
 			<input type="button" class="btn btn-default pull-right"
 			onClick="location.href='/mimi/views/userReview/userReviewInsert.jsp'" value="글쓰기" style="outline: none;"></td>
 	</tr>
-</table>
-		
+</table>		
 </div>
 <!-- 페이징 처리 -->
 <div style="text-align: center">
@@ -163,5 +161,6 @@ table {
 	[맨끝]</a>
 <% } %>
 </div>
+
 <%@include file="../../footer.jsp"%>
 <%@include file="../../end.jsp"%>
