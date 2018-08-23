@@ -7,53 +7,161 @@
 	//String userId = (String)session.getAttribute("userId");
 %>
 
-<%@include file="../../head.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
 
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+<link rel="stylesheet" href="/mimi/resources/css/bootstrap.css">
+<script type="text/javascript" src="/mimi/resources/js/jquery-3.3.1.min.js"></script>
+<link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
+</head>
+<body onload="commentList()">
+<!-- 바디 태그 시작 -->
+
+<%
+	String userId = (String)session.getAttribute("userId");
+	String authority = (String)session.getAttribute("authority");
+	String nickName = (String)session.getAttribute("nickName");
+	
+	if(userId == null){
+%>		
+		<%@include file="../../header.jsp" %>
+<% 		
+	}
+	else if(authority.equals("U")){
+%>		
+		<%@include file="../../memberHeader.jsp" %>
+<%	
+	}
+	else if(authority.equals("A")){
+%>		
+		<%@include file="../../adminHeader.jsp" %>
+<%		
+	}
+%>
 
 <!-- ---------------------- -->
 
 <script src="//code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript">
-var listCount = json.listCount;
-var startPage = json.startPage;
-var endPage = json.endPage;
-var maxPage = json.maxPage;
-var currentPage = json.currentPage;
+//var listCount = json.listCount;
+//var startPage = json.startPage;
+//var endPage = json.endPage;
+//var maxPage = json.maxPage;
+//var currentPage = json.currentPage;
+</script>
+
+<script type="text/javascript">
+function cmtedit(obj, cmtNo){
+    var checkBtn = $(obj);
+	//var trashParam = $(obj).parent().attr('id');
+    //var index = $( "#comment" ).index( obj );
+    var table = checkBtn.parent().parent().parent();
+    var tr = table.children()
+    var td = tr.children()
+    
+    var d0 = td.eq(0).text();
+    var d1 = td.eq(1).text();
+    var d2 = td.eq(2).text();
+    var d3 = td.eq(3).text();
+    var d4 = td.eq(4).text();
+    
+    var cmtcontent= td.eq(4).text();
+    
+    td.eq(2).empty();
+    td.eq(3).empty();
+    td.eq(4).empty();
+    td.eq(2).append("<td style='width: 50px' class='text-center'><a href='javascript:void(0);' onclick='cmtupdate(\""+ cmtNo + "\");'>완료</a></td>");
+    //td.eq(2).append("<td style='width: 50px' class='text-center'><a href='javascript:void(0);' onclick='cmtupdate();'>완료</a></td>");
+	td.eq(3).append("<td style='width: 50px' class='text-center'><a href='javascript:void(0);' onclick='commentList();'>취소</a></td>");
+    td.eq(4).append("<textarea style=\"width: 100%;\" rows=\"3\" class=\"cmtEditcontent\" name=\"cmtEditcontent\">"+cmtcontent+"</textarea>");
+}
+
+function cmtupdate(cmtNo){
+    var cmtEditcontent = $(".cmtEditcontent").val();
+    console.log("cmtEditcontent : " + cmtEditcontent);
+    console.log("cmtNo : " + cmtNo); 
+	$.ajax({
+		url : "/mimi/userboardreplyupdate",
+		type : "post",
+		data : {cmtNo : cmtNo, cmtEditcontent : cmtEditcontent},
+		success : function(data){		
+			commentList(); 
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
+
+function cmtdelete(cmtNo){
+	if (confirm("삭제 하시겠습니까?")){ 
+		$.ajax({
+			url : "/mimi/userboardreplydelete",
+			type : "post",
+			data : {cmtNo : cmtNo},
+			success : function(data){		
+				commentList(); 
+			},
+			error : function(jqXHR, textstatus, errorThrown){
+				console.log("error : " + jqXHR + ", " + 
+						textstatus + ", " + errorThrown);
+			}
+		});  //ajax close
+		}else{ 
+		return; 
+	} 
+} 
+
 </script>
 <script type="text/javascript">
-	$(function commentList(){
-		$.ajax({
-			url : "/mimi/userboardreplylist?bnum=<%= board.getBoardNo() %>",
-			type : "get",
-			dataType : "json",
-			success : function(data){				
-				//console.log("success : " + data);			
-				var jsonStr = JSON.stringify(data);
-				//console.log(jsonStr);
-				var json = JSON.parse(jsonStr);
-				//console.log(json);
-				listCount = json.listCount;
-				startPage = json.startPage;
-				endPage = json.endPage;
-				maxPage = json.maxPage;
-				currentPage = json.currentPage;
-				var values = "";
-				for(var i in json.list){
-					values += "<tr>"
-						+ "<td><table id='comment' style='width:100%'>"
-							+ "<tr>"
-								+ "<td style='width: 40px'><img src='/mimi/resources/images/icon/icon_human.ico' width=40 height=40></td>"
-								+ "<td class='text-left'>&nbsp;" + json.list[i].cmtNickname + "<span style='font-size: 8px'>&nbsp;&nbsp;" + json.list[i].cmtDate + "</span></td>"
-								+ "<td style='width: 50px' class='text-center'><a href='/mimi/views/userReview/userReviewList.jsp'>수정</a></td>"
-								+ "<td style='width: 50px' class='text-center'><a href='#'>삭제</a></td>"
-							+"</tr>"
-						+"<tr>"
-							+"<td colspan='4' class='text-left'><div class='margin5'>" + json.list[i].cmtContents + "</div></td>"
+
+	function commentList(){
+	$.ajax({
+		url : "/mimi/userboardreplylist?bnum=<%= board.getBoardNo() %>",
+		type : "get",
+		dataType : "json",
+		success : function(data){					
+			var jsonStr = JSON.stringify(data);
+			//console.log(jsonStr);
+			var json = JSON.parse(jsonStr);
+			//console.log(json);
+			//listCount = json.listCount;
+			//startPage = json.startPage;
+			//endPage = json.endPage;
+			//maxPage = json.maxPage;
+			//currentPage = json.currentPage;
+			var values = "";
+			for(var i in json.list){
+				values += "<tr>"
+					+ "<td><table id='comment' style='width:100%'>"
+						+ "<tr>"
+							+ "<td style='width: 40px'><img src='/mimi/resources/images/icon/icon_human.ico' width=40 height=40></td>"
+							+ "<td class='text-left'>&nbsp;" + json.list[i].cmtNickname + "<span style='font-size: 8px'>&nbsp;&nbsp;" + json.list[i].cmtDate + "</span></td>"
+							//+ "<td style='width: 50px' class='text-center' id=\"abc\"><a href='#a' class='cmtedit'>수정</a></td>"
+							+ "<td style='width: 50px' class='text-center'>";
+							if(json.list[i].cmtNickname=="양은주"){
+								values += "<a href='javascript:void(0);' onclick=\"cmtedit(this, \'"+ json.list[i].cmtNo + "\');\">수정</a></td>"
+							}
+							values += "</td>"
+							+ "<td style='width: 50px' class='text-center'><a href='javascript:void(0);' onclick=\"cmtdelete('"+ json.list[i].cmtNo + "');\">삭제</a></td>"
 						+"</tr>"
-						+"</table></td>"
+					+"<tr>"
+						+"<td colspan='4' class='text-left' id='cmtContentsview'><div class='margin5'>" + json.list[i].cmtContents + "</div></td>"
 					+"</tr>"
-				}
-				
+					+"</table></td>"
+				+"</tr>";
+			}	
 				$("#cmtlist").html(values);
 				//$("#paging").paging();
 			},
@@ -62,52 +170,27 @@ var currentPage = json.currentPage;
 						textstatus + ", " + errorThrown);
 			}
 		});  //ajax close
-	});
+	}
 </script>
 
 <script type="text/javascript">
-function cmtsubmit2(){
-	var userid = $("#userid").value;
-    var bnum = $("#bnum").value;
-    var cmtContent = $("#cmtContent").value;
-    alert("alert 테스트");
-	$.ajax({
-		url : "/mimi/userboardreplyinsert",
-		type : "post",
-		dataType : "json",
-		data : {userid : userid, bnum : bnum, cmtContent : cmtContent},
-		success : function(data){				
-			commentList();
-		},
-		error : function(jqXHR, textstatus, errorThrown){
-			console.log("error : " + jqXHR + ", " + 
-					textstatus + ", " + errorThrown);
-		}
-	});  //ajax close
-}
-</script>
 
-
-<script type="text/javascript">
-function cmtContent(){
+function cmtinsert(){
   	var userid = $("#userid").val();
     var bnum = $("#bnum").val();
     var cmtContent = $("#cmtContent").val();
-    alert($("#userid").val()+" "+bnum+" "+cmtContent);
 	$.ajax({
 		url : "/mimi/userboardreplyinsert",
 		type : "post",
 		data : {userid : $("#userid").val(), bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
-		success : function(data){				
-		    alert(data);
+		success : function(data){		
+			commentList(); 
 		},
 		error : function(jqXHR, textstatus, errorThrown){
 			console.log("error : " + jqXHR + ", " + 
 					textstatus + ", " + errorThrown);
 		}
 	});  //ajax close
-	
-	return false;  //submit 안 되게 처리함
 }
 
 </script>
@@ -165,9 +248,8 @@ function cmtContent(){
 	
 </script>
 
-
-
 <!-- <title>유저리뷰보기</title> -->
+
 <div class="container" style="width:1150px;">
 	<h3>유저리뷰</h3>
 	<div id="inner">
@@ -255,7 +337,7 @@ function cmtContent(){
 				<td width="15%"><img src="/mimi/resources/images/icon/icon_human.ico" width=40
 				height=40>&nbsp;&nbsp;<label>user03</label></td>
 				<td width="*"><textarea style="width: 100%;" rows="3" id="cmtContent" name="cmtContent"></textarea></td>
-				<td width="8%"><button class="btn btn-default" style="outline: none;" value="등록" id="cmtsubmit" onclick="cmtContent()">등록</button></td>
+				<td width="8%"><button class="btn btn-default" style="outline: none;" value="등록" id="cmtsubmit" onclick="cmtinsert()">등록</button></td>
 			</tr>
 		</table>
 		<!--</form>->

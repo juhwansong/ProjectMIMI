@@ -43,14 +43,13 @@ public class UserBoardReplyListServlet extends HttpServlet {
 		//페이지 값 처리용 변수
 		int currentPage = 1;
 		//한 페이지당 출력할 목록 갯수
-		int limit = 10;
+		int limit = 30;
 		String boardNum = request.getParameter("bnum");
 		
 		UserBoardService ubservice = new UserBoardService();
 		
 		try {
 			int listCount = ubservice.getListCount();
-			
 			ArrayList<Board> list = ubservice.selectUserBoardReplyList(boardNum, currentPage, limit);
 			//총 페이지수 계산 
 			//목록이 최소 1개일 때 1 페이지로 처리하기
@@ -88,7 +87,6 @@ public class UserBoardReplyListServlet extends HttpServlet {
 			json.put("endPage", endPage);
 			json.put("listCount", listCount);
 
-			
 			response.setContentType(
 					"application/json; charset=utf-8");
 			PrintWriter out = response.getWriter();

@@ -36,7 +36,6 @@ public class UserBoardReplyInsertServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html; charset=utf-8");
-		System.out.println("시작");
 		String boardNum = request.getParameter("bnum");
 		RequestDispatcher view = null;
 		
@@ -45,16 +44,13 @@ public class UserBoardReplyInsertServlet extends HttpServlet {
 		board.setCommentUserId(request.getParameter("userid"));	//카테고리 연결필요
 		//board.setCommentUserId(mrequest.getParameter("userId")); 세션에서 아이디 획득 필요
 		board.setCommentContents(request.getParameter("cmtContent"));
-		System.out.println(boardNum +" " + board.getCommentUserId() + " " + board.getCommentContents());
 		try {
 			int result = new UserBoardService().insertUserBoardReply(boardNum, board);
 			
 			String returnValue = null;
 			if (result > 0) {
-				System.out.println("성공");
 				returnValue = "ok";
 			} else {
-				System.out.println("실패");
 				returnValue = "fail";
 			}
 
@@ -63,7 +59,6 @@ public class UserBoardReplyInsertServlet extends HttpServlet {
 				out.flush();
 				out.close();		
 			} catch (UserBoardException e) {
-			System.out.println("실패");
 			view = request.getRequestDispatcher("views/userReview/userReviewError.jsp");
 			request.setAttribute("message", e.getMessage());
 			view.forward(request, response);
