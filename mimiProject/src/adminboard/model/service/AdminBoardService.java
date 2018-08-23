@@ -16,14 +16,16 @@ public class AdminBoardService {//미미 리뷰 게시판 기능
 		
 	}
 	
-	public int getListCount() throws AdminBoardException{//게시물 총 갯수(페이지네이션 관리 시 필요)
+	//게시물 총 갯수(페이지네이션 관리 시 필요)
+	public int getListCount() throws AdminBoardException{
 		Connection conn = getConnection();
 		int listCount = new AdminBoardDao().getListCount(conn);
 		close(conn);
 		return listCount;
 	}
 	
-	public int getSearchListCount(String query) throws AdminBoardException{ //검색한 게시물 총 갯수(페이지네이션 관리 시 필요)
+	//검색한 게시물 총 갯수(페이지네이션 관리 시 필요)
+	public int getSearchListCount(String query) throws AdminBoardException{
 		Connection conn = getConnection();
 		int listCount = new AdminBoardDao().getListCount(conn, query);
 		close(conn);
@@ -74,8 +76,8 @@ public class AdminBoardService {//미미 리뷰 게시판 기능
 	}
 
 	
-	//카테고리 검색..ajax
-	public ArrayList<Board> searchAdminBoard(String query, int currentPage, int countList) throws AdminBoardException{//게시물 정렬,키워드 검색 등 필요 데이터를 map에 다 넣음(key는 쿼리문,value는 ?값)
+	//게시물 검색 목록
+	public ArrayList<Board> searchAdminBoard(String query, int currentPage, int countList) throws AdminBoardException{
 		Connection conn = getConnection();
 		ArrayList<Board> list = new AdminBoardDao().searchAdminBoard(conn, query, currentPage, countList);
 		close(conn);

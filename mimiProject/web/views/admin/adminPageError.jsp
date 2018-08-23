@@ -6,13 +6,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset=UTF-8">
+<meta charset="UTF-8">
 <title>adminPageErrorPage</title>
 </head>
 <body>
 <h1>관리자 페이지 에러 메시지 : </h1>
 <% if(message != null){ %>
-	<h3>예러 메세지 : <%= message %> </h3>
+	<h3>에러 메세지 : <%= message %> </h3>
 <% }else { %>
 	<h3>예외 발생 : <%= exception.getMessage() %></h3>
 <% } %>

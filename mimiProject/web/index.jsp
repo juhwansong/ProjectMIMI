@@ -18,26 +18,32 @@
 		opacity: .8;
 	}
 </style>
+
+	
 	
 <!-- 이미지 슬라이드 -->
 <div class="carousel slide" id="myCarousel" data-ride="carousel"  style="position:relative; min-width:1150px;"> 
 	<!-- 검색 -->
 	<div class="form-inline">
-		<form name="select-category" id="select-category" method="get" action="#"
+		<form name="select-category" id="select-category" method="post" action="/mimi/userboardsearch"
 		 style="display: flex; justify-content: center;">
 			<div class="form-group">
-				<select class="form-control" style="border-radius: 5px 0 0 5px; padding: 3px; height: 35px;">
-					<option value="" selected disabled hidden>Category</option>
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
+				<select class="form-control" name="category" style="border-radius: 5px 0 0 5px; padding: 3px; height: 35px;">
+				<option value="C0" selected disabled hidden>Category</option>
+				<option value="C0">전체</option>
+				<option value="C1">1</option>
+				<option value="C2">2</option>
+				<option value="C3">3</option>
+				<option value="C4">4</option>
+				<option value="C5">5</option>
+				<option value="C6">6</option>
+				<option value="C7">7</option>
+				<option value="C8">8</option>
 				</select>
 			</div>
 			<div class="form-group">
 		 		<input type="text" class="form-control" name="search-text" id="search-text" size="30" placeholder="검색할 키워드를 입력하세요" style="border-radius: 0 5px 5px 0; padding: 2px; height: 35px;">
-		​​​​​​​  		<button type="button" class="btn" name="btn" style="outline: none;">Search&nbsp;<i class="fas fa-search"></i></button>
+		​​​​​​​  		<button type="submit" class="btn" name="searchBtn" style="outline: none;">Search&nbsp;<i class="fas fa-search"></i></button>
 			</div>
 		</form>
 	</div>

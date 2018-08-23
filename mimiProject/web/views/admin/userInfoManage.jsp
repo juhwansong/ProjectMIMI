@@ -12,7 +12,6 @@
 <!-- head -->
 <%@include file="../../head.jsp" %>
 <!-- body -->
-<%@include file="../../adminHeader.jsp" %>
 <!--------------------------------------------------------------------------->
 <style>
 .sidenav {
@@ -202,26 +201,13 @@
 	</thead>
 	<tbody>
 	<% for (Member member : list) {
-		
-		String mauthority = null, mauthority2 = null;
 
-		if(member.getAuthority().equals("A")){
-			mauthority = "관리자";
-			mauthority2 = "회원";
-		}else{
-			mauthority = "회원";
-			mauthority2 = "관리자";
-		}
-		
-		
-		String state = null, state2 = null;
-		if(member.getState().equals("SN")){
-			state = "일반";
-			state2 = "삭제대기";
-		}else{
-			state = "삭제대기";
-			state2 = "일반";
-		}
+		String authority1 = (member.getAuthority().equals("A")) ? "관리자" : "회원";
+		String authority2 = (member.getAuthority().equals("A")) ? "회원" : "관리자";
+
+ 		String state1 = (member.getState().equals("SN")) ? "일반" : "삭제대기";
+ 		String state2 = (member.getState().equals("SN")) ? "삭제대기" : "일반";
+
 	%>
 	<tr>
 		<td><input type="checkbox" name="checkOne" id="checkOne"></td>
@@ -234,13 +220,13 @@
 		<td>
 		<!-- 권한 -->
 		<select class="border-zero" name="dropdown1" id="dropdown1">
-			<option value="<%= mauthority %>" selected><%= mauthority %></option>
-			<option value="<%= mauthority2 %>"><%= mauthority2 %></option>
+			<option value="<%= authority1 %>" selected><%= authority1 %></option>
+			<option value="<%= authority2 %>"><%= authority2 %></option>
 		</select>
 		</td>
 		<td><!-- 상태 -->
 		<select class="border-zero" name="dropdown2" id="dropdown2">
-			<option value="<%= state %>" selected><%= state %></option>
+			<option value="<%= state1 %>" selected><%= state1 %></option>
 			<option value="<%= state2 %>"><%= state2 %></option>
 		</select>
 		</td>

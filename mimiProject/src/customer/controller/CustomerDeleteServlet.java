@@ -62,13 +62,13 @@ public class CustomerDeleteServlet extends HttpServlet {
 					response.sendRedirect("/mimi/customerlist"); //성공시 새로고침해서 다시 들어감....
 	
 				}else{
-					view = request.getRequestDispatcher("view/admin/adminPageError.jsp");
+					view = request.getRequestDispatcher("view/admin/adminError.jsp");
 					request.setAttribute("message", "회원 정보 삭제 실패");
 					view.forward(request, response);
 				}
 				
 			} catch (CustomerException e) {
-				view = request.getRequestDispatcher("view/admin/adminPageError.jsp");
+				view = request.getRequestDispatcher("view/admin/adminError.jsp");
 				request.setAttribute("message", e.getMessage());
 			}
 		}//if else 종료

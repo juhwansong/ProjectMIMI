@@ -41,8 +41,8 @@ public class NoticeDao {
 				list.add(n);
 			}
 			
-			if(list.size() == 0)
-				throw new NoticeException("공지사항이 없습니다.....");
+//			if(list.size() == 0)
+//				throw new NoticeException("공지사항이 없습니다.....");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NoticeException(e.getMessage());
@@ -68,7 +68,7 @@ public class NoticeDao {
 			if(rset.next()){
 				listCount = rset.getInt(1);
 			}else{
-				throw new NoticeException("공지사항이 존재하지 않습니다.....");
+//				throw new NoticeException("공지사항이 존재하지 않습니다.....");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -147,6 +147,7 @@ public class NoticeDao {
 		return result;
 	}
 
+	//공지사항 삭제
 	public int deleteNotice(Connection conn, String noticeNo) throws NoticeException{
 		int result = 0;
 		PreparedStatement pstmt = null;
@@ -169,6 +170,7 @@ public class NoticeDao {
 		return result;
 	}
 
+	//공지사항 수정
 	public int updateNotice(Connection conn, Notice notice) throws NoticeException{
 		int result = 0;
 		PreparedStatement pstmt = null;
@@ -209,17 +211,24 @@ public class NoticeDao {
 	}
 
 	//통합검색
-	public ArrayList<Notice> searchNotice(Connection conn, String keyword) throws NoticeException{
+	public ArrayList<Notice> searchNotice(Connection conn, String keyword, int currentPage, int countList) throws NoticeException{
 		ArrayList<Notice> list = new ArrayList<Notice>();
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
-		String query = "SELECT * FROM V_NOTICE_VIEW WHERE NOTICE_TITLE LIKE ? OR NOTICE_CONTENTS LIKE ?"
-				+ " ORDER BY NOTICE_NO DESC";
+		
+		String query = "SELECT * FROM (SELECT ROWNUM RNUM, NOTICE_NO, NOTICE_TITLE, NICKNAME, NOTICE_DATE "
+				+ "FROM (SELECT * FROM V_NOTICE_VIEW WHERE NOTICE_TITLE LIKE ? OR NOTICE_CONTENTS LIKE ? "
+				+ "ORDER BY NOTICE_NO DESC)) WHERE RNUM >= ? AND RNUM <= ?";
+
+		int startRow = (currentPage - 1) * countList + 1;
+		int endRow = startRow + countList - 1;
 		
 		try {
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, "%" + keyword + "%");
 			pstmt.setString(2, "%" + keyword + "%");
+			pstmt.setInt(3, startRow);
+			pstmt.setInt(4, endRow);
 			
 			rset = pstmt.executeQuery();
 			
@@ -235,8 +244,8 @@ public class NoticeDao {
 				//System.out.println(n); //가져오는거 확인용
 			}
 			
-			if(list.size() == 0)
-				throw new NoticeException("공지글이 없습니다.");
+//			if(list.size() == 0)
+//				throw new NoticeException("공지글이 없습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NoticeException(e.getMessage());
@@ -245,6 +254,37 @@ public class NoticeDao {
 			close(pstmt);
 		}
 		return list;
+	}
+
+	//검색한 공지 개수
+	public int getListCount(Connection conn, String keyword) throws NoticeException{
+		int result = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		String query = "SELECT COUNT(*) FROM V_NOTICE_VIEW WHERE NOTICE_TITLE LIKE ? OR NOTICE_CONTENTS LIKE ?"
+				+ " ORDER BY NOTICE_NO DESC";
+		
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, "%" + keyword + "%");
+			pstmt.setString(2, "%" + keyword + "%");
+			
+			rset = pstmt.executeQuery();
+			
+			if(rset.next()){
+				result = rset.getInt(1);
+			}else{
+				//게시물 없음
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new NoticeException(e.getMessage());
+		} finally {
+			close(rset);
+			close(pstmt);
+		}
+		return result;
 	}
 
 }

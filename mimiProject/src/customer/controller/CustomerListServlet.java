@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import common.model.vo.Member;
 import customer.exception.CustomerException;
@@ -61,7 +62,13 @@ public class CustomerListServlet extends HttpServlet {
 				endPage = maxPage;
 		
 			
-//			if(memberList.size() > 0){
+			HttpSession session = request.getSession(false);
+			String authority = (String)session.getAttribute("authority");
+			
+			//System.out.println("authoriy 값 확인 : " + authority);
+			
+			
+			if(authority != null && authority.equals("A")){
 				view = request.getRequestDispatcher("views/admin/userInfoManage.jsp");
 				request.setAttribute("customerList", memberList);
 				request.setAttribute("currentPage", currentPage);
@@ -70,11 +77,11 @@ public class CustomerListServlet extends HttpServlet {
 				request.setAttribute("endPage", endPage);
 				request.setAttribute("totalCount", totalCount);
 				view.forward(request, response);
-//			}else{ //정보 없을때
-//				view = request.getRequestDispatcher("view/admin/adminPageError.jsp");
-//				request.setAttribute("message", "회원 정보가 없습니다.");
-//				view.forward(request, response);
-//			}
+			}else{ //관리자가 아닐때
+				view = request.getRequestDispatcher("views/admin/adminPageError.jsp");
+				request.setAttribute("message", "관리자 로그인이 필요합니다.");
+				view.forward(request, response);
+			}
 			
 		} catch (CustomerException e) {
 			view = request.getRequestDispatcher("view/admin/adminPageError.jsp");

@@ -9,263 +9,174 @@
 	int maxPage = ((Integer) request.getAttribute("maxPage")).intValue();
 	int currentPage = ((Integer) request.getAttribute("currentPage")).intValue();
 	
-	//String category = (String)request.getAttribute("category");
-	//String keyword = (String)request.getAttribute("keyword");
+
 %>
 <%@include file="../../head.jsp" %>
 
 
-<%-- <%@include file="../../header.jsp" %> --%>
-<%@include file="../../memberHeader.jsp" %>
-<%-- <%@include file="../../adminHeader.jsp" %> --%>
+<script type="text/javascript">
+	function callback(data){ //목록, 페이지네이션 처리
+		//console.log("콜백함수 실행중...");
+		var searchText = $("#search-text").val();
+		var jsonStr = JSON.stringify(data);			
+		var json = JSON.parse(jsonStr);
+		
+		$("#row").empty(); //기존 목록 전부 지우기
+		values = ""; //변수 선언
+		//console.log("row html 확인하기  :: " + values);
+		
+		for(var i in json.list){		
+			values += '<div class="col-lg-4 col-sm-6 portfolio-item"><div class="rounded"><div class="img-div"><div class="cb">'
+					+ '<span class="text"><i class="fas fa-comments"></i>' + json.list[i].commentNum
+					+ '&nbsp;&nbsp;<i class="far fa-thumbs-up"></i>' + json.list[i].recommend
+					+ '</span> </div> <a href="#"><img class="img img-mover" src="/mimi/resources/images/main/img3.jpg" alt="/mimi/resources/images/main/img3.jpg"></a>'
+					+ '</div> <div class="r-body"> <table class="r-table"><tr><td><h4><a href="#">' + decodeURIComponent(json.list[i].title)
+					+ '</a></h4></td><td class="td-ast" style="font-size: 12px;">' + json.list[i].boardDate
+					+ '</td></tr></table><p class="r-text">' + decodeURIComponent(json.list[i].contents) + '</p></div></div></div>'
+			
+		}//for 
+		
+		$("#row").html(values); //목록 채우기
+	
+		//pagination
+		$("#adminPagination").empty(); //기존 페이지네이션 지우기
+		pageValues = "";
 
-
-<!-- <title>MIMI</title> -->
-
-
-
+	 	//<< 1
+		if(json.currentPage <= 1){
+			pageValues += '<li><span style="color:#ccc;">&laquo;</span></li><li>';
+		}else{
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(1);" title="맨처음"><span style="color:#444;">&laquo;</span></a></li><li>'
+		}
+	
+	 	//< -10
+		if((json.currentPage - 10) <= json.startPage && (json.currentPage - 10) > 1){
+			pageValues += '<a href="javascript:void(0)" onclick="paging(' + (json.currentPage - 10) + ');" title="이전"><span style="color:#444;">&lt;</span></a></li>'	
+		}else if(json.currentPage != 1){ //1페이지 아니면 항상 활성화
+			pageValues += '<a href="javascript:void(0)" onclick="paging(1);" title="이전"><span style="color:#444;">&lt;</span></a></li>'
+		}else{
+			pageValues += '<span style="color:#ccc;">&lt;</span></li>'
+		}
+		
+		
+	 	//123
+		for(var p = json.startPage; p <= json.endPage; p++){
+			if(p == json.currentPage){
+					pageValues += '<li><span style="color:#ccc;">' + p + '</span></li>'
+		 	}else{ 
+		 		pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + p + ');"><span style="color:#444;">' + p + '</span></a></li>'
+			}}
+		
+	 	//> +10
+		if((json.currentPage + 10) <= json.maxPage){
+		 	pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + (json.currentPage + 10) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>'
+		}else if((json.currentPage + 10 ) > json.maxPage && json.currentPage < json.maxPage){ //마지막 페이지 아닐시 항상 활성화
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + (json.maxPage) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>'
+		}else{
+			pageValues += '<li><span style="color:#ccc;">&gt;</span></li>'
+		}
+		
+		//>> max
+		if(json.currentPage >= json.maxPage){
+			pageValues += '<li><span style="color:#ccc;">&raquo;</span></li>'
+		}else{
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + json.maxPage + ');" title="맨끝"><span style="color:#444;">&raquo;</span></a></li>'
+			
+		}
+		$("#adminPagination").html(pageValues);//페이지네이션
+		$('html, body').scrollTop(0); //상단으로 이동
+		}//callback function		
+		
+		function paging(p){
+			$.ajax({		
+				url : "adminboardsearch",
+				data : {category : categoryValue, keyword : searchText, page : p},
+				type : "post",
+				dataType : "json",
+				success : function(data){	
+					callback(data);
+				}//success
+			})//ajax
+		}//paging
+</script>
+<!-------------같이 두면 인식 못해서 분리----------------------------------------------------------------------->
 <script type="text/javascript">
 	$(function(){		
-		<%-- //alert("카테고리값 : " + <%=category%> + "\nkeyword : " + <%=keyword%>); --%>
-		//select box 변경 시 작동
+		var page = <%= currentPage%>;
+
+		//select box 변경 시 ajax 실행
 		$("#select-category").change(function(){
-			categoryValue = $("#select-category option:selected").val(); //변경된 카테고리 값
+			categoryValue = $("#select-category option:selected").val();
 			searchText = $("#search-text").val();
 			//console.log("변경된 카테고리 값 : " + categoryValue);
 
 			$.ajax({
 				url : "adminboardsearch",
-				data : {category : categoryValue},
+				data : {category : categoryValue, page : page},
 				type : "post",
 				dataType : "json",
 				success : function(data){					
-					var jsonStr = JSON.stringify(data);
-					//console.log("jsonStr : " + jsonStr);
-					
-					var json = JSON.parse(jsonStr);
-					//console.log("문자열로 바꾼거 확인 : " + json);
-					
-					$("#row").empty(); //기존 목록 전부 지우기
-					values = ""; //변수 선언
-					//console.log("row html 확인하기  :: " + values);
-					for(var i in json.list){
-						
-						values += '<div class="col-lg-4 col-sm-6 portfolio-item"><div class="rounded"><div class="img-div"><div class="cb">'
-								+ '<span class="text"><i class="fas fa-comments"></i>' + json.list[i].commentNum
-								+ '&nbsp;&nbsp;<i class="far fa-thumbs-up"></i>' + json.list[i].recommend
-								+	'</span> </div> <a href="#"><img class="img img-mover" src="/mimi/resources/images/main/img3.jpg" alt="/mimi/resources/images/main/img3.jpg"></a>'
-								+ '</div> <div class="r-body"> <table class="r-table"><tr><td><h4><a href="#">' + decodeURIComponent(json.list[i].title)
-								+ '</a></h4></td><td class="td-ast" style="font-size: 12px;">' + json.list[i].boardDate
-								+ '</td></tr></table><p class="r-text">' + decodeURIComponent(json.list[i].contents) + '</p></div></div></div>'
-						
-
-					}//for 
-					$("#row").html(values); //목록 채우기
-										
-					
-					//pagination
-					$("#adminPagination").empty(); //기존 페이지네이션 지우기
-					pageValues = "";
-					
-					 //페이지네이션 처리.....
-						if(json.currentPage <= 1){
-							pageValues += '<li><span style="color:#ccc;">&laquo;</span></li><li>';
-						}else{
-							pageValues += '<li><a href="/mimi/adminboardsearch?page=1&category=' + categoryValue + '&keyword=' + searchText + '" title="맨처음"><span style="color:#444;">&laquo;</span></a></li><li>'
-						}
-
-						if((json.currentPage - 10) < json.startPage && (json.currentPage - 10) > 1){
-							pageValues += '<a href="/mimi/adminboardsearch?page=' + (json.startPage - 10)+ '&category=' + categoryValue + '&keyword=' + searchText + '" title="이전"><span style="color:#444;">&lt;</span></a></li>'	
-						}else{
-							pageValues += '<span style="color:#ccc;">&lt;</span></li>'
-						}
-						
-						
-						for(var p = json.startPage; p <= json.endPage; p++){
-							if(p == json.currentPage){
-									pageValues += '<li><span style="color:#ccc;">' + p + '</span></li>'
-						 	}else{ 
-							 	pageValues += '<li><a href="/mimi/adminboardsearch?page=' + p + '&category=' + categoryValue + '&keyword=' + searchText + '"><span style="color:#444;">' + p + '</span></a></li>'
-							}}
-						
-						if((json.currentPage + 10) > json.endPage && (json.currentPage + 10) < json.maxPage){
-						 	pageValues += '<li><a href="/mimi/adminboardsearch?page=' + (json.endPage + 10) +'&category=' + categoryValue + '&keyword=' + searchText + '" title="다음"><span style="color:#444;">&gt;</span></a></li>'
-						}else{
-							pageValues += '<li><span style="color:#ccc;">&gt;</span></li>'
-						}
-						
-						if(json.currentPage >= json.maxPage){
-							pageValues += '<li><span style="color:#ccc;">&raquo;</span></li>'
-						}else{
-							pageValues += '<li><a href="/mimi/adminboardsearch?page=' + json.maxPage + '&category=' + categoryValue + '&keyword=' + searchText + '" title="맨끝"><span style="color:#444;">&raquo;</span></a></li>'
-						}				
-					$("#adminPagination").html(pageValues);//페이지네이션
-					$("select-category").val(categoryValue).prop("selected", true);
-					$("#search-text").val(searchText);
+					callback(data);
 				}//success
 			});//ajax
-/* 			$("select-category").val(categoryValue).prop("selected", true);
-			$("#search-text").val(searchText); */
+			
 		})//select box change
 		
- /* 		
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////	 		
 		
-		//검색버튼 클릭시 ajax 실행
+		//검색버튼 클릭 시 ajax 실행
 		$("#submitBtn").on('click', function(){
-			categoryValue = $("#select-category option:selected").val(); //변경된 카테고리 값
+			categoryValue = $("#select-category option:selected").val();
 			searchText = $("#search-text").val();
 			//console.log("버튼 실행 확인...");
 			$.ajax({
 				
 				url : "adminboardsearch",
-				data : {category : categoryValue, keyword : searchText},
+				data : {category : categoryValue, keyword : searchText, page : page},
 				type : "post",
 				dataType : "json",
-				success : function(data){					
-					var jsonStr = JSON.stringify(data);
-					//console.log("jsonStr : " + jsonStr);
-					
-					var json = JSON.parse(jsonStr);
-					//console.log("문자열로 바꾼거 확인 : " + json);
-					
-					$("#row").empty(); //기존의 내용 전부 지우기
-					values = ""; //변수 선언
-					//console.log("row html 확인하기  :: " + values);
-					for(var i in json.list){
-						
-						values += '<div class="col-lg-4 col-sm-6 portfolio-item"><div class="rounded"><div class="img-div"><div class="cb">'
-								+ '<span class="text"><i class="fas fa-comments"></i>' + json.list[i].commentNum
-								+ '&nbsp;&nbsp;<i class="far fa-thumbs-up"></i>' + json.list[i].recommend
-								+	'</span> </div> <a href="#"><img class="img img-mover" src="/mimi/resources/images/main/img3.jpg" alt="/mimi/resources/images/main/img3.jpg"></a>'
-								+ '</div> <div class="r-body"> <table class="r-table"><tr><td><h4><a href="#">' + decodeURIComponent(json.list[i].title)
-								+ '</a></h4></td><td class="td-ast" style="font-size: 12px;">' + json.list[i].boardDate
-								+ '</td></tr></table><p class="r-text">' + decodeURIComponent(json.list[i].contents) + '</p></div></div></div>'
-						
-
-					}//for 
-					$("#row").html(values);
-										
-					
-					//pagination
-					$("#adminPagination").empty(); //기존 페이지네이션 지우기
-					pageValues = "";
-					
-						if(json.currentPage <= 1){
-							pageValues += '<li><span style="color:#ccc;">&laquo;</span></li><li>';
-						}else{
-							pageValues += '<li><a href="/mimi/adminboardsearchlist?page=1&category=' + categoryValue + '&keyword=' + searchText + '" title="맨처음"><span style="color:#444;">&laquo;</span></a></li><li>'
-						}
-
-						if((json.currentPage - 10) < json.startPage && (json.currentPage - 10) > 1){
-							pageValues += '<a href="/mimi/adminboardsearchlist?page=' + (json.startPage - 10)+ '&category=' + categoryValue + '&keyword=' + searchText + '" title="이전"><span style="color:#444;">&lt;</span></a></li>'	
-						}else{
-							pageValues += '<span style="color:#ccc;">&lt;</span></li>'
-						}
-						
-						
-						for(var p = json.startPage; p <= json.endPage; p++){
-							if(p == json.currentPage){
-									pageValues += '<li><span style="color:#ccc;">' + p + '</span></li>'
-						 	}else{ 
-							 	pageValues += '<li><a href="/mimi/adminboardsearchlist?page=' + p +'&category=' + categoryValue + '&keyword=' + searchText + '"><span style="color:#444;">' + p + '</span></a></li>'
-							}}
-						
-						if((json.currentPage + 10) > json.endPage && (json.currentPage + 10) < json.maxPage){
-						 	pageValues += '<li><a href="/mimi/adminboardsearchlist?page=' + (json.endPage + 10) +'&category=' + categoryValue + '&keyword=' + searchText + '" title="다음"><span style="color:#444;">&gt;</span></a></li>'
-						}else{
-							pageValues += '<li><span style="color:#ccc;">&gt;</span></li>'
-						}
-						
-						if(json.currentPage >= json.maxPage){
-							pageValues += '<li><span style="color:#ccc;">&raquo;</span></li>'
-						}else{
-							pageValues += '<li><a href="/mimi/adminboardsearchlist?page=' + json.maxPage + '&category=' + categoryValue + '&keyword=' + searchText + '" title="맨끝"><span style="color:#444;">&raquo;</span></a></li>'
-						}				
-					$("#adminPagination").html(pageValues);//페이지네이션
-
-					
+				success : function(data){	
+					callback(data);
 				}//success
 			})//ajax
-			
-			
-			console.log("categoryValue : " + categoryValue + "\nsearchText : " + searchText);
+
+			//console.log("categoryValue : " + categoryValue + "\nsearchText : " + searchText);
 		})//submitBtn click
-		
- */
-	$.ajax({
-		
-		url : "adminboardsearch",
-		data : {category : categoryValue, keyword : searchText},
-		type : "post",
-		dataType : "json",
-		success : function(data){			
-			console.log("wkrehd??");
-			var jsonStr = JSON.stringify(data);
-			//console.log("jsonStr : " + jsonStr);
-			
-			var json = JSON.parse(jsonStr);
-			//console.log("문자열로 바꾼거 확인 : " + json);
-			
-			$("#row").empty(); //기존의 내용 전부 지우기
-			values = ""; //변수 선언
-			//console.log("row html 확인하기  :: " + values);
-			for(var i in json.list){
-				
-				values += '<div class="col-lg-4 col-sm-6 portfolio-item"><div class="rounded"><div class="img-div"><div class="cb">'
-						+ '<span class="text"><i class="fas fa-comments"></i>' + json.list[i].commentNum
-						+ '&nbsp;&nbsp;<i class="far fa-thumbs-up"></i>' + json.list[i].recommend
-						+	'</span> </div> <a href="#"><img class="img img-mover" src="/mimi/resources/images/main/img3.jpg" alt="/mimi/resources/images/main/img3.jpg"></a>'
-						+ '</div> <div class="r-body"> <table class="r-table"><tr><td><h4><a href="#">' + decodeURIComponent(json.list[i].title)
-						+ '</a></h4></td><td class="td-ast" style="font-size: 12px;">' + json.list[i].boardDate
-						+ '</td></tr></table><p class="r-text">' + decodeURIComponent(json.list[i].contents) + '</p></div></div></div>'
-				
 
-			}//for 
-			$("#row").html(values);
-								
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+ 
+		//정렬 선택 시 ajax 실행
+		$("#r-sort, #h-sort, #d-sort").on('click', function(){
+			var icon = ($(this).children().attr('class') === 'fas fa-sort-down') ? 'fas fa-sort-up' : 'fas fa-sort-down'; 
 			
-			//pagination
-			$("#adminPagination").empty(); //기존 페이지네이션 지우기
-			pageValues = "";
+			//현재 선택영역 제외하고 나머지 원래 아이콘으로 변경
+			$("#r-sort, #h-sort, #d-sort").children().not($(this).children()).attr('class', 'fas fa-sort');
+			$(this).children().prop('class', icon); //아이콘 바꾸기
 			
-				if(json.currentPage <= 1){
-					pageValues += '<li><span style="color:#ccc;">&laquo;</span></li><li>';
-				}else{
-					pageValues += '<li><a href="/mimi/adminboardsearchlist?page=1&category=' + categoryValue + '&keyword=' + searchText + '" title="맨처음"><span style="color:#444;">&laquo;</span></a></li><li>'
-				}
-
-				if((json.currentPage - 10) < json.startPage && (json.currentPage - 10) > 1){
-					pageValues += '<a href="/mimi/adminboardsearchlist?page=' + (json.startPage - 10)+ '&category=' + categoryValue + '&keyword=' + searchText + '" title="이전"><span style="color:#444;">&lt;</span></a></li>'	
-				}else{
-					pageValues += '<span style="color:#ccc;">&lt;</span></li>'
-				}
-				
-				
-				for(var p = json.startPage; p <= json.endPage; p++){
-					if(p == json.currentPage){
-							pageValues += '<li><span style="color:#ccc;">' + p + '</span></li>'
-				 	}else{ 
-					 	pageValues += '<li><a href="/mimi/adminboardsearchlist?page=' + p +'&category=' + categoryValue + '&keyword=' + searchText + '"><span style="color:#444;">' + p + '</span></a></li>'
-					}}
-				
-				if((json.currentPage + 10) > json.endPage && (json.currentPage + 10) < json.maxPage){
-				 	pageValues += '<li><a href="/mimi/adminboardsearchlist?page=' + (json.endPage + 10) +'&category=' + categoryValue + '&keyword=' + searchText + '" title="다음"><span style="color:#444;">&gt;</span></a></li>'
-				}else{
-					pageValues += '<li><span style="color:#ccc;">&gt;</span></li>'
-				}
-				
-				if(json.currentPage >= json.maxPage){
-					pageValues += '<li><span style="color:#ccc;">&raquo;</span></li>'
-				}else{
-					pageValues += '<li><a href="/mimi/adminboardsearchlist?page=' + json.maxPage + '&category=' + categoryValue + '&keyword=' + searchText + '" title="맨끝"><span style="color:#444;">&raquo;</span></a></li>'
-				}				
-			$("#adminPagination").html(pageValues);//페이지네이션
-
+			var sort = $(this).children().attr('class');
+			var order = $(this).children().attr('id');
+			categoryValue = $("#select-category option:selected").val();
+			searchText = $("#search-text").val();
 			
-		}//success
-	})//ajax
+			//값 확인
+			//console.log("order : " + order + "\nsort : " + sort);
+			//console.log("categoryValue : " + categoryValue + "\nsearchText : " + searchText);
+			
+			$.ajax({
+				
+				url : "adminboardsearch",
+				data : {category : categoryValue, keyword : searchText, order : order, sort : sort, page : page},
+				type : "post",
+				dataType : "json",
+				success : function(data){
+					callback(data);					
+				}//success
+			})//ajax
+		})//sort
 		
-	})//document
+	})//document close
+	
+	
 </script>
 
 <div class="container" style="width:1150px;">
@@ -288,9 +199,9 @@
 				<option value="C7">7</option>
 				<option value="C8">8</option>
 			</select>&nbsp;&nbsp;&nbsp; <span id="" style="color: #555; font-size: 12px;">
-			<a href="#">추천수&nbsp;<i class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
-			<a href="#">조회수&nbsp;<i class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
-			<a href="#">기간&nbsp;<i class="fas fa-sort"></i></a></span>
+			<a href="#" id="r-sort">추천수&nbsp;<i id="recommend" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
+			<a href="#" id="h-sort">조회수&nbsp;<i id="hits" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
+			<a href="#" id="d-sort">기간&nbsp;<i id="board_date" class="fas fa-sort"></i></a></span>
 		</div>
 		<!-- 오른쪽 -->
 		<div class="form-group" style="float: right; margin: 1px;">
@@ -340,67 +251,72 @@
 		<% } %>
 	
 	</div>
-	
-	
-	
 	<!-- /row -->
+	
+	
 <hr class="margin1">
 
 <table style="width:100%">
 	<tr>
 		<td width="10%"></td><!-- 빈칸 -->
 		<td width="*"><!-- 페이지 -->
-	<!-- Pagination -->
-		<ul class="pagination" id="adminPagination" style="float: center; display: flex; justify-content: center;">
-			<!-- 맨앞으로 -->
-			<li>
-			<% if(currentPage <= 1){ %>
-				<span style="color:#ccc;">&laquo;</span>
-			<% }else{ %>
-				<a href="/mimi/adminboardlist?page=1" title="맨처음"><span style="color:#444;">&laquo;</span></a>
-			<% } %>
-			</li>
-			
-			<!-- 하나 앞으로 -->
-			<li>
-				<% if((currentPage - 10) < startPage && (currentPage - 10) > 1){ %>
-				<a href="/mimi/adminboardlist?page=<%=startPage - 10%>" title="이전"><span style="color:#444;">&lt;</span></a>	
-			<% }else{ %>
-				<span style="color:#ccc;">&lt;</span>
-			<% } %>
-			</li>
-			
-			<% for(int p = startPage; p <= endPage; p++){
-					if(p == currentPage){%>
-			<li><span style="color:#ccc;"><%=p %></span></li>
-			<% }else{ %>
-			<li><a href="/mimi/adminboardlist?page=<%=p%>"><span style="color:#444;"><%=p %></span></a></li>
-			<% }} %>
-			
-			<!-- 하나 뒤 -->
-			<% if((currentPage + 10) > endPage && (currentPage + 10) < maxPage){ %>
-			<li>
-				<a href="/mimi/adminboardlist?page=<%=endPage + 10%>" title="다음"><span style="color:#444;">&gt;</span></a>
-			</li>
-			<% }else{ %>
-			<li><span style="color:#ccc;">&gt;</span></li>
-			<!-- 맨뒤 -->
-			<% }
-				if(currentPage >= maxPage){%>
-				<li><span style="color:#ccc;">&raquo;</span></li>
-			<% }else{ %>
-			<li>
-				<a href="/mimi/adminboardlist?page=<%=maxPage%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
-			</li>
-			<% } %>
-			
-		</ul>	
-	</td>
+		<!-- Pagination -->
+			<ul class="pagination" id="adminPagination" style="float: center; display: flex; justify-content: center;">
+				<!-- 맨앞으로 -->
+				<li>
+				<% if(currentPage <= 1){ %>
+					<span style="color:#ccc;">&laquo;</span>
+				<% }else{ %>
+					<a href="/mimi/adminboardlist?page=1" title="맨처음"><span style="color:#444;">&laquo;</span></a>
+				<% } %>
+				</li>
+				
+				<!-- 하나 앞으로 -->
+				<li>
+				<% if((currentPage - 10) <= startPage && (currentPage - 10) > 1){ %>
+					<a href="/mimi/adminboardlist?page=<%=startPage - 10%>" title="이전"><span style="color:#444;">&lt;</span></a>
+				<% }else if(currentPage != 1){ %>	
+					<a href="/mimi/adminboardlist?page=1" title="이전"><span style="color:#444;">&lt;</span></a>
+				<% }else{ %>
+					<span style="color:#ccc;">&lt;</span>
+				<% } %>
+				</li>
+				
+				<% for(int p = startPage; p <= endPage; p++){
+						if(p == currentPage){%>
+				<li><span style="color:#ccc;"><%=p %></span></li>
+				<% }else{ %>
+				<li><a href="/mimi/adminboardlist?page=<%=p%>"><span style="color:#444;"><%=p %></span></a></li>
+				<% }} %>
+					
+				
+				<!-- 하나 뒤 -->
+				<% if((currentPage + 10) <= maxPage){ %>
+				<li><a href="/mimi/adminboardlist?page=<%=currentPage + 10%>" title="다음"><span style="color:#444;">&gt;</span></a></li>
+				<% }else if((currentPage + 10) > maxPage && currentPage < maxPage){ %>
+				<li><a href="/mimi/adminboardlist?page=<%=maxPage%>" title="다음"><span style="color:#444;">&gt;</span></a></li>
+				<% }else{ %>
+				<li><span style="color:#ccc;">&gt;</span></li>
+				<!-- 맨뒤 -->
+				<% }
+					if(currentPage >= maxPage){%>
+					<li><span style="color:#ccc;">&raquo;</span></li>
+				<% }else{ %>
+				<li>
+					<a href="/mimi/adminboardlist?page=<%=maxPage%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
+				</li>
+				<% } %>
+				
+			</ul>	
+		</td>
 		<!-- 글쓰기버튼 -->
 		<td width="10%" style="vertical-align:top;">
-						<input type="button" class="btn btn-default pull-right"
+		<% if(authority != null && authority.equals("A")){ %>
+			<input type="button" class="btn btn-default pull-right"
 			onclick="location.href='/mimi/userReview/userReviewInsert.jsp'"
-			value="글쓰기" style="outline: none;"></td>
+			value="글쓰기" style="outline: none;">
+		<% } %>
+			</td>
 	</tr>
 </table>
 </div><!-- /container -->
