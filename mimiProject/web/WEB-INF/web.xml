@@ -4,7 +4,6 @@
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
-  <!-- 비밀번호 암호와 관련 필터 -->
   <filter>
     <filter-name>memberpassword</filter-name>
     <filter-class>member.filter.MemberPasswordFilter</filter-class>
@@ -17,5 +16,5 @@
     <url-pattern>/memberupdate</url-pattern>
     <url-pattern>/memberupdatepassword</url-pattern>
   </filter-mapping>
-  <!-- 비밀번호 암호와 관련 필터 끝 -->
+  
 </web-app>

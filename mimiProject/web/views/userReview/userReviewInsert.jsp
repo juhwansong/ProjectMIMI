@@ -44,7 +44,7 @@ function cateSelect(btnVal){
 </style>
 
 <!-- <title>리뷰쓰기</title> -->
-
+		
 
 <div class="container" style="width:1150px;">
 	<h3>리뷰 작성</h3>
@@ -123,16 +123,21 @@ function cateSelect(btnVal){
 			<tr>
 				<th>내용</th>
 				<td colspan="3">
-				<input type="hidden" readonly="readonly" name="thumbnailName" id="thumbnailName" value="썸네일">
+				<!-- <input type="hidden" readonly="readonly" name="thumbnailName" id="thumbnailName" value="썸네일">
 				<textarea class="form-control" rows="20"
-						id="texta_content" name="content_tag"></textarea>
+						id="texta_content" name="content_tag"></textarea> -->
+				<textarea  id="texta_content" name="content_tag" ></textarea>
+				<input type="hidden" name="smallcontent" id="smallcontent" value="">		
 				</td>
+				<!-- 고칠 부분 -->
+				
+				
 			</tr>
 		</table>
 	</div>
 	<hr class="margin2">
 	<div style="text-align: center;">
-		<button type="submit" class="btn btn-default" style="outline: none;">작성
+		<button type="button" id="result-btn" class="btn btn-default" style="outline: none;">작성
 			완료</button>
 		<input type="button" class="btn btn-default"
 			onclick="window.history.back();" value="취소" style="outline: none;">
@@ -142,6 +147,7 @@ function cateSelect(btnVal){
 
 <script type = "text/javascript">
 //마커를 담을 배열입니다
+var checkUnload = true; //새로고침이나 페이지 나갈 시 적용
 var markers = [];
 var geocoder = new daum.maps.services.Geocoder(); //주소-좌표 변환 객체 생성
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
@@ -224,10 +230,6 @@ function addMarker(position, i) {
     return marker;
 }
 
-
-
-
-
 function mapRefresh(){ // 팝업창에서 확인 버튼 누를시 부모창에서 맵 객체 생성 후 적용
 	if($("#latitude").val() !== ""){
 		markers = [];
@@ -247,6 +249,102 @@ function mapRefresh(){ // 팝업창에서 확인 버튼 누를시 부모창에�
 		map.setCenter(locPosition);
 	}
 }
+
+$(function(){
+	
+	$("#texta_content").summernote({//summernote 선언
+		height:500, //에디터 높이
+		fontNames : ['맑은고딕', 'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],//폰트들
+		fontNamesIgnoreCheck : ['맑은고딕'],
+		minHeight : null,//최소 높이
+		maxHeigth: null, //최대 높이
+		focus: true,
+		//theme: 'monokai',
+		callbacks: {
+			onImageUpload: function(files, editor, welEditable){
+				for(var i=files.length-1; i>=0; i--){
+					sendFile(files[i], this);	
+				}					
+			}
+		}
+		
+	}); 
+});
+
+//summernote에서 이미지 업로드시 실행 함수
+function sendFile(file, el){
+	//파일 전송 위한 폼생성
+	var form_data = new FormData();
+	form_data.append("file", file);
+	$.ajax({
+		data : form_data,
+		type : "post",
+		url: "/mimi/userfileupload",
+		cache : false,
+		contentType : false,
+		processData : false,
+		success:function(data){
+			//에디터에 이미지 출력
+			$(el).summernote('editor.insertImage', data);//서머노트 에디터에 이미지 등록
+			
+			
+		}
+	});
+}
+
+$(document).on("click", "#result-btn", function(){
+	checkUnload = false;	//게시글 작성 완료 시 false로 값 변경하여 페이지 이동 시 발생하는 onbeforeunload 이벤트를 걸리지 않게 한다.
+	$("#smallcontent").val($($("#texta_content").summernote("code")).text());
+	
+	//자바스크립트에서 post 방식으로 보내기
+	var form = document.createElement("form");
+	var input = new Array();
+	var parm = new Array(); //input 태그안의 name,value값 설정
+	//파라미터 추가
+	parm.push(["categoryNo", $("#categoryNo").val()]);
+	parm.push(["title", $("#user_title").val()]);
+	parm.push(["shopName", $("#store_name").val()]);
+	parm.push(["shopAddress", $("#store_address").val()]);
+	parm.push(["shopCall", $("#store_phone").val()]);
+	parm.push(["latitude", $("#latitude").val()]);
+	parm.push(["longitude", $("#longitude").val()]);
+	parm.push(["content_tag", $("#texta_content").summernote("code")]);
+	parm.push(["content", $("#smallcontent").val()]);
+	for(var i=0; i<parm.length; i++){
+		input[i]=document.createElement("input");
+		input[i].setAttribute("type", "hidden");
+		input[i].setAttribute("name", parm[i][0]);
+		input[i].setAttribute("value", parm[i][1]);
+		form.appendChild(input[i]);
+	}
+	
+	form.method = "post";
+	form.action = "/mimi/userboardinsert";
+	
+	document.body.appendChild(form);
+	form.submit();
+	//location.href = "/file/upcontent?smallcontent=" + smallcontent + "&content=" + content;
+});
+
+onbeforeunload = function() {
+	if(checkUnload){ //게시글 작성 완료 페이지 이동이 아닐 시 
+	    return ""; //페이지 종료,이동 시 confirm 창
+	
+	  	
+	}	
+		
+}
+$(window).on("unload",function(){ //페이 종료,이동 시 뜨는 confirm 확인 버튼 클릭 시
+	if(checkUnload != false){
+		$.ajax({
+			url : "/mimi/waitimagedelete",	// 이미지 삭제 필터로 직접 전송
+			cache : "false", //캐시사용금지
+			method : "POST",			
+			async : false //동기화설정(동기화사용함)	
+		});	
+	}
+	 
+});
 </script>
 
 <%@include file="../../footer.jsp"%>
