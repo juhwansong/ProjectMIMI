@@ -198,10 +198,10 @@
 				<option value="C6">6</option>
 				<option value="C7">7</option>
 				<option value="C8">8</option>
-			</select>&nbsp;&nbsp;&nbsp; <span id="" style="color: #555; font-size: 12px;">
-			<a href="#" id="r-sort">추천수&nbsp;<i id="recommend" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
-			<a href="#" id="h-sort">조회수&nbsp;<i id="hits" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
-			<a href="#" id="d-sort">기간&nbsp;<i id="board_date" class="fas fa-sort"></i></a></span>
+			</select>&nbsp;&nbsp;&nbsp; <span style="color: #555; font-size: 12px;">
+			<a href="javascript:void(0)" id="r-sort">추천수&nbsp;<i id="recommend" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
+			<a href="javascript:void(0)" id="h-sort">조회수&nbsp;<i id="hits" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
+			<a href="javascript:void(0)" id="d-sort">기간&nbsp;<i id="board_date" class="fas fa-sort"></i></a></span>
 		</div>
 		<!-- 오른쪽 -->
 		<div class="form-group" style="float: right; margin: 1px;">

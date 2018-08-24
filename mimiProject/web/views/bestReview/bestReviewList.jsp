@@ -2,9 +2,49 @@
 	pageEncoding="UTF-8"%>
 
 <%@include file="../../head.jsp"%>
-<script type="text/javascript">
 
-	$(function(){
+<!-- Best Review -->
+
+<script type="text/javascript">
+	$(function(){		
+		//select box 변경 시 ajax 실행
+		$("#select-category").change(function(){
+			var year = $("#category-year option:selected").val();
+			var month = $("#category-month option:selected").val();
+			//console.log("변경된 연도 : " + year + ", 월 : " + month);
+/* 
+			$.ajax({
+				url : "bestboardsearch",
+				data : {yeat : year, month : month},
+				type : "post",
+				dataType : "json",
+				success : function(data){	
+					
+					var jsonStr = JSON.stringify(data);			
+					var json = JSON.parse(jsonStr);
+					
+					$("#row").empty(); //기존 목록 전부 지우기
+					values = ""; //변수 선언
+					//console.log("row html 확인하기  :: " + values);
+					
+					for(var i in json.list){		
+						values += '<div class="col-lg-4 col-sm-6 portfolio-item"><div class="rounded"><div class="img-div"><div class="cb">'
+								+ '<span class="text"><i class="fas fa-comments"></i>' + json.list[i].commentNum
+								+ '&nbsp;&nbsp;<i class="far fa-thumbs-up"></i>' + json.list[i].recommend
+								+ '</span> </div> <a href="#"><img class="img img-mover" src="/mimi/resources/images/main/img3.jpg" alt="/mimi/resources/images/main/img3.jpg"></a>'
+								+ '</div> <div class="r-body"> <table class="r-table"><tr><td><h4><a href="#">' + decodeURIComponent(json.list[i].title)
+								+ '</a></h4></td><td class="td-ast" style="font-size: 12px;">' + json.list[i].boardDate
+								+ '</td></tr></table><p class="r-text">' + decodeURIComponent(json.list[i].contents) + '</p></div></div></div>'
+						
+					}//for 	
+					$("#row").html(values); //목록 채우기			
+					$('html, body').scrollTop(0); //상단으로 이동
+				}//success
+			});//ajax
+ */			 
+		})//select box change
+		
+		
 		
 		//체크박스 전체선택,해제 함수
 		$("#checkAll").click(function(){
@@ -13,11 +53,10 @@
 			} else {
 				$("input[name=checkOne]").prop("checked", false);
 			}	
-		})	
+		})//checkbox
 		
-		
-	});//document
-
+	})//document close
+	
 	
 </script>
 
@@ -26,16 +65,15 @@
 <div class="container" style="width:1150px;">
 	<h3>Best 리뷰</h3>
 	<hr class="margin1" style="margin: auto auto 5px auto;">
-	<form class="form-inline" name="select-category" id="select-category" method="get" action="#">
+	<form class="form-inline" name="select-category" id="select-category" method="post" action="#">
 		<!-- 왼쪽 -->
 		<div class="form-group">
-			연도 <select class="form-control" name="category_year">
+			연도 <select class="form-control" id="category-year">
 				<option value="2018" selected>2018</option>
 				<option value="2017">2017</option>
 				<option value="2016">2016</option>
 				<option value="2015">2015</option>
-			</select>&nbsp;&nbsp;&nbsp;월 <select class="form-control"
-				name="category_month">
+			</select>&nbsp;&nbsp;&nbsp;월 <select class="form-control" id="category-month">
 				<option value="08" selected>08</option>
 				<option value="01">01</option>
 				<option value="02">02</option>
@@ -52,8 +90,8 @@
 		</div>
 		<!-- 오른쪽 -->
 		<div class="form-group" style="float: right; margin: 1px;">
-			<input type="text" class="form-control" name="search-text" id="search-text" size="12" placeholder=" ">​​​​​​​
-			<button type="button" class="btn" name="btn" style="outline: none;">
+			<input type="text" class="form-control" name="search-text" id="search-text" size="12">​​​​​​​
+			<button type="submit" class="btn" style="outline: none;">
 				검색&nbsp;<i class="fas fa-search"></i>
 			</button>
 		</div>
@@ -68,10 +106,10 @@
 					<!-- 관리자 전용 체크박스 -->
 					<th width="8%"><input type="checkbox" name="checkAll" id="checkAll">
 						<span style="vertical-align:top;">전체선택</span></th>
+					<th width="8%"><i class="far fa-calendar"></i>선정일</th>
 					<th width="8%">Rank</th>
 					<th width="*" colspan="2">리뷰</th>
 					<th width="12%"><i class="fas fa-pen"></i>작성자</th>
-					<th width="8%"><i class="far fa-calendar"></i>작성일</th>
 					<th width="8%"><i class="far fa-eye"></i>조회수</th>
 					<th width="8%"><i class="far fa-thumbs-up"></i>추천</th>
 				</tr>
@@ -79,6 +117,7 @@
 			<tbody>
 				<tr>
 					<td><input type="checkbox" name="checkOne" id="checkOne"></td>
+					<td>18.08</td>
 					<td>1</td>
 					<td style="width: 160px"><a href="#"><img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img3.jpg"></a></td>
 					<td>
@@ -95,13 +134,13 @@
 						</table>
 					</td>
 					<td>유저</td>
-					<td>07-22</td>
 					<td>9999</td>
 					<td>999</td>
 				</tr>
 				<tr>
 					<!-- 관리자 전용 체크박스 -->
 					<td><input type="checkbox" name="checkOne" id="checkOne"></td>
+					<td>18.08</td>
 					<td>2</td>
 					<td style="width: 160px"><a href="#"><img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img2.jpg"></a></td>
 					<td>
@@ -118,13 +157,13 @@
 						</table>
 					</td>
 					<td>유저</td>
-					<td>07-22</td>
 					<td>9999</td>
 					<td>999</td>
 				</tr>
 				<tr>
 					<!-- 관리자 전용 체크박스 -->
 					<td><input type="checkbox" name="checkOne" id="checkOne"></td>
+					<td>18.08</td>
 					<td>3</td>
 					<td style="width: 160px"><a href="#"><img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img6.jpg"></a></td>
 					<td>
@@ -141,13 +180,13 @@
 						</table>
 					</td>
 					<td>유저</td>
-					<td>07-22</td>
 					<td>9999</td>
 					<td>999</td>
 				</tr>
 				<tr>
 					<!-- 관리자 전용 체크박스 -->
 					<td><input type="checkbox" name="checkOne" id="checkOne"></td>
+					<td>18.08</td>
 					<td>4</td>
 					<td style="width: 160px"><a href="#"><img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img5.jpg"></a></td>
 					<td>
@@ -164,13 +203,13 @@
 						</table>
 					</td>
 					<td>유저</td>
-					<td>07-22</td>
 					<td>9999</td>
 					<td>999</td>
 				</tr>
 				<tr>
 					<!-- 관리자 전용 체크박스 -->
 					<td><input type="checkbox" name="checkOne" id="checkOne"></td>
+					<td>18.08</td>
 					<td>5</td>
 					<td style="width: 160px"><a href="#"><img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img2.jpg"></a></td>
 					<td>
@@ -187,13 +226,13 @@
 						</table>
 					</td>
 					<td>유저</td>
-					<td>07-22</td>
 					<td>9999</td>
 					<td>999</td>
 				</tr>
 				<tr>
 					<!-- 관리자 전용 체크박스 -->
 					<td><input type="checkbox" name="checkOne" id="checkOne"></td>
+					<td>18.08</td>
 					<td>6</td>
 					<td style="width: 160px"><a href="#"><img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img1.jpg"></a></td>
 					<td>
@@ -210,13 +249,13 @@
 						</table>
 					</td>
 					<td>유저</td>
-					<td>07-22</td>
 					<td>9999</td>
 					<td>999</td>
 				</tr>
 				<tr>
 					<!-- 관리자 전용 체크박스 -->
 					<td><input type="checkbox" name="checkOne" id="checkOne"></td>
+					<td>18.08</td>
 					<td>7</td>
 					<td style="width: 160px"><a href="#"><img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img3.jpg"></a></td>
 					<td>
@@ -233,13 +272,13 @@
 						</table>
 					</td>
 					<td>유저</td>
-					<td>07-22</td>
 					<td>9999</td>
 					<td>999</td>
 				</tr>
 				<tr>
 					<!-- 관리자 전용 체크박스 -->
 					<td><input type="checkbox" name="checkOne" id="checkOne"></td>
+					<td>18.08</td>
 					<td>8</td>
 					<td style="width: 160px"><a href="#"><img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img4.jpg"></a></td>
 					<td>
@@ -256,13 +295,13 @@
 						</table>
 					</td>
 					<td>유저</td>
-					<td>07-22</td>
 					<td>9999</td>
 					<td>999</td>
 				</tr>
 				<tr>
 					<!-- 관리자 전용 체크박스 -->
 					<td><input type="checkbox" name="checkOne" id="checkOne"></td>
+					<td>18.08</td>
 					<td>9</td>
 					<td style="width: 160px"><a href="#"><img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img5.jpg"></a></td>
 					<td>
@@ -279,13 +318,13 @@
 						</table>
 					</td>
 					<td>유저</td>
-					<td>07-22</td>
 					<td>9999</td>
 					<td>999</td>
 				</tr>
 				<tr>
 					<!-- 관리자 전용 체크박스 -->
 					<td><input type="checkbox" name="checkOne" id="checkOne"></td>
+					<td>18.08</td>
 					<td>10</td>
 					<td style="width: 160px"><a href="#">
 					<img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img6.jpg"></a></td>
@@ -303,7 +342,6 @@
 						</table>
 					</td>
 					<td>유저</td>
-					<td>07-22</td>
 					<td>9999</td>
 					<td>999</td>
 				</tr>
@@ -316,7 +354,7 @@
 		<td width="25%"></td><!-- 빈칸 -->
 		<td width="*"><!-- 페이지 -->
 	<!-- Pagination -->
-		<ul class="pagination" style="float: center; display: flex; justify-content: center;">
+<!-- 		<ul class="pagination" style="float: center; display: flex; justify-content: center;">
 			<li>
 				<a href="#" aria-label="Previous">
 				<span aria-hidden="true">&laquo;</span>
@@ -332,12 +370,15 @@
 				<span class="sr-only">Next</span>
 				</a>
 			</li>
-		</ul>	
+		</ul>	 -->
 	</td>
 		<!-- 버튼 -->
 			<td width="25%" style="vertical-align: top;">
 			<!-- 관리자 전용 버튼 -->
-			<input type="button" class="btn btn-default pull-right" onClick="#" value="숨기기" style="outline: none; margin:1px;"></td>
+			<% if(authority != null && authority.equals("A")){ %>
+			<input type="button" class="btn btn-default pull-right" onClick="#" value="숨기기" style="outline: none; margin:1px;">
+			<% } %>
+			</td>
 		</tr>
 </table>
 	</form>
