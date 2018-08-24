@@ -81,16 +81,16 @@ public class UserBoardService {	//유저 리뷰 게시판 기능
 		return null;
 	}
 	
-	public int getListReplyCount() throws UserBoardException{//게시물 총 갯수(페이지네이션 관리 시 필요)
+	public int getListReplyCount(String boardNo) throws UserBoardException{//댓글 게시물 총 갯수(페이지네이션 관리 시 필요)
 		Connection con = getConnection();
-		int listCount = new UserBoardDao().getListCount(con);
+		int listCount = new UserBoardDao().getListReplyCount(con, boardNo);
 		close(con);
 		return listCount;
 	}
 	
-	public ArrayList<Board> selectUserBoardReplyList(String boardNum, int currentPage, int limit) throws UserBoardException{//해당 게시물의 전체 댓글 조회
+	public ArrayList<Board> selectUserBoardReplyList(String boardNo, int currentPage, int limit) throws UserBoardException{//해당 게시물의 전체 댓글 조회
 		Connection con = getConnection();
-		ArrayList<Board> list = new UserBoardDao().selectReplyList(con, boardNum, currentPage, limit);
+		ArrayList<Board> list = new UserBoardDao().selectReplyList(con, boardNo, currentPage, limit);
 		close(con);
 		return list;
 	}

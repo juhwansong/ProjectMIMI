@@ -368,6 +368,37 @@ public class UserBoardDao {
 		return result;
 	}
 	
+	public int getListReplyCount(Connection con, String boardNo) throws UserBoardException {
+		int listCount = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		String query = "select count(*) from V_USER_REVIEW_COMMENT "
+				+ "where BOARD_NO = ? and COMMENT_STATE = 'SN'";
+		
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, boardNo);
+			
+			rset = pstmt.executeQuery();
+			
+			if(rset.next()){
+				listCount = rset.getInt(1);
+			}else{
+				throw new UserBoardException("댓글이 존재하지 않습니다.");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserBoardException(e.getMessage());
+		}finally{
+			close(rset);
+			close(pstmt);
+		}
+		
+		return listCount;
+	}
+	
 	public ArrayList<Board> selectReplyList(Connection con, String boardNum, int currentPage, int limit) throws UserBoardException {
 		ArrayList<Board> list = new ArrayList<Board>();
 		PreparedStatement pstmt = null;
@@ -380,7 +411,7 @@ public class UserBoardDao {
 				+ "from V_USER_REVIEW_COMMENT "
 				+ "where COMMENT_STATE='SN' "
 				+ "and BOARD_NO = ? "
-				+ "order by COMMENT_NO desc) "
+				+ "order by COMMENT_NO asc) "
 				+ "where rnum >= ? and rnum <= ?";
 		
 		int startRow = (currentPage - 1) * limit + 1;
@@ -393,7 +424,7 @@ public class UserBoardDao {
 
 			
 			rset = pstmt.executeQuery();
-			
+
 			while(rset.next()){
 				Board b = new Board();
 				b.setCommentNo(rset.getString("COMMENT_NO"));
@@ -404,12 +435,7 @@ public class UserBoardDao {
 				b.setCommentContents(rset.getString("COMMENT_CONTENTS"));
 				b.setCommentState(rset.getString("COMMENT_STATE"));
 				list.add(b);
-			}
-			
-			if(list.size() == 0)
-				throw new UserBoardException(
-						"댓글이 존재하지 않습니다.");
-			
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new UserBoardException(e.getMessage());
@@ -420,7 +446,6 @@ public class UserBoardDao {
 		
 		return list;
 	}
-
 
 
 

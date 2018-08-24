@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.simple.JSONObject;
 
@@ -37,16 +38,15 @@ public class UserBoardReplyInsertServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html; charset=utf-8");
 		String boardNum = request.getParameter("bnum");
+		HttpSession session = request.getSession();		
 		RequestDispatcher view = null;
 		
 		// 전송온 값 꺼내서 변수/객체에 저장하기
 		Board board = new Board();
-		board.setCommentUserId(request.getParameter("userid"));	//카테고리 연결필요
-		//board.setCommentUserId(mrequest.getParameter("userId")); 세션에서 아이디 획득 필요
+		board.setCommentUserId((String)session.getAttribute("userId"));
 		board.setCommentContents(request.getParameter("cmtContent"));
 		try {
 			int result = new UserBoardService().insertUserBoardReply(boardNum, board);
-			
 			String returnValue = null;
 			if (result > 0) {
 				returnValue = "ok";
