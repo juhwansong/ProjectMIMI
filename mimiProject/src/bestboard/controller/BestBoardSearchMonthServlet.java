@@ -42,7 +42,7 @@ public class BestBoardSearchMonthServlet extends HttpServlet {
 		String month = request.getParameter("month");
 		String selectedMonth = year + "/" + month;
 		
-		System.out.println("선정월 : " + selectedMonth);
+		//System.out.println("선정월 : " + selectedMonth);
 		
 		response.setContentType("text/html; charset=utf-8");
 				
@@ -66,6 +66,7 @@ public class BestBoardSearchMonthServlet extends HttpServlet {
 				job.put("commentNum", board.getCommentNum());
 				job.put("recommend", board.getRecommed());
 				job.put("hits", board.getHits());
+				job.put("boardLink", board.getBoardLink());
 
 				job.put("selectedMonth", board.getGradeName()); //안 쓰는 변수 대신 사용...
 				job.put("rank", board.getLongitude()); //안쓰는 변수 대신 사용...

@@ -1,7 +1,9 @@
 package bestboard.model.service;
 
 import static common.jdbc.JDBCTemplate.close;
+import static common.jdbc.JDBCTemplate.commit;
 import static common.jdbc.JDBCTemplate.getConnection;
+import static common.jdbc.JDBCTemplate.rollback;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -55,6 +57,10 @@ public class BestBoardService {	//베스트리뷰 게시판 기능
 	public int deleteBestBoard(String[] boardNoList) throws BestBoardException{
 		Connection conn = getConnection();
 		int listCount = new BestBoardDao().deleteBestBoard(conn, boardNoList);
+		if(listCount > 0)
+			commit(conn);
+		else
+			rollback(conn);
 		close(conn);
 		return listCount;
 	}

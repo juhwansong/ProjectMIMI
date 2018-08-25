@@ -197,7 +197,7 @@ public class BookmarkDao {
 				pstmt.setString(2, checkOne);
 				result = pstmt.executeUpdate();
 			}
-			if(result <= 0)
+			if(result < 0)
 				throw new BookmarkException("즐겨찾게 삭제 실패...");
 		} catch (Exception e) {
 			e.printStackTrace();

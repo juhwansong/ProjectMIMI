@@ -431,8 +431,10 @@ public class UserBoardDao {
 		return list;
 	}
 	
+
 	
 	
+///////////////////////////////////////////////////////////////////////////////////////////////////////	
 	//검색한 게시물 개수
 	public int getListCount(Connection conn, String qr) throws UserBoardException{
 		int listCount = 0;
@@ -472,12 +474,12 @@ public class UserBoardDao {
 		int startRow = (currentPage - 1) * countList + 1;
 		int endRow = startRow + countList - 1;
 		
-		String query = "SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NO, TITLE, CONTENTS, BOARD_DATE, CATEGORY_NO, "
-					+ "CATEGORY_FOOD, COMMENT_NUM, RECOMMEND, THUMBNAIL_NAME "
+		String query = "SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NO, TITLE, BOARD_DATE, CATEGORY_NO, "
+					+ "CATEGORY_FOOD, COMMENT_NUM, RECOMMEND, THUMBNAIL_NAME, BOARD_LINK, NICKNAME "
 					+ "FROM (SELECT * FROM V_USER_REVIEW_LIST " + qr
 					+ " )) WHERE RNUM >= ? AND RNUM <= ?";
 
-//		System.out.println("쿼리 확인...2 : " + query);
+		//System.out.println("쿼리 확인...2 : " + query);
 		try {
 			pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, startRow);
@@ -488,12 +490,13 @@ public class UserBoardDao {
 				Board b = new Board();
 				b.setBoardNo(rset.getString("board_no"));
 				b.setTitle(rset.getString("title"));
-				b.setContents(rset.getString("contents"));
 				b.setBoardDate(rset.getDate("board_date"));
 				b.setCategoryName(rset.getString("category_food"));
 				b.setCommentNum(rset.getInt("comment_num"));
 				b.setRecommed(rset.getInt("recommend"));
 				b.setThumbnailName(rset.getString("thumbnail_name"));
+				b.setBoardLink(rset.getString("board_link"));
+				b.setNickName(rset.getString("nickname"));
 				
 				list.add(b);
 			}

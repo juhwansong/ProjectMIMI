@@ -44,9 +44,9 @@ public class UserBoardSearchServlet extends HttpServlet {
 		String order = request.getParameter("order");
 		//System.out.println("sortby : " + sortby + "\norder : " + order);
 		String sort = (sortby != null && sortby.contains("up")) ? " ASC " : " DESC ";
-		//System.out.println("sort 변환 확인 : " + sort);
-		//System.out.println("검색한 category 값 : " + category);
-		//System.out.println("검색한 keyword값 : " + keyword);
+//		System.out.println("sort 변환 확인 : " + sort);
+//		System.out.println("검색한 category 값 : " + category);
+//		System.out.println("검색한 keyword값 : " + keyword);
 
 		
 		keyword = (keyword == null) ? "" : keyword.replaceAll("(^\\p{Z}+|\\p{Z}+$)", ""); //null이면 전체검색, 아니면 공백 제거
@@ -99,15 +99,15 @@ public class UserBoardSearchServlet extends HttpServlet {
 			//System.out.println("start page : " + startPage + "\nendPage : " + endPage + "\ncurrentPage : " + currentPage);
 				
 				
-			//System.out.println(boardList.size());
+			System.out.println(boardList.size());
 //			if(boardList.size() > 0){
 				view = request.getRequestDispatcher("views/userReview/userReviewList.jsp");
-				request.setAttribute("boardList", boardList);
+				request.setAttribute("list", boardList);
 				request.setAttribute("currentPage", currentPage);
 				request.setAttribute("maxPage", maxPage);
 				request.setAttribute("startPage", startPage);
 				request.setAttribute("endPage", endPage);
-				request.setAttribute("totalCount", totalCount);
+				request.setAttribute("listCount", totalCount);
 				view.forward(request, response);
 //			}else{
 //				view = request.getRequestDispatcher("views/board/boardError.jsp");

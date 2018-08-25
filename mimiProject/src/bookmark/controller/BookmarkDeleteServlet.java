@@ -53,7 +53,7 @@ public class BookmarkDeleteServlet extends HttpServlet {
 			int result = new BookmarkService().deleteBookmark(userId, boardNo);
 			
 			if(result > 0){
-//				response.sendRedirect("/mimi/bookmarklist");
+				response.sendRedirect("/mimi/bookmarklist");
 
 			}else{
 				view = request.getRequestDispatcher("views/board/boardError.jsp");

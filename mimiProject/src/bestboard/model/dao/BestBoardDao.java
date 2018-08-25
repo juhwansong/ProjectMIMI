@@ -27,7 +27,7 @@ public class BestBoardDao {
 				result = pstmt.executeUpdate();
 			}
 			
-			if(result <= 0)
+			if(result < 0)
 				throw new BestBoardException("상태 변경 실패...ㅠ");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -44,8 +44,8 @@ public class BestBoardDao {
 		Statement stmt = null;
 		ResultSet rset = null;
 		
-		String query = "SELECT * FROM TB_BOARD_BEST"
-				+ " WHERE SELECTED_MONTH = TO_CHAR(SYSDATE, 'RR/MM')"
+		String query = "SELECT * FROM V_BEST_REVIEW"
+				+ " WHERE SELECTED_MONTH = TO_CHAR(SYSDATE, 'RR/MM') AND STATE = 'SN'"
 				+ " ORDER BY RANK ASC";
 		
 		try {
@@ -64,6 +64,7 @@ public class BestBoardDao {
 				b.setBoardLink(rset.getString("board_link"));
 				b.setThumbnailName(rset.getString("thumbnail_name"));
 				b.setHits(rset.getInt("hits"));
+				b.setRecommed(rset.getInt("recommend"));
 				
 				//변수이름이 없어서 다른곳에 대체
 				b.setGradeName(rset.getString("selected_month"));
@@ -97,7 +98,6 @@ public class BestBoardDao {
 			pstmt.setString(2, "%" + keyword + "%");
 			pstmt.setString(3, "%" + keyword + "%");
 			rset = pstmt.executeQuery();
-			
 			if(rset.next()){
 				listCount = rset.getInt(1);
 			}else{
@@ -119,7 +119,7 @@ public class BestBoardDao {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
-		String query = "SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NO, TITLE, CONTENTS, USER_ID,"
+		String query = "SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NO, TITLE, CONTENTS, USER_ID, SELECTED_MONTH,"
 				+ " NICKNAME, HITS, RECOMMEND, THUMBNAIL_NAME, BOARD_LINK, COMMENT_NUM, RANK, STATE"
 				+ " FROM (SELECT * FROM V_BEST_REVIEW WHERE (TITLE LIKE ? OR CONTENTS LIKE ? OR NICKNAME LIKE ?)"
 				+ " AND STATE = 'SN' ORDER BY SELECTED_MONTH DESC, RANK ASC)) WHERE RNUM >= ? AND RNUM <= ?";
@@ -133,8 +133,7 @@ public class BestBoardDao {
 			pstmt.setString(3, "%" + keyword + "%");
 			pstmt.setInt(4, startRow);
 			pstmt.setInt(5, endRow);
-			rset = pstmt.executeQuery();
-			
+			rset = pstmt.executeQuery();	
 			while(rset.next()){
 				Board b = new Board();
 				
@@ -146,12 +145,14 @@ public class BestBoardDao {
 				b.setBoardLink(rset.getString("board_link"));
 				b.setThumbnailName(rset.getString("thumbnail_name"));
 				b.setHits(rset.getInt("hits"));
+				b.setRecommed(rset.getInt("recommend"));
 				
 				//변수이름이 없어서 다른곳에 대체
 				b.setGradeName(rset.getString("selected_month"));
 				b.setLongitude(rset.getInt("rank"));
 				
 				list.add(b);
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -170,7 +171,7 @@ public class BestBoardDao {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
-		String query = "SELECT * FROM V_BEST_REVIEW WHERE SELECTED_MONTH = ? ORDER BY RANK ASC";
+		String query = "SELECT * FROM V_BEST_REVIEW WHERE SELECTED_MONTH = ? AND STATE = 'SN' ORDER BY RANK ASC";
 		
 		try {
 			pstmt = conn.prepareStatement(query);
@@ -188,6 +189,7 @@ public class BestBoardDao {
 				b.setBoardLink(rset.getString("board_link"));
 				b.setThumbnailName(rset.getString("thumbnail_name"));
 				b.setHits(rset.getInt("hits"));
+				b.setRecommed(rset.getInt("recommend"));
 				
 				//변수이름이 없어서 다른곳에 대체
 				b.setGradeName(rset.getString("selected_month"));
