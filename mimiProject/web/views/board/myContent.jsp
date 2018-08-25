@@ -11,8 +11,7 @@
 	
 	String category = (String)request.getAttribute("category");
 	String searchText = (String)request.getAttribute("searchText");
-	String nickname = (String)request.getAttribute("nickname");
-	String user = (String)request.getAttribute("user");
+	String attr = (String)request.getAttribute("attr");
 %>
 
 <%@include file="../../head.jsp" %>
@@ -94,46 +93,108 @@
 	  	text-align: center;
 	}
 	 */
-	
-@media screen and (max-width: 700px) {
-	table, tr, td {
+	 
+#main { width: 1150px; }
+
+@media screen and (max-width: 600px) {
+	#main { width: 100%; }
+	#title-td { 
+		width: 90%;
 		display: block;
+		margin-left: 5%;
 	}
-	td:first-child {
-		border-bottom: 1px solid #91ced4;
-		border-radius: 10px 10px 0 0;
+	#form-td { 
+		width: 90%;
+		display: block;
+		margin-left: 5%;
+	} 
+	.form-group { width: 100%; }
+	.btn { width: 100%; }	
+
+	tr { display: block;}
+	#table-css { width: 90%;}
+	#table-css th { display: none; }
+	#table-css td {
+		border: 0;
+		display: block;
+		width: 100%;
+		text-align: left;
+		margin-left: 1.5%;
+	}
+	#table-css tbody tr {
+		border: 1px solid #91ced4;
+		border-radius: 10px 10px 10px 10px;
+		margin: 3% 0 5% 0;
+	}
+	
+	#table-css td:first-child {
+		/* border-bottom: 1px solid #91ced4;
+		border-radius: 10px 10px 0 0; */
 		position: relative;
 		top: 0;
 		-webkit-transform: translateY(0);
 		transform: translateY(0);
-		width: 100%;
+		/* width: 100%; */
 	}
-	td:not (:first-child ) {
+	#table-css td:not (:first-child ) {
 		margin: 0;
 		padding: 5px 1em;
 		width: 100%;
 	}
-	td:last-child {
+	#table-css td:last-child {
 		padding-bottom: 1rem !important;
 	}
-	td:nth-child(2):before {
+	#table-css td:first-child {
+		display: none;
+	} 
+	#table-css td:nth-child(2):before {
 		content: '글번호:';
 	}
-	td:nth-child(3):before {
+	#table-css td:nth-child(3):before {
 		content: '글제목:';
 	}
-	td:nth-child(4):before {
+	#table-css td:nth-child(4):before {
 		content: '작성자:';
 	}
-	td:nth-child(5):before {
+	#table-css td:nth-child(5):before {
 		content: '작성일:';
 	}
-	td:nth-child(6):before {
+	#table-css td:nth-child(6):before {
 		content: '조회수:';
 	}
-	td:nth-child(7):before {
+	#table-css td:nth-child(7):before {
 		content: '추천수:';
 	}
+	
+	/* table, tr, td {
+    		display: block;
+  		}
+
+  		td:first-child {
+	    	border-bottom: 1px solid #91ced4;
+	    	border-radius: 10px 10px 0 0;
+	    	position: relative;
+	    	top: 0;
+	    	-webkit-transform: translateY(0);
+	            	transform: translateY(0);
+	    	width: 100%;
+	  	}
+  
+  		td:not(:first-child) {
+	    	margin: 0;
+	    	padding: 5px 1em;
+	    	width: 100%;
+	  	}
+	  	
+	  	td:last-child { padding-bottom: 1rem !important; }		
+  	
+  		td:nth-child(2):before { content: '글번호:'; }
+  		td:nth-child(3):before { content: '글제목:'; }
+  		td:nth-child(4):before { content: '작성자:'; }
+  		td:nth-child(5):before { content: '작성일:'; }
+  		td:nth-child(6):before { content: '조회수:'; }
+  		td:nth-child(7):before { content: '추천수:'; } */
+	
 	/* 
   		tr {
 	    	border: 1px solid #6cbec6;
@@ -174,6 +235,69 @@
 			console.log("len:" + len);
 			all.checked = len === total;
 		}
+		
+		// when browser window size is less than 600px
+		$("#table-css tbody tr").on("click", function() {
+			if(window.matchMedia("(max-width: 600px)").matches) {
+				var boardNo = $(this).children().eq(1).text();
+				var idx = 0;
+				
+				$("#table-css tbody tr").each(function(index) {
+					boardNoList = $("#table-css tbody tr").eq(index).children();
+					
+					if(boardNoList.eq(1).text() == boardNo)
+						idx = index;
+				});
+				
+				var selectBox = $("input.select-item").eq(idx);
+				
+				if(selectBox.is(":checked")) {
+					selectBox.prop("checked", false);	// jQuery에서 checked 속성은 ".attr()" 동작 안함
+					$(this).css("background", "#ffffff");
+				} else {
+					selectBox.prop("checked", true);	// jQuery에서 checked 속성은 ".attr()" 동작 안함
+					$(this).css("background", "#f8f8f8");
+				}
+			} else {
+				$("#table-css tbody tr").each(function(index) {
+					$("#table-css tbody tr").eq(index).css("background-color", "#ffffff");
+				});
+			}
+		});
+		
+		// whenever browser window size change
+		$(window).resize(function() {
+			if(window.matchMedia("(min-width: 600px)").matches) {
+				$("#table-css tbody tr").each(function(index) {
+					$("#table-css tbody tr").eq(index).css("background-color", "#ffffff");
+				});
+				
+				<% if(list.size() == 0) { %>
+					$("#table-css tbody tr").children().css("display", "");
+				<% } %>
+			} else {
+				$("input.select-item").each(function(index, item) {
+					if($(this).is(':checked')) {
+						$(this).closest("tr").css("background", "#f8f8f8");
+					}
+				});
+				
+				<% if(list.size() == 0) { %>
+					$("#table-css tbody tr").children().css("display", "block");
+					$("#table-css tbody tr").children().css("text-align", "center");
+					$("#table-css tbody tr").css("border", "none");
+				<% } %>
+			}
+		});
+		
+		// jsp 페이지에 접근 시 list.size() == 0 이면 "검색 결과가 없습니다"를 표현하기 위한 조건
+		<% if(list.size() == 0) { %>
+			if(window.matchMedia("(max-width: 600px)").matches) {
+				$("#table-css tbody tr").children().css("display", "block");
+				$("#table-css tbody tr").children().css("text-align", "center");
+				$("#table-css tbody tr").css("border", "none");
+			}
+		<% } %>
 	});
 	
 	function deleteRow() {
@@ -182,11 +306,12 @@
 		$("input.select-item").each(function(index, item) {
 			if($(this).is(':checked')) {
 				selected += $(this).val() + " ";
+				console.log(selected);
 			}
 		});
 		
 		$.get("/mimi/myboarddelete", {boardNoStr: selected}, function() {
-			location.href="/mimi/myboardlist?page=1&nickname=<%=nickname%>&user=<%=user%>";
+			location.href="/mimi/myboardlist?page=1&attr=<%=attr%>&nickName=<%=nickName%>";
 		});
 		
 		<%-- $.ajax({
@@ -202,14 +327,14 @@
 
 <!-- body -->
 
-<div class="container" id="main" style="width:1150px;">
+<div class="container" id="main">
 	<!-- 	<div class="row">
 		<div class="col-xs-12 col-sm-9"> -->
 	<!-- 상단 메뉴 -->
 	<table width="100%" border="0">
 		<tr>
-			<td><h3>내가 쓴 글</h3></td>
-			<td style="text-align: right; vertical-align: bottom; color: #777">
+			<td id="title-td"><h3>내가 쓴 글</h3></td>
+			<td style="text-align: right; vertical-align: bottom; color: #777" id="form-td">
 				<!-- 카테고리 -->
 				<form class="form-inline" name="select-category"
 					id="select-category" method="get" action="/mimi/myboardsearch?page=1">
@@ -219,13 +344,13 @@
 							<option value="BOARD_NO">글번호</option>
 							<option value="TITLE">제목</option>
 							<option value="NICKNAME">작성자</option>
-							<input type=hidden name="nickname" value="<%= nickname %>">
-							<input type=hidden name="user" value="<%= user %>">
 						</select> <input type="text" class="form-control" name="search-text"
 							id="search-text" size="8" placeholder=" ">&nbsp; ​​​​​​​
 						<button type="submit" class="btn" name="btn">
 							검색&nbsp;<i class="fas fa-search"></i>
 						</button>
+						<input type=hidden name="attr" value="<%= attr %>">
+						<input type=hidden name="nickName" value="<%= nickName %>">
 					</div>
 				</form>
 			</td>
@@ -249,11 +374,11 @@
 		<tbody>
 			<% if(list.size() != 0) { %>
 				<% for(Board b : list) { %>
-					<tr>
+					<tr id="list">
 					<td><input type="checkbox" class="select-item checkbox"
-						name="select-item" value="<%= b.getBoardNo() %>" /></td>
+						name="select-item" id="select-item" value="<%= b.getBoardNo() %>" /></td>
 					<td><%= b.getBoardNo().substring(2).replaceAll("^0*", "") %></td>
-					<td class="tbl-td-title"><%= b.getTitle() %></td>
+					<td class="tbl-td-title" id="title"><%= b.getTitle() %></td>
 					<td><%= b.getNickName() %></td>
 					<td><%= b.getBoardDate() %></td>
 					<td><%= b.getHits() %></td>
@@ -319,9 +444,9 @@
             <span style="color:#ccc;">&laquo;</span>
          <% }else{ %>
          	<% if(category == null || category.equals("ALL")) { %>
-         		<a href="/mimi/myboardlist?page=1&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="맨처음"><span style="color:#444;">&laquo;</span></a>
+         		<a href="/mimi/myboardlist?page=1&attr=<%=attr%>&nickName=<%=nickName%>&category=<%=category%>&searchText=<%=searchText%>" title="맨처음"><span style="color:#444;">&laquo;</span></a>
          	<% } else { %>
-            	<a href="/mimi/myboardsearch?page=1&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="맨처음"><span style="color:#444;">&laquo;</span></a>
+         		<a href="/mimi/myboardsearch?page=1&attr=<%=attr%>&nickName=<%=nickName%>&category=<%=category%>&searchText=<%=searchText%>" title="맨처음"><span style="color:#444;">&laquo;</span></a>
          	<% } %>
          <% } %>
          </li>
@@ -330,9 +455,9 @@
          <li>
          <% if((currentPage - 10) < startPage && (currentPage - 10) > 1){ %>
 			<% if(category == null || category.equals("ALL")) { %>
-         		<a href="/mimi/myboardlist?page=<%=startPage - 10%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="이전"><span style="color:#444;">&lt;</span></a>
+         		<a href="/mimi/myboardlist?page=<%=startPage - 10%>&attr=<%=attr%>&nickName=<%=nickName%>&category=<%=category%>&searchText=<%=searchText%>" title="이전"><span style="color:#444;">&lt;</span></a>
          	<% } else { %>
-				<a href="/mimi/myboardsearch?page=<%=startPage - 10%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="이전"><span style="color:#444;">&lt;</span></a>  
+				<a href="/mimi/myboardsearch?page=<%=startPage - 10%>&attr=<%=attr%>&nickName=<%=nickName%>&category=<%=category%>&searchText=<%=searchText%>" title="이전"><span style="color:#444;">&lt;</span></a>  
          	<% } %>
          <% }else{ %>
             <span style="color:#ccc;">&lt;</span>
@@ -344,9 +469,9 @@
          <li><span style="color:#ccc;"><%=p %></span></li>
          <% }else{ %>
             <% if(category == null || category.equals("ALL")) { %>
-         		<li><a href="/mimi/myboardlist?page=<%=p%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>"><span style="color:#444;"><%=p %></span></a></li>
+         		<li><a href="/mimi/myboardlist?page=<%=p%>&attr=<%=attr%>&nickName=<%=nickName%>&category=<%=category%>&searchText=<%=searchText%>"><span style="color:#444;"><%=p %></span></a></li>
          	<% } else { %>
-            	<li><a href="/mimi/myboardsearch?page=<%=p%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>"><span style="color:#444;"><%=p %></span></a></li>
+            	<li><a href="/mimi/myboardsearch?page=<%=p%>&attr=<%=attr%>&nickName=<%=nickName%>&category=<%=category%>&searchText=<%=searchText%>"><span style="color:#444;"><%=p %></span></a></li>
          	<% } %>
          <% }} %>
          
@@ -354,9 +479,9 @@
          <% if((currentPage + 10) > endPage && (currentPage + 10) < maxPage){ %>
          <li>
          	<% if(category == null || category.equals("ALL")) { %>
-         		<a href="/mimi/myboardlist?page=<%=endPage + 10%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="다음"><span style="color:#444;">&gt;</span></a>
+         		<a href="/mimi/myboardlist?page=<%=endPage + 10%>&attr=<%=attr%>&nickName=<%=nickName%>&category=<%=category%>&searchText=<%=searchText%>" title="다음"><span style="color:#444;">&gt;</span></a>
          	<% } else { %>
-				<a href="/mimi/myboardsearch?page=<%=endPage + 10%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="다음"><span style="color:#444;">&gt;</span></a>							                 
+				<a href="/mimi/myboardsearch?page=<%=endPage + 10%>&attr=<%=attr%>&nickName=<%=nickName%>&category=<%=category%>&searchText=<%=searchText%>" title="다음"><span style="color:#444;">&gt;</span></a>							                 
          	<% } %>
          </li>
          <% }else{ %>
@@ -368,9 +493,9 @@
          <% }else{ %>
          <li>
          	<% if(category == null || category.equals("ALL")) { %>
-         		<a href="/mimi/myboardlist?page=<%=maxPage%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
+         		<a href="/mimi/myboardlist?page=<%=maxPage%>&attr=<%=attr%>&nickName=<%=nickName%>&category=<%=category%>&searchText=<%=searchText%>%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
          	<% } else { %>
-            	<a href="/mimi/myboardsearch?page=<%=maxPage%>&nickname=<%=nickname%>&user=<%=user%>&category=<%=category%>&searchText=<%=searchText%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
+            	<a href="/mimi/myboardsearch?page=<%=maxPage%>&attr=<%=attr%>&nickName=<%=nickName%>&category=<%=category%>&searchText=<%=searchText%>" title="맨끝"><span style="color:#444;">&raquo;</span></a>
          	<% } %>
          </li>
          <% } %>

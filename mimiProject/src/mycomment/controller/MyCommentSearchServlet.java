@@ -38,14 +38,14 @@ public class MyCommentSearchServlet extends HttpServlet {
 		
 		String category = request.getParameter("category");
 		String searchText = request.getParameter("search-text");
-		String nickname = request.getParameter("nickname");
-		String user = request.getParameter("user");
+		String attr = request.getParameter("attr");
+		String nickName = request.getParameter("nickName");
 		
 		if(searchText == null)
 			searchText = request.getParameter("searchText");
 		
 		HashMap<String, String> searchMap = new HashMap<String, String>();
-		searchMap.put(nickname, user);
+		searchMap.put(attr, nickName);
 		if(category != null && !category.equals("ALL"))
 			searchMap.put(category, searchText);
 		
@@ -62,8 +62,6 @@ public class MyCommentSearchServlet extends HttpServlet {
 		try {
 			int searchListCount = service.getSearchListCount(searchMap);
 			ArrayList<Board> list = service.searchMyComment(searchMap);
-			
-			System.out.println(searchListCount);
 			
 			int maxPage = (int)((double)searchListCount / limit + 0.9);
 			int startPage = (((int)((double)currentPage / pageLimit + 0.9)) - 1) * pageLimit + 1;
@@ -99,8 +97,8 @@ public class MyCommentSearchServlet extends HttpServlet {
 			request.setAttribute("listCount", searchListCount);
 			request.setAttribute("category", category);
 			request.setAttribute("searchText", searchText);
-			request.setAttribute("nickname", nickname);
-			request.setAttribute("user", user);
+			request.setAttribute("attr", attr);
+			request.setAttribute("nickName", nickName);
 			view.forward(request, response);
 		} catch (MyCommentException e) {
 			view = request.getRequestDispatcher("views/board/boardError.jsp");

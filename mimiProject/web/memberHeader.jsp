@@ -208,7 +208,7 @@
 				<div style="padding-top:20px;" align="center">	
 					<span style="width:100px;">	
 						<!-- <a href="/mimi/views/board/myContent.jsp"> -->
-						<a href="/mimi/myboardlist?nickname=USER_ID&user=<%=(String)session.getAttribute("userId")%>">
+						<a href="/mimi/myboardlist?attr=NICKNAME&nickName=<%=session.getAttribute("nickName")%>">
 							<div>
 								<p style="font-size:25pt;" class="far fa-file-alt" aria-hidden="true"></p>
 								<p>작성한 글</p>	
@@ -217,7 +217,7 @@
 					</span>			
 					<span style="width:100px;">	
 						<!-- <a href="/mimi/views/board/myComment.jsp"> -->
-						<a href="/mimi/mycommentlist?nickname=USER_ID&user=<%=(String)session.getAttribute("userId")%>">
+						<a href="/mimi/mycommentlist?attr=NICKNAME&nickName=<%=session.getAttribute("nickName")%>">
 							<div>
 								<p style="font-size:25pt;" class="far fa-comments" aria-hidden="true"></p>
 								<p>작성한 댓글</p>	

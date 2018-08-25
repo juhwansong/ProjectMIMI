@@ -38,14 +38,14 @@ public class MyBoardListServlet extends HttpServlet {
 		
 		String category = request.getParameter("category");
 		String searchText = request.getParameter("searchText");
-		String nickname = request.getParameter("nickname");
-		String user = request.getParameter("user");
+		String attr = request.getParameter("attr");
+		String nickName = request.getParameter("nickName");
 		
 		if(searchText == null) 
 			searchText = request.getParameter("searchText");
 		
 		HashMap<String, String> searchMap = new HashMap<String, String>();
-		searchMap.put(nickname, user);
+		searchMap.put(attr, nickName);
 		
 		int currentPage = 1;
 		int limit = 15;
@@ -99,8 +99,8 @@ public class MyBoardListServlet extends HttpServlet {
 			request.setAttribute("listCount", searchListCount);
 			request.setAttribute("category", category);
 			request.setAttribute("searchText", searchText);
-			request.setAttribute("nickname", nickname);
-			request.setAttribute("user", user);
+			request.setAttribute("attr", attr);
+			request.setAttribute("nickName", nickName);
 			view.forward(request, response);
 		} catch (MyBoardException e) {
 			view = request.getRequestDispatcher("views/board/boardError.jsp");
