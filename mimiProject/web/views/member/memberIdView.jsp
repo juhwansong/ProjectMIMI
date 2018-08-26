@@ -42,7 +42,7 @@
 				alert("클립보드에 id가 복사되었습니다.");
 			    return $("#userid").val();
 			  }
-			});
+			}); 
 			$(document).on("click", "#home-btn", function(){
 				location.href = "/mimi/index.jsp";
 			});

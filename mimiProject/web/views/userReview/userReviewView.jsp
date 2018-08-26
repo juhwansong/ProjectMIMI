@@ -24,7 +24,10 @@
 <link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
 <!-- 다음맵 인증키 (직접 발급받아야됨) -->
 <script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=795b33c97453a44f73949c94f447f347&libraries=services,clusterer,drawing"></script>
+ 
 <link rel="stylesheet" type = "text/css" href = "/mimi/resources/css/mapPage.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
+<script type="text/javascript" src="/mimi/resources/js/kakao.min.js"></script>
 </head>
 <body onload="commentList(1)">
 <!-- 바디 태그 시작 -->
@@ -318,14 +321,14 @@ function cmtinsert(){
 
 </style>
 <script type="text/javascript">
-	$(function(){
+	//$(function(){
 		
 		new Clipboard('.copyBtn', {text: function() {
 			alert("클립보드에 복사되었습니다.");
 		    return document.location.href;
 		  }
 		});
-	});//onload
+	//});//onload
 	
 </script>
 
