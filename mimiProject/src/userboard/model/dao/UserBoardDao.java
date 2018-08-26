@@ -99,6 +99,49 @@ public class UserBoardDao {
 		
 		return list;
 	}
+	
+	public ArrayList<Board> selectList2(
+			Connection con) throws UserBoardException {
+		ArrayList<Board> list = new ArrayList<Board>();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		String query = "select * from V_USER_REVIEW_LIST";
+		
+		try {
+			pstmt = con.prepareStatement(query);
+			rset = pstmt.executeQuery();
+			
+			while(rset.next()){
+				Board b = new Board();
+				b.setBoardNo(rset.getString("BOARD_NO"));
+				b.setTitle(rset.getString("TITLE"));
+				b.setUserId(rset.getString("USER_ID"));
+				b.setNickName(rset.getString("NICKNAME"));
+				b.setBoardDate(rset.getDate("BOARD_DATE"));
+				b.setHits(rset.getInt("HITS"));
+				b.setRecommed(rset.getInt("RECOMMEND"));
+				b.setContents(rset.getString("CONTENTS"));
+				b.setCategoryName(rset.getString("CATEGORY_FOOD"));
+				b.setCommentNum(rset.getInt("COMMENT_NUM"));	
+				list.add(b);
+				System.out.println(list);
+			}
+			
+			if(list.size() == 0)
+				throw new UserBoardException(
+						"게시글이 존재하지 않습니다.");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserBoardException(e.getMessage());
+		}finally{
+			close(rset);
+			close(pstmt);
+		}
+		
+		return list;
+	}
 		
 	public int addReadCount(Connection con, 
 			String boardNum) throws UserBoardException {
