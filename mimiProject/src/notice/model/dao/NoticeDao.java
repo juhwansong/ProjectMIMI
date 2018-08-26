@@ -207,7 +207,11 @@ public class NoticeDao {
 		
 		return result;
 	}
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> refs/heads/kyi
 	//통합검색
 	public ArrayList<Notice> searchNotice(Connection conn, String keyword) throws NoticeException{
 		ArrayList<Notice> list = new ArrayList<Notice>();

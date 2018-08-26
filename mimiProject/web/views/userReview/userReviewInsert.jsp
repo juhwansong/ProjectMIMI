@@ -2,9 +2,6 @@
 	pageEncoding="UTF-8"%>
 
 <%@include file="../../head.jsp"%>
-
-
-
 <script type="text/javascript">
 var openWin;
 //var cateVal = "카페";
@@ -21,7 +18,6 @@ function cateSelect(btnVal){
 	$("#"+ btnVal).addClass("btn-success");        // a 태그에 클래스 명 test를 추가
 	document.getElementById("categoryNo").value = btnVal;
 }
-
 	
 </script>
 
@@ -56,7 +52,7 @@ function cateSelect(btnVal){
 				<td width="*"><input type="text" class="form-control"
 					id="user_title" placeholder="제목" name="title"></td>
 				<th width="15%">작성자</th>
-				<td width="15%">NICKNAME</td>
+				<td width="15%"><%= nickName %></td>
 			</tr>
 			<tr>
 				<th><label for="text_category" class="control-label">카테고리</label></th>

@@ -63,8 +63,8 @@ public class UserBoardUpdateOriginServlet extends HttpServlet {
 		Board board = new Board();
 		board.setBoardNo(boardNum);	//카테고리 연결필요
 		board.setCategoryNo(request.getParameter("categoryNo"));	//카테고리 연결필요
-		//board.setUserId(mrequest.getParameter("userId")); 세션에서 아이디 획득 필요
-		board.setUserId("user04");
+		
+		board.setUserId((String)session.getAttribute("userId"));
 		board.setTitle(request.getParameter("title"));
 		board.setContents(request.getParameter("content"));
 		board.setContentsTag(request.getParameter("content_tag").replaceAll("resources/waitimage", "resources/files/userboard"));//임시폴더경로를 새폴더경로로 바꿔서 저장

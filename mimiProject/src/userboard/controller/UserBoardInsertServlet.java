@@ -48,6 +48,7 @@ public class UserBoardInsertServlet extends HttpServlet {
 						
 		int maxSize = 1024 * 1024 * 10;
 		
+		HttpSession session = request.getSession();	
 		RequestDispatcher view = null;
 		
 		/*
@@ -67,8 +68,8 @@ public class UserBoardInsertServlet extends HttpServlet {
 		// 전송온 값 꺼내서 변수/객체에 저장하기
 		Board board = new Board();
 		board.setCategoryNo(request.getParameter("categoryNo"));	//카테고리 연결필요
-		//board.setUserId(mrequest.getParameter("userId")); 세션에서 아이디 획득 필요
-		board.setUserId("user04");
+		
+		board.setUserId((String)session.getAttribute("userId"));
 		board.setTitle(request.getParameter("title"));
 		board.setContents(request.getParameter("content"));
 		board.setContentsTag(request.getParameter("content_tag").replaceAll("resources/waitimage", "resources/files/userboard"));//임시폴더경로를 새폴더경로로 바꿔서 저장

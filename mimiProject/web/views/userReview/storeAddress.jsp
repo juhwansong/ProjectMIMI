@@ -4,6 +4,24 @@
 <%-- <%@include file="../../head.jsp" %>  --%>
 <%@include file="../../nonHeaderHead.jsp" %> 
 <!-- head.jsp에 header.jsp가 들어가 있기때문에 header.jsp가 미포함된 head.jsp추가  -->
+<<<<<<< HEAD
+=======
+
+<script type="text/javascript">
+$(function getParentText(){
+	document.getElementById("store_name").value = opener.document.getElementById("store_name").value;
+	document.getElementById("store_phone").value = opener.document.getElementById("store_phone").value;
+	document.getElementById("store_address").value = opener.document.getElementById("store_address").value;
+ });
+ 
+function setParentText(){
+	opener.document.getElementById("store_name").value = document.getElementById("store_name").value;
+	opener.document.getElementById("store_phone").value = document.getElementById("store_phone").value;
+	opener.document.getElementById("store_address").value = document.getElementById("store_address").value;
+	self.close()
+ }
+</script>
+>>>>>>> refs/heads/kyi
 
 <!-- 다음맵 인증키 (직접 발급받아야됨) -->
 <script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=795b33c97453a44f73949c94f447f347&libraries=services,clusterer,drawing"></script>

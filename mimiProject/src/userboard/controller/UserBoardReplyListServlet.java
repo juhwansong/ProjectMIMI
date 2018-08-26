@@ -44,13 +44,31 @@ public class UserBoardReplyListServlet extends HttpServlet {
 		int currentPage = 1;
 		//한 페이지당 출력할 목록 갯수
 		int limit = 10;
-		
+		String boardNo = request.getParameter("bnum");
+		if(request.getParameter("page") != null){
+			currentPage = Integer.parseInt(request.getParameter("page"));
+		}
 		UserBoardService ubservice = new UserBoardService();
 		
 		try {
-			int listCount = ubservice.getListCount();
+			//댓글 전체 목록 갯수 조회함
+			int listCount = ubservice.getListReplyCount(boardNo);
 			
-			ArrayList<Board> list = ubservice.selectUserBoardReplyList(currentPage, limit);
+			ArrayList<Board> list = ubservice.selectUserBoardReplyList(boardNo, currentPage, limit);
+			//총 페이지수 계산 
+			//목록이 최소 1개일 때 1 페이지로 처리하기
+			//위해서 0.9를 더하기 함
+			int maxPage = (int)((double)listCount / limit + 0.9);
+			//현재 페이지에 보여줄 시작 페이지 수
+			//1, 11, 21, ....
+			//현재 페이지가 13페이지면 시작 페이지는 11페이지가 됨.
+			int startPage = (((int)((double)currentPage / limit 
+					+ 0.9)) - 1) * limit + 1;
+			//만약, 목록 아래에 보여질 페이지 갯수가 10개이면
+			//끝페이지수는 20페이지가 되어야 함
+			int endPage = startPage + limit - 1;
+			if(maxPage < endPage)
+				endPage = maxPage;
 			
 			JSONObject json = new JSONObject();
 			JSONArray jarr = new JSONArray();
@@ -67,7 +85,12 @@ public class UserBoardReplyListServlet extends HttpServlet {
 			}
 			
 			json.put("list", jarr);
-			
+			json.put("currentPage", currentPage);
+			json.put("maxPage", maxPage);
+			json.put("startPage", startPage);
+			json.put("endPage", endPage);
+			json.put("listCount", listCount);
+
 			response.setContentType(
 					"application/json; charset=utf-8");
 			PrintWriter out = response.getWriter();
