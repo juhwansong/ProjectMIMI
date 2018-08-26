@@ -126,9 +126,6 @@ public class AllBoardDao {
 				
 				list.add(b);
 			}
-			
-			if(list.size() == 0)
-				throw new AllBoardException("전체 목록을 불러올 수 없습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AllBoardException(e.getMessage());
@@ -171,9 +168,6 @@ public class AllBoardDao {
 				
 				list.add(b);
 			}
-			
-			if(list.size() == 0)
-				throw new AllBoardException("전체 목록을 불러올 수 없습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new AllBoardException(e.getMessage());

@@ -113,7 +113,7 @@ public class MemberDao {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
-		String query = "select * from tb_user where user_id = ? and user_pwd = ? and state = 'SN' ";
+		String query = "select * from tb_user where user_id = ? and user_pwd = ? and state = 'SN'";
 		
 		try {
 			pstmt = con.prepareStatement(query);

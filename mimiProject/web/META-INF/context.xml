@@ -6,8 +6,8 @@
 		WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 	--><!-- The contents of this file will be loaded for each web application -->
 
-<Context workDir="C:\eclipse\mimi\mimiProject\web\WEB-INF\jspwork">
 
+<Context workDir="C:\eclipse\mimi\mimiProject\web\WEB-INF\jspwork">
 
 <!-- 본인 프로젝트 경로 --> 
 
