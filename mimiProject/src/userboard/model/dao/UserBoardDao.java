@@ -448,8 +448,87 @@ public class UserBoardDao {
 		
 		return list;
 	}
+	
 
+	
+	
+///////////////////////////////////////////////////////////////////////////////////////////////////////	
+	//검색한 게시물 개수
+	public int getListCount(Connection conn, String qr) throws UserBoardException{
+		int listCount = 0;
+		Statement stmt = null;
+		ResultSet rset = null;
+		
+		String query = "SELECT COUNT(*) FROM V_USER_REVIEW_LIST" + qr;
+		
+		try {
+			stmt = conn.createStatement();
+			rset = stmt.executeQuery(query);
+			
+//			System.out.println("쿼리확인1 : " + query);
+			if(rset.next()){
+				listCount = rset.getInt(1);
+			}else{
+//				throw new AdminBoardException("게시글이 존재하지 않습니다.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserBoardException(e.getMessage());
+		} finally {
+			close(rset);
+			close(stmt);
+		}
+		return listCount;
+	}
+	
+	
+	
+	//검색한 게시물 목록
+	public ArrayList<Board> searchUserBoard(Connection conn, String qr, int currentPage,
+			int countList) throws UserBoardException{
+		ArrayList<Board> list = new ArrayList<Board>();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;	
+		int startRow = (currentPage - 1) * countList + 1;
+		int endRow = startRow + countList - 1;
+		
+		String query = "SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NO, TITLE, BOARD_DATE, CATEGORY_NO, "
+					+ "CATEGORY_FOOD, COMMENT_NUM, RECOMMEND, THUMBNAIL_NAME, BOARD_LINK, NICKNAME "
+					+ "FROM (SELECT * FROM V_USER_REVIEW_LIST " + qr
+					+ " )) WHERE RNUM >= ? AND RNUM <= ?";
 
-
-
+		//System.out.println("쿼리 확인...2 : " + query);
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, startRow);
+			pstmt.setInt(2, endRow);
+			rset = pstmt.executeQuery();
+			
+			while(rset.next()){
+				Board b = new Board();
+				b.setBoardNo(rset.getString("board_no"));
+				b.setTitle(rset.getString("title"));
+				b.setBoardDate(rset.getDate("board_date"));
+				b.setCategoryName(rset.getString("category_food"));
+				b.setCommentNum(rset.getInt("comment_num"));
+				b.setRecommed(rset.getInt("recommend"));
+				b.setThumbnailName(rset.getString("thumbnail_name"));
+				b.setBoardLink(rset.getString("board_link"));
+				b.setNickName(rset.getString("nickname"));
+				
+				list.add(b);
+			}
+			
+//			if(list.size() == 0)
+//				throw new AdminBoardException("게시글이 없습니다.");
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserBoardException(e.getMessage());
+		} finally {
+			close(rset);
+			close(pstmt);
+		}
+		return list;
+	}
 }

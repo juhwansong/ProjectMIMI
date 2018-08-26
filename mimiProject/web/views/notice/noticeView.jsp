@@ -49,10 +49,12 @@
 
 		<!-- 우측 버튼 -->
 		<td>
+		<% if(authority != null && authority.equals("A")){ %>
 		<button type="button" class="btn btn-default pull-right" style="outline:none; padding: 7px; margin:2px;"
 		 onclick="location.href='/mimi/noticedelete?no=<%= notice.getNoticeNo()%>'">삭제</button>
 		<button type="submit" class="btn btn-default pull-right" style="outline:none; padding: 7px; margin:2px;"
-		 onclick="location.href='/mimi/noticeupdatepage?no=<%= notice.getNoticeNo()%>&page=<%= currentPage%>'">수정</button></td>
+		 onclick="location.href='/mimi/noticeupdatepage?no=<%= notice.getNoticeNo()%>&page=<%= currentPage%>'">수정</button>
+		 <% } %></td>
 	</tr>
 </table>
 	</div>

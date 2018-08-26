@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import bookmark.exception.BookmarkException;
 import bookmark.model.service.BookmarkService;
@@ -33,20 +34,30 @@ public class BookmarkDeleteServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		response.setContentType("text/html; charset=utf-8");	
-		String userId = "user01"; //임시..수정해야됨////////////////////////////////////////
-		String[] checkedNo = request.getParameterValues("checkOne");
+		HttpSession session = request.getSession(false);
+		String userId = (String)session.getAttribute("userId");
 		
+		String[] boardNo = request.getParameterValues("checkOne");	//즐겨찾기 페이지에서 삭제하고 넘어오는 배열 값
+		String bno = request.getParameter("boardNo");	//리뷰 상세보기에서 넘어오는 값
 		
+		//System.out.println("값 확인 : " + bno);
+		
+		if(bno != null){
+			boardNo = new String[1];
+			boardNo[0] = bno;
+		}
+		
+		//System.out.println("값 확인 : " + boardNo[0]);
 		RequestDispatcher view = null;
 		try {
-			int result = new BookmarkService().deleteBookmark(userId, checkedNo);
+			int result = new BookmarkService().deleteBookmark(userId, boardNo);
 			
 			if(result > 0){
 				response.sendRedirect("/mimi/bookmarklist");
 
 			}else{
 				view = request.getRequestDispatcher("views/board/boardError.jsp");
-				request.setAttribute("message", "즐겨찾기 게시물 삭제 실패...");
+				request.setAttribute("message", "즐겨찾기 삭제 실패...");
 				view.forward(request, response);
 			}
 		} catch (BookmarkException e) {

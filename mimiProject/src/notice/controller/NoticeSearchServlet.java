@@ -39,7 +39,7 @@ public class NoticeSearchServlet extends HttpServlet {
 		int countList = 10;	//한 화면에 출력될 리스트 개수
 		int countPage = 10; //한 화면에 출력될 페이지 개수
 		String keyword = request.getParameter("keyword");
-		
+		keyword = (keyword == null) ? "" : keyword.replaceAll("(^\\p{Z}+|\\p{Z}+$)", ""); //null이면 전체검색, 아니면 공백 제거
 		
 		if(request.getParameter("page") != null) {
 			currentPage = Integer.parseInt(request.getParameter("page"));
@@ -47,9 +47,10 @@ public class NoticeSearchServlet extends HttpServlet {
 		
 		RequestDispatcher view = null;
 		try {
-			ArrayList<Notice> list = new NoticeService().searchNotice(keyword);
+			ArrayList<Notice> list = new NoticeService().searchNotice(keyword, currentPage, countList);
 			
-			int totalCount = list.size();	//검색결과수
+			int totalCount = new NoticeService().getSearchListCount(keyword);	//검색결과수
+			System.out.println("공지검색개수 ; " + totalCount);
 			int maxPage = totalCount / countList;
 			if(totalCount % countList > 0)
 				maxPage++;
@@ -65,7 +66,7 @@ public class NoticeSearchServlet extends HttpServlet {
 				endPage = maxPage;
 
 			
-			if(list.size() > 0){
+//			if(list.size() > 0){
 				view = request.getRequestDispatcher("views/notice/noticeList.jsp");
 				request.setAttribute("noticeList", list);
 				request.setAttribute("currentPage", currentPage);
@@ -74,11 +75,11 @@ public class NoticeSearchServlet extends HttpServlet {
 				request.setAttribute("endPage", endPage);
 				request.setAttribute("totalCount", totalCount);
 				view.forward(request, response);
-			}else{
-				view = request.getRequestDispatcher("views/notice/noticeError.jsp");
-				request.setAttribute("message", keyword + "이(가) 속한 게시글이 존재하지 않습니다.");
-				view.forward(request, response);
-			}
+//			}else{
+//				view = request.getRequestDispatcher("views/notice/noticeError.jsp");
+//				request.setAttribute("message", keyword + "이(가) 속한 게시글이 존재하지 않습니다.");
+//				view.forward(request, response);
+//			}
 		} catch (NoticeException e) {
 			view = request.getRequestDispatcher("views/notice/noticeError.jsp");
 			request.setAttribute("message", e.getMessage());

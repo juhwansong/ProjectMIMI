@@ -78,7 +78,7 @@ public class CustomerDao {
 			if(rset.next()){
 				listCount = rset.getInt(1);
 			}else{
-				throw new CustomerException("회원이 존재하지 않습니다.");
+//				throw new CustomerException("회원이 존재하지 않습니다.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -100,8 +100,8 @@ public class CustomerDao {
 				String query = "UPDATE TB_USER SET";
 				query += entry.getValue() + "WHERE USER_ID = '" + entry.getKey() + "'";
 				pstmt = conn.prepareStatement(query);
-				//쿼리확인용
-				System.out.println("쿼리 확인용 : " + query);
+
+				//System.out.println("쿼리 확인용 : " + query);
 				result = pstmt.executeUpdate();
 			}
 			
@@ -190,6 +190,38 @@ public class CustomerDao {
 		}
 		
 		return list;
+	}
+
+	//검색한 회원수
+	public int getSearchListCount(Connection conn, String column, String value) throws CustomerException{
+		int listCount = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		String query = "SELECT COUNT(*) FROM (SELECT ROWNUM RNUM, USER_ID, USER_NAME, NICKNAME, EMAIL, PHONE, "
+				+ "GRADE_POINT, GRADE_NAME, AUTHORITY, STATE, DEL_DATE"
+				+ " FROM (SELECT * FROM TB_USER WHERE " + column
+				+ " LIKE ? ORDER BY GRADE_POINT DESC, STATE, AUTHORITY, USER_ID))";
+		System.out.println(query);
+		try {
+			pstmt = conn.prepareStatement(query);
+			//pstmt.setString(1, column); // 인식 못 함
+			pstmt.setString(1, "%" + value + "%");
+			rset = pstmt.executeQuery();
+			
+			if(rset.next()){
+				listCount = rset.getInt(1);
+			}else{
+//				throw new CustomerException("회원이 존재하지 않습니다.");
+			}
+			System.out.println("작동확인... : " + listCount);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new CustomerException(e.getMessage());
+		} finally {
+			close(rset);
+			close(pstmt);
+		}
+		return listCount;
 	}
 
 }

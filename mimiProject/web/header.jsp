@@ -167,7 +167,7 @@
                         <a href="/mimi/adminboardlist">MIMI 리뷰</a>
                     </li>
                     <li>
-                        <a href="/mimi/views/bestReview/bestReviewList.jsp">Best리뷰</a>
+                        <a href="/mimi/bestboardlist">Best리뷰</a>
                     </li>
                     <li>
                         <a href="/mimi/userboardlist">유저리뷰</a>

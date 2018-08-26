@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import bookmark.exception.BookmarkException;
 import bookmark.model.service.BookmarkService;
@@ -39,7 +40,9 @@ public class BookmarkListServlet extends HttpServlet {
 		int countList = 10;	//한 화면에 출력될 리스트 개수
 		int countPage = 10; //한 화면에 출력될 페이지 개수
 		
-		String userId = "user01"; //임시..수정해야됨////////////////////////////////////////
+		HttpSession session = request.getSession(false);
+		String userId = (String)session.getAttribute("userId");
+		
 		
 		if(request.getParameter("page") != null) {
 			currentPage = Integer.parseInt(request.getParameter("page"));
@@ -64,7 +67,7 @@ public class BookmarkListServlet extends HttpServlet {
 			if(endPage > maxPage)
 				endPage = maxPage;
 
-//			if(list.size() > 0){
+			if(userId != null){
 				view = request.getRequestDispatcher("views/board/bookmarkList.jsp");
 				request.setAttribute("list", list);
 				request.setAttribute("currentPage", currentPage);
@@ -73,13 +76,12 @@ public class BookmarkListServlet extends HttpServlet {
 				request.setAttribute("endPage", endPage);
 				request.setAttribute("totalCount", totalCount);
 				view.forward(request, response);
-
-//			}else{
-//				//즐겨찾기한 목록이 없을때...
-//				view = request.getRequestDispatcher("views/board/boardError.jsp");
-//				request.setAttribute("message", "즐겨찾기한 게시물이 존재하지 않습니다.");
-//				view.forward(request, response);
-//			}
+			}else{
+				//로그인 안하고 접근
+				view = request.getRequestDispatcher("views/board/boardError.jsp");
+				request.setAttribute("message", "잘못된 접근입니다.");
+				view.forward(request, response);
+			}
 		} catch (BookmarkException e) {
 			view = request.getRequestDispatcher("views/board/boardError.jsp");
 			request.setAttribute("message", e.getMessage());

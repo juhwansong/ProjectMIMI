@@ -40,6 +40,41 @@ public class BookmarkDao {
 	
 		return listCount;
 	}
+	
+	
+	//즐겨찾기 검색한 게시물 개수
+	public int getSearchListCount(Connection conn, String userId, String board_gb, String keyword) throws BookmarkException{
+		int listCount = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		String query = "SELECT COUNT(*) FROM V_BOOKMARK WHERE BOOKMARK_USER_ID = ? AND BOARD_GB " + board_gb
+				+ " AND ( TITLE LIKE ? OR CONTENTS LIKE ? OR SHOP_NAME LIKE ? OR SHOP_ADDRESS LIKE ? )";
+		
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, userId);
+			pstmt.setString(2, "%" + keyword + "%");
+			pstmt.setString(3, "%" + keyword + "%");
+			pstmt.setString(4, "%" + keyword + "%");
+			pstmt.setString(5, "%" + keyword + "%");
+			rset = pstmt.executeQuery();
+			
+			if(rset.next()){
+				listCount = rset.getInt(1);
+			}else{
+				//게시물이 없을때
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BookmarkException(e.getMessage());
+		} finally {
+			close(rset);
+			close(pstmt);
+		}
+	
+		return listCount;
+	}
 
 	//즐겨찾기 목록
 	public ArrayList<Board> selectBookmarkList(Connection conn, String userId, int currentPage, int countList) throws BookmarkException {
@@ -91,6 +126,7 @@ public class BookmarkDao {
 		return list;
 	}
 
+	
 	//즐겨찾기 검색
 	public ArrayList<Board> searchBookmark(Connection conn, String userId, String board_gb, String keyword, int currentPage, int countList) throws BookmarkException {
 		ArrayList<Board> list = new ArrayList<>();
@@ -161,7 +197,7 @@ public class BookmarkDao {
 				pstmt.setString(2, checkOne);
 				result = pstmt.executeUpdate();
 			}
-			if(result <= 0)
+			if(result < 0)
 				throw new BookmarkException("즐겨찾게 삭제 실패...");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -172,41 +208,32 @@ public class BookmarkDao {
 		return result;
 	}
 	
-	
 
-	//즐겨찾기 검색한 개시물 개수
-//	public int getSearchListCount(Connection conn, String userId, String board_gb, String keyword) throws BookmarkException{
-//		int listCount = 0;
-//		PreparedStatement pstmt = null;
-//		ResultSet rset = null;
-//		String query = "SELECT COUNT(*) FROM V_BOOKMARK WHERE BOOKMARK_USER_ID = ? AND BOARD_GB " + board_gb
-//				+ " AND ( TITLE LIKE ? OR CONTENTS LIKE ? OR SHOP_NAME LIKE ? OR SHOP_ADDRESS LIKE ? )";
-//		
-//		try {
-//			pstmt = conn.prepareStatement(query);
-//			pstmt.setString(1, userId);
-//			pstmt.setString(2, "%" + keyword + "%");
-//			pstmt.setString(3, "%" + keyword + "%");
-//			pstmt.setString(4, "%" + keyword + "%");
-//			pstmt.setString(5, "%" + keyword + "%");
-//			rset = pstmt.executeQuery();
-//			
-//			if(rset.next()){
-//				listCount = rset.getInt(1);
-//			}else{
-//				//게시물이 없을때
-//			}
-//			
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new BookmarkException(e.getMessage());
-//		} finally {
-//			close(rset);
-//			close(pstmt);
-//		}
-//	
-//		return listCount;
-//	}
+
+	//즐겨찾기 추가
+	public int insertBookmark(Connection conn, String userId, String boardNo) throws BookmarkException {
+		int result = 0;
+		PreparedStatement pstmt = null;
+//		INSERT INTO TB_BOOKMARK	VALUES ('BR0001', 'user01', TO_DATE('2018/08/10', 'RRRR/MM/DD'));
+		String query = "INSERT INTO TB_BOOKMARK VALUES (?, ?, SYSDATE)";
+		
+		try {
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, userId);
+			pstmt.setString(2, boardNo);
+			
+			result = pstmt.executeUpdate();
+			
+			if(result <= 0)
+				throw new BookmarkException("즐겨찾기 실패...ㅇ");
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BookmarkException(e.getMessage());
+		} finally {
+			close(pstmt);
+		}
+		return result;
+	}
 
 	
 

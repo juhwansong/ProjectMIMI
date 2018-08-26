@@ -46,18 +46,11 @@ public class CustomerUpdateServlet extends HttpServlet {
 			String[] strArr = dataArr.split(",");
 			HashMap<String, String> map = new HashMap<>();
 			
-			//json 쓰면,,,
+
 			//key : id, value : authority + state
-			for(int i = 2; i < strArr.length; i += 3){
-				if(strArr[i - 1].equals("관리자"))
-					strArr[i - 1] = "A";
-				else
-					strArr[i - 1] = "U";
-				
-				if(strArr[i].equals("삭제대기"))
-					strArr[i] = "SD";
-				else
-					strArr[i] = "SN";
+			for(int i = 2; i < strArr.length; i += 3){				
+				strArr[i - 1] = (strArr[i - 1].equals("관리자")) ? "A" : "U";
+				strArr[i] = (strArr[i].equals("삭제대기")) ? "SD" : "SN";
 				
 				map.put(strArr[i - 2], " AUTHORITY = '" + strArr[i - 1] + "', STATE = '" + strArr[i] + "' ");
 				//확인용

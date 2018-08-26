@@ -127,4 +127,20 @@ public class UserBoardService {	//유저 리뷰 게시판 기능
 		close(con);
 		return result;
 	}
+	
+	//게시물 검색
+	public ArrayList<Board> searchUserBoard(String query, int currentPage, int countList) throws UserBoardException {
+		Connection conn = getConnection();
+		ArrayList<Board> list = new UserBoardDao().searchUserBoard(conn, query, currentPage, countList);
+		close(conn);
+		return list;
+	}
+
+	//검색한 게시물 개수
+	public int getSearchListCount(String query) throws UserBoardException {
+		Connection conn = getConnection();
+		int listCount = new UserBoardDao().getListCount(conn, query);
+		close(conn);
+		return listCount;
+	}
 }

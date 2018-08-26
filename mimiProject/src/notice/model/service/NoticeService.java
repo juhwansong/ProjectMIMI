@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import adminboard.model.dao.AdminBoardDao;
 import notice.exception.NoticeException;
 import notice.model.dao.NoticeDao;
 import notice.model.vo.Notice;
@@ -22,16 +23,14 @@ public class NoticeService {//공지사항 게시판 기능
 		close(conn);
 		return listCount;
 	}
-	public int getSearchListCount(HashMap<String, String> keword) throws NoticeException{ //검색한 게시물 총 갯수(페이지네이션 관리 시 필요)
-		return 0;
-	}
+
 	public int deleteNotice(String noticeNo) throws NoticeException{//게시물 삭제
 		Connection conn = getConnection();
 		int result = new NoticeDao().deleteNotice(conn, noticeNo);
 		if(result > 0)
 			commit(conn);
 		else
-			rollback(conn);
+			rollback(conn);	
 		close(conn);
 		return result;
 	}
@@ -70,11 +69,20 @@ public class NoticeService {//공지사항 게시판 기능
 		return result;
 	}
 	
-	public ArrayList<Notice> searchNotice(String keyword) throws NoticeException{//검색한 키워드 데이터를 map에 다 넣음(key는 쿼리문,value는 ?값)//통합 검색으로 수정
+	//통합검색
+	public ArrayList<Notice> searchNotice(String keyword, int currentPage, int countList) throws NoticeException{//검색한 키워드 데이터를 map에 다 넣음(key는 쿼리문,value는 ?값)//통합 검색으로 수정
 		Connection conn = getConnection();
-		ArrayList<Notice> list = new NoticeDao().searchNotice(conn, keyword);
+		ArrayList<Notice> list = new NoticeDao().searchNotice(conn, keyword, currentPage, countList);
 		close(conn);
 		return list;
+	}
+
+	//검색한 게시물 총 갯수(페이지네이션 관리 시 필요)
+	public int getSearchListCount(String keyword) throws NoticeException{
+		Connection conn = getConnection();
+		int listCount = new NoticeDao().getListCount(conn, keyword);
+		close(conn);
+		return listCount;
 	}
 
 }

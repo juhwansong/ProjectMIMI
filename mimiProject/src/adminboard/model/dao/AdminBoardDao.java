@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import adminboard.exception.AdminBoardException;
 import common.model.vo.Board;
@@ -28,7 +30,7 @@ public class AdminBoardDao {
 			if(rset.next()){
 				listCount = rset.getInt(1);
 			}else{
-				throw new AdminBoardException("게시글이 존재하지 않습니다.");
+//				throw new AdminBoardException("게시글이 존재하지 않습니다.");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -76,7 +78,7 @@ public class AdminBoardDao {
 			}
 			
 //			if(list.size() == 0)
-//				throw new AdminBoardException("게시글이 없습니다.");
+//				throw new AdminBoardException("게시글이 존재하지 않습니다.");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -87,26 +89,55 @@ public class AdminBoardDao {
 		}
 		return list;
 	}
-
-	//카테고리 조회
-	public ArrayList<Board> searchAdminBoard(Connection conn, String category, int currentPage, int countList) throws AdminBoardException{
-		ArrayList<Board> list = new ArrayList<Board>();
-		PreparedStatement pstmt = null;
+	
+	
+	//검색한 게시물 개수
+	public int getListCount(Connection conn, String qr) throws AdminBoardException{
+		int listCount = 0;
+		Statement stmt = null;
 		ResultSet rset = null;
 		
-		String query = "SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NO, TITLE, CONTENTS, BOARD_DATE, CATEGORY_NO, "
-				+ "CATEGORY_FOOD, COMMENT_NUM, RECOMMEND, THUMBNAIL_NAME "
-				+ "FROM (SELECT * FROM V_ADMIN_REVIEW_LIST WHERE CATEGORY_NO = ? ORDER BY BOARD_NO DESC)) "
-				+ "WHERE RNUM >= ? AND RNUM <= ?";
+		String query = "SELECT COUNT(*) FROM V_ADMIN_REVIEW_LIST" + qr;
 		
+		try {
+			stmt = conn.createStatement();
+			rset = stmt.executeQuery(query);
+			
+//			System.out.println("쿼리확인1 : " + query);
+			if(rset.next()){
+				listCount = rset.getInt(1);
+			}else{
+//				throw new AdminBoardException("게시글이 존재하지 않습니다.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AdminBoardException(e.getMessage());
+		} finally {
+			close(rset);
+			close(stmt);
+		}
+		return listCount;
+	}
+	
+	//검색한 게시물 목록
+	public ArrayList<Board> searchAdminBoard(Connection conn, String qr, int currentPage,
+			int countList) throws AdminBoardException{
+		ArrayList<Board> list = new ArrayList<Board>();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;	
 		int startRow = (currentPage - 1) * countList + 1;
 		int endRow = startRow + countList - 1;
-	
+		
+		String query = "SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NO, TITLE, CONTENTS, BOARD_DATE, CATEGORY_NO, "
+					+ "CATEGORY_FOOD, COMMENT_NUM, RECOMMEND, THUMBNAIL_NAME "
+					+ "FROM (SELECT * FROM V_ADMIN_REVIEW_LIST " + qr
+					+ " )) WHERE RNUM >= ? AND RNUM <= ?";
+
+//		System.out.println("쿼리 확인...2 : " + query);
 		try {
 			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, category);
-			pstmt.setInt(2, startRow);
-			pstmt.setInt(3, endRow);
+			pstmt.setInt(1, startRow);
+			pstmt.setInt(2, endRow);
 			rset = pstmt.executeQuery();
 			
 			while(rset.next()){
@@ -135,5 +166,6 @@ public class AdminBoardDao {
 		}
 		return list;
 	}
+
 
 }

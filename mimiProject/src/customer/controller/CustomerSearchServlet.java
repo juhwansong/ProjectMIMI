@@ -41,19 +41,15 @@ public class CustomerSearchServlet extends HttpServlet {
 		
 		String column = request.getParameter("select-category");
 		String value = request.getParameter("search-text");
-		System.out.println("변환전 value : " + value);
-		if(column.equals("all")){
+		value = (value == null) ? "" : value.replaceAll("(^\\p{Z}+|\\p{Z}+$)", "");
+		
+		//System.out.println("변환전 value : " + value);
+		if(column == null || column.equals("all")){
 			response.sendRedirect("/mimi/customerlist"); //성공시 새로고침해서 다시 들어감....
 		}else if(column.equals("authority")){
-			if(value.equals("관리자"))
-				value = "A";
-			else if(value.equals("회원"))
-				value = "U";
+			value = (value.equals("관리자")) ? "A" : "U";
 		}else if(column.equals("state")){
-			if(value.equals("삭제대기"))
-				value = "SD";
-			else if(value.equals("일반"))
-				value = "SN";	
+			value = (value.equals("삭제대기")) ? "SD" : "SN";
 		}
 		
 		//값 확인
@@ -69,7 +65,7 @@ public class CustomerSearchServlet extends HttpServlet {
 		try {
 			ArrayList<Member> list = new CustomerService().searchCustomer(column, value, currentPage, countList);
 			
-			int totalCount = list.size();
+			int totalCount = new CustomerService().getSearchListCount(column, value);
 			int maxPage = totalCount / countList;
 			if(totalCount % countList > 0)
 				maxPage++;
