@@ -7,9 +7,6 @@
     %>
 
 <%@include file="../../head.jsp" %>
-<%-- <%@include file="../../header.jsp" %> --%>
-<%@include file="../../memberHeader.jsp" %>
-<%-- <%@include file="../../adminHeader.jsp" %> --%>
 
 <!-- <title>MIMI</title> -->
 
