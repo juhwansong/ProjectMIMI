@@ -290,6 +290,7 @@ function sendFile(file, el){
 		cache : false,
 		contentType : false,
 		processData : false,
+		async : false, //동기화설정을 안하면  파일 연속 추가할때 섹션에 이미지 경로 데이터가 제대로 안들어감
 		success:function(data){
 			//에디터에 이미지 출력
 			$(el).summernote('editor.insertImage', data);//서머노트 에디터에 이미지 등록
@@ -348,7 +349,7 @@ $(window).on("unload",function(){ //페이 종료,이동 시 뜨는 confirm 확�
 			url : "/mimi/waitimagedelete",	// 이미지 삭제 필터로 직접 전송
 			cache : "false", //캐시사용금지
 			method : "POST",			
-			async : false //동기화설정(동기화사용함)	
+			async : false //동기화설정(동기화사용안함)	
 		});	
 	}
 	 

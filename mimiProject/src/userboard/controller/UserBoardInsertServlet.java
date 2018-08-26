@@ -94,8 +94,7 @@ public class UserBoardInsertServlet extends HttpServlet {
 					board.setThumbnailName(content.substring(firstIndex, lastIndex));
 				}
 				
-				count = content.indexOf("\"", content.indexOf("<img src=\"", count)+10) + 1;
-						
+				count = content.indexOf("\"", content.indexOf("<img src=\"", count)+10) + 1;	
 			}
 		}
 		

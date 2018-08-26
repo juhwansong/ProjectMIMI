@@ -84,11 +84,11 @@ public class UserBoardUpdateOriginServlet extends HttpServlet {
 				int firstIndex = oldContent.indexOf("<img src=\"", oldCount)+42; //폴더경로에 따라 달라질수있음
 				int lastIndex = oldContent.indexOf("\"", oldContent.indexOf("<img src=\"", oldCount)+42);
 				oldImgList.add(oldContent.substring(firstIndex, lastIndex));				
-				oldCount = oldContent.indexOf("\"", oldContent.indexOf("<img src=\"", oldCount)+10) + 1;					
+				oldCount = oldContent.indexOf("\"", oldContent.indexOf("<img src=\"", oldCount)+10) + 1;	
 			}
 		}
 			
-		String content = request.getParameter("content_tag");
+		String content = board.getContentsTag(); //request.getParameter("content_tag");
 		ArrayList<String> imgList = new ArrayList<>();
 		int count = 0;
 		if(content.contains("<img src=")){ //그림첨부를 했을때만
@@ -101,7 +101,7 @@ public class UserBoardUpdateOriginServlet extends HttpServlet {
 					board.setThumbnailName(content.substring(firstIndex, lastIndex));
 				}				
 				count = content.indexOf("\"", content.indexOf("<img src=\"", count)+10) + 1;
-						
+				System.out.println("현재태그 그림파일 : " + content.substring(firstIndex, lastIndex));		
 			}
 		}
 		
@@ -111,18 +111,29 @@ public class UserBoardUpdateOriginServlet extends HttpServlet {
 				for(String oldImg : oldImgList){
 					File oldContentFile = new File(newSavePath + "/" + oldImg);
 					oldContentFile.delete();
+					
 				}
 			}
 			else{
-				for(String img : imgList){
+				
+				for(String img : imgList){  
 					for(String oldImg : oldImgList){
-						if(!img.contains(oldImg)){
-							File oldContentFile = new File(newSavePath + "/" + oldImg);
-							oldContentFile.delete();
+						if(img.contains(oldImg)){
+							oldImgList.remove(oldImg); //수정 후에도 존재하는 수정 전 이미지는   수정 전 이미지 모음 배열에서 제거				
 							break;
 						}
 					}
 				}
+				
+				
+				if(oldImgList.size() > 0){ // 수정 후 안쓰이는 수정 전 이미지가 있을때
+					for(String oldImg : oldImgList){ //수정 후 쓰이지 않는 수정 전 이미지를 전부 삭제
+						File oldContentFile = new File(newSavePath + "/" + oldImg);
+						oldContentFile.delete();
+					}
+				}
+				
+				
 			}
 		}
 		

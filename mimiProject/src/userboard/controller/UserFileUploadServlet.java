@@ -48,7 +48,6 @@ public class UserFileUploadServlet extends HttpServlet {
 		
 		// TODO Auto-generated method stub
 		// doGet(request, response);
-
 		String 			savePath 		= "";
 		String 			originFileName = ""; //바꿀이름들을 저장
 		String 			convertFileName = "";

@@ -1,6 +1,8 @@
 package userboard.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -32,6 +34,7 @@ public class UserBoardDeleteServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
 		
 		String boardNum = request.getParameter("bnum");
@@ -40,9 +43,29 @@ public class UserBoardDeleteServlet extends HttpServlet {
 		try {
 			UserBoardService bservice = new UserBoardService();
 			Board board = bservice.selectUserBoard(boardNum);
-
+			
 			if(bservice.deleteUserBoard(boardNum) > 0){
 				//삭제 성공시, 첨부파일이 있을 경우
+				String oldContent = request.getParameter("content_tag");				
+				//html코드에서 img태그부분만 추출하는 부분		
+				ArrayList<String> oldImgList = new ArrayList<>();
+				int oldCount = 0;
+				if(oldContent.contains("<img src=")){ //그림첨부를 했을때만
+					while(oldCount <= oldContent.lastIndexOf("<img src=\"")+42){ //html포함 컨텐츠에서 img 경로만 빼는 작업
+						int firstIndex = oldContent.indexOf("<img src=\"", oldCount)+42; //폴더경로에 따라 달라질수있음
+						int lastIndex = oldContent.indexOf("\"", oldContent.indexOf("<img src=\"", oldCount)+42);
+						oldImgList.add(oldContent.substring(firstIndex, lastIndex));				
+						oldCount = oldContent.indexOf("\"", oldContent.indexOf("<img src=\"", oldCount)+10) + 1;	
+					}
+					
+					String newSavePath = request.getSession().getServletContext().getRealPath("resources/files/userboard");
+					
+					for(String oldImg : oldImgList){ 
+						File oldContentFile = new File(newSavePath + "/" + oldImg);
+						oldContentFile.delete();
+					}
+					
+				}
 				//bupfiles 폴더에 해당 파일 삭제 처리함
 				/*
 				if(board.getBoardOriginalFileName() != null){

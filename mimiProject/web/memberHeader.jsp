@@ -192,7 +192,7 @@
         <!-- /.container-fluid -->
         <nav id="mini-menu-box">
 			<!-- <div id="menu-box-btn" class="fas fa-user-circle" aria-hidden="true"></div> -->
-			<div id="menu-box-btn"  aria-hidden="true"><img src="/mimi/resources/images/icon/icon_level1.png" width="60px" ></img></div>
+			<div id="menu-box-btn"  aria-hidden="true"><img id="menu-gradeimg" src=""  width="60px" ></img></div>
 			<!-- 회원 로그인 상태에서 메뉴 버튼 누를시 -->
 			<div class="member-menu-box">
 				<div>
@@ -256,8 +256,25 @@
 	      		type : "post",
 	      		success : function(data){
 	      			var json = data;
+	      			json.gradeName = decodeURI(json.gradeName);  			
 	      			$("#menu-gradename").html(decodeURI(json.gradeName));
 	      			$("#menu-nickname").html(decodeURI(json.nickName));
+	      			if(json.gradeName === "손님"){
+	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level1.png");
+	      			}
+	      			else if(json.gradeName === "종업원"){
+	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level1.png");
+	      			}
+	      			else if(json.gradeName === "주방보조"){
+	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level2.png");
+	      			}
+	      			else if(json.gradeName === "주방장"){
+	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level3.png");
+	      			}
+	      			else if(json.gradeName === "식신"){
+	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level4.png");
+	      			}
+	      			
 	      		}
 	      	});
 			
@@ -267,7 +284,7 @@
 			});
 			
 			
-			$(document).on("click", "body", function(event){
+			$(document).on("click", "body", function(event){  //미니 메뉴 박스 이외의 지역 클릭시 미니 메뉴 사라지고, 메뉴 버튼 누르면 미니 메뉴 나타남
 				if($(".member-menu-box").css("display") === "none"){
 					if($(event.target).is("#menu-box-btn,#menu-box-btn *")){
 						$(".member-menu-box").slideDown("slow", function() {	

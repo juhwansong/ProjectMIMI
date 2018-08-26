@@ -59,11 +59,13 @@
 </script>
 <style type="text/css">
 
-#text_context {
-	font-family: "Helvetica Nene", Helvetica, Arial, sans-serif;
-	font-size: 14px;
+#text_context{
+	/* font-family: "Helvetica Nene", Helvetica, Arial, sans-serif;
+	font-size: 14px; 
 	line-height: 1.42857143;
-	color: #333;
+	color: #333; */
+	width:952px;
+	margin-left: auto; 
 }
 
 #good_qta {
@@ -157,10 +159,11 @@
 		</table>
 	</div>
 	
-	<hr class="margin2">			
-	<p id="text_context">
-		<%= board.getContentsTag()%>
-	</p> 
+	<hr class="margin2">
+	<div id="text_context">			
+		<p>
+			<%= board.getContentsTag()%>
+		</p> 
 	</div>
 	<hr>
 	<div style="text-align: right;">
@@ -238,7 +241,7 @@
 		</div>
 		<div class="col-xs-6 text-right">
 			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/userboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>'">
-			<input type="submit" class="btn btn-default" value="삭제" style="outline: none;" onClick="location.href='/mimi/userboarddelete?bnum=<%= board.getBoardNo() %>'">
+			<button type="button" id="user-delete-btn" class="btn btn-default" style="outline: none;">삭제</button>
 		</div>
 	</div>
 	<br>
@@ -353,6 +356,33 @@ function addMarker(position, i) {
     return marker;
 }
 
+$(function(){
+	$(document).on("click", "#user-delete-btn", function(){
+		//자바스크립트에서 post 방식으로 보내기
+		var form = document.createElement("form");
+		var input = new Array();
+		var parm = new Array(); //input 태그안의 name,value값 설정
+		//파라미터 추가
+		parm.push(["bnum", "<%=board.getBoardNo()%>"]);
+		parm.push(["content_tag", '<%=board.getContentsTag()%>']);
+		
+		for(var i=0; i<parm.length; i++){
+			input[i]=document.createElement("input");
+			input[i].setAttribute("type", "hidden");
+			input[i].setAttribute("name", parm[i][0]);
+			input[i].setAttribute("value", parm[i][1]);
+			form.appendChild(input[i]);
+		}
+		
+		form.method = "post";
+		form.action = "/mimi/userboarddelete";
+		
+		document.body.appendChild(form);
+		form.submit();
+		
+		board.getContentsTag()
+	});	
+});
 
 </script>
 
