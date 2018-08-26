@@ -81,6 +81,7 @@ public class UserBoardDao {
 				b.setCategoryName(rset.getString("CATEGORY_FOOD"));
 				b.setCommentNum(rset.getInt("COMMENT_NUM"));
 				b.setThumbnailName(rset.getString("THUMBNAIL_NAME"));	
+
 				list.add(b);
 
 			}
@@ -99,52 +100,7 @@ public class UserBoardDao {
 		
 		return list;
 	}
-	
-
-	
-	public ArrayList<Board> selectList2(
-			Connection con) throws UserBoardException {
-		ArrayList<Board> list = new ArrayList<Board>();
-		PreparedStatement pstmt = null;
-		ResultSet rset = null;
 		
-		String query = "select * from V_USER_REVIEW_LIST";
-		
-		try {
-			pstmt = con.prepareStatement(query);
-			rset = pstmt.executeQuery();
-			
-			while(rset.next()){
-				Board b = new Board();
-				b.setBoardNo(rset.getString("BOARD_NO"));
-				b.setTitle(rset.getString("TITLE"));
-				b.setUserId(rset.getString("USER_ID"));
-				b.setNickName(rset.getString("NICKNAME"));
-				b.setBoardDate(rset.getDate("BOARD_DATE"));
-				b.setHits(rset.getInt("HITS"));
-				b.setRecommed(rset.getInt("RECOMMEND"));
-				b.setContents(rset.getString("CONTENTS"));
-				b.setCategoryName(rset.getString("CATEGORY_FOOD"));
-				b.setCommentNum(rset.getInt("COMMENT_NUM"));	
-				list.add(b);
-				System.out.println(list);
-			}
-			
-			if(list.size() == 0)
-				throw new UserBoardException(
-						"게시글이 존재하지 않습니다.");
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new UserBoardException(e.getMessage());
-		}finally{
-			close(rset);
-			close(pstmt);
-		}
-		
-		return list;
-	}
-	
 	public int addReadCount(Connection con, 
 			String boardNum) throws UserBoardException {
 		int result = 0;
@@ -246,9 +202,8 @@ public class UserBoardDao {
 			pstmt.setInt(9, board.getLatitude());
 			pstmt.setInt(10, board.getLongitude());
 			pstmt.setString(11, board.getThumbnailName());
-		
-			result = pstmt.executeUpdate();
 			
+			result = pstmt.executeUpdate();
 			if(result <= 0)
 				throw new UserBoardException("새 원글 등록 실패!");			
 			
@@ -306,7 +261,7 @@ public class UserBoardDao {
 		PreparedStatement pstmt = null;
 		
 		String query = "update TB_BOARD_REVIEW set "
-						+ "STATE = 'SD' "
+						+ "STATE = 'SD', DEL_DATE = SYSDATE "
 						+ "where BOARD_NO = ?";
 		
 		try {
@@ -329,57 +284,122 @@ public class UserBoardDao {
 	}
 
 
-	public int insertReply(Connection con, Board replyBoard) throws UserBoardException {
+	public int insertReply(Connection con, String boardNum, Board board) throws UserBoardException {
 		int result = 0;
 		PreparedStatement pstmt = null;
 		
-		String query = null;
+		String query = "INSERT INTO TB_COMMENT_REVIEW "
+						+ "(COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS, "
+						+ "COMMENT_STATE, DEL_DATE) VALUES "
+						+ "('CR'||LPAD(COMMENT_REVIEW_SEQ.NEXTVAL, 4, '0'), ?, ?, SYSDATE, ?, "
+						+ "'SN', NULL)";
 		
-		/*
-		//원글의 댓글인 경우
-		if(replyBoard.getBoardLevel() == 1){
-			query = "insert into board values ("
-				+ "(select max(board_num) + 1 from board), "
-				+ "?, ?, ?, null, null, sysdate, ?, ?, "
-				+ "(select max(board_num) + 1 from board), "
-				+ "1, default)";
-		}
-		
-		//댓글의 댓글인 경우
-		if(replyBoard.getBoardLevel() == 2){
-			query = "insert into board values ("
-					+ "(select max(board_num) + 1 from board), "
-					+ "?, ?, ?, null, null, sysdate, ?, ?, ?, "
-					+ "1, default)";
-		}
-		*/
-		/*
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setString(1, replyBoard.getTitle());
-			pstmt.setString(2, replyBoard.getUserId());
-			
-			if(replyBoard.getBoardLevel() == 2)
-				pstmt.setInt(6, replyBoard.getBoardReplyRef());
-			
+			pstmt.setString(1, boardNum);
+			pstmt.setString(2, board.getCommentUserId());
+			pstmt.setString(3, board.getCommentContents());
+		
 			result = pstmt.executeUpdate();
 			
 			if(result <= 0)
-				throw new BoardException(
-					replyBoard.getBoardRef()
-					+ "번글에 대한 댓글 달기 실패!");
+				throw new UserBoardException("새 댓글 등록 실패!");			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new BoardException(e.getMessage());
+			throw new UserBoardException(e.getMessage());
 		}finally{
 			close(pstmt);
-		}
-		*/
+		}		
+		
 		return result;
 	}
-
-	public ArrayList<Board> selectReplyList(Connection con, int currentPage, int limit) throws UserBoardException {
+	
+	public int updateReply(Connection con, Board board) throws UserBoardException {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		String query = "update TB_COMMENT_REVIEW set "
+							+ "COMMENT_CONTENTS = ?, COMMENT_DATE = SYSDATE "
+							+ "where COMMENT_NO = ?";
+		
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, board.getCommentContents());
+			pstmt.setString(2, board.getCommentNo());
+			result = pstmt.executeUpdate();
+			
+			if(result <= 0)
+				throw new UserBoardException("댓글 수정 실패!");			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserBoardException(e.getMessage());
+		}finally{
+			close(pstmt);
+		}		
+		
+		return result;
+	}
+	
+	public int deleteReply(Connection con, String commentNo) throws UserBoardException {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		
+		String query = "update TB_COMMENT_REVIEW set "
+							+ "COMMENT_STATE = 'SD', DEL_DATE = SYSDATE "
+							+ "where COMMENT_NO = ?";
+		
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, commentNo);
+			result = pstmt.executeUpdate();
+			
+			if(result <= 0)
+				throw new UserBoardException("댓글 삭제 실패!");			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserBoardException(e.getMessage());
+		}finally{
+			close(pstmt);
+		}		
+		
+		return result;
+	}
+	
+	public int getListReplyCount(Connection con, String boardNo) throws UserBoardException {
+		int listCount = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		String query = "select count(*) from V_USER_REVIEW_COMMENT "
+				+ "where BOARD_NO = ? and COMMENT_STATE = 'SN'";
+		
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, boardNo);
+			
+			rset = pstmt.executeQuery();
+			
+			if(rset.next()){
+				listCount = rset.getInt(1);
+			}else{
+				throw new UserBoardException("댓글이 존재하지 않습니다.");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new UserBoardException(e.getMessage());
+		}finally{
+			close(rset);
+			close(pstmt);
+		}
+		
+		return listCount;
+	}
+	
+	public ArrayList<Board> selectReplyList(Connection con, String boardNum, int currentPage, int limit) throws UserBoardException {
 		ArrayList<Board> list = new ArrayList<Board>();
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
@@ -390,19 +410,21 @@ public class UserBoardDao {
 				+ "COMMENT_CONTENTS, COMMENT_STATE "
 				+ "from V_USER_REVIEW_COMMENT "
 				+ "where COMMENT_STATE='SN' "
-				+ "order by COMMENT_NO desc) "
+				+ "and BOARD_NO = ? "
+				+ "order by COMMENT_NO asc) "
 				+ "where rnum >= ? and rnum <= ?";
-
+		
 		int startRow = (currentPage - 1) * limit + 1;
 		int endRow = startRow + limit - 1;
-		
 		try {
 			pstmt = con.prepareStatement(query);
-			pstmt.setInt(1, startRow);
-			pstmt.setInt(2, endRow);
+			pstmt.setString(1, boardNum);
+			pstmt.setInt(2, startRow);
+			pstmt.setInt(3, endRow);
+
 			
 			rset = pstmt.executeQuery();
-			
+
 			while(rset.next()){
 				Board b = new Board();
 				b.setCommentNo(rset.getString("COMMENT_NO"));
@@ -412,14 +434,8 @@ public class UserBoardDao {
 				b.setCommentDate(rset.getDate("COMMENT_DATE"));
 				b.setCommentContents(rset.getString("COMMENT_CONTENTS"));
 				b.setCommentState(rset.getString("COMMENT_STATE"));
-				
 				list.add(b);
-			}
-			
-			if(list.size() == 0)
-				throw new UserBoardException(
-						"게시글이 존재하지 않습니다.");
-			
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new UserBoardException(e.getMessage());
@@ -430,5 +446,8 @@ public class UserBoardDao {
 		
 		return list;
 	}
+
+
+
 
 }

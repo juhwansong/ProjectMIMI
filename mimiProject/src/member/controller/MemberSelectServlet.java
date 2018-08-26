@@ -1,11 +1,17 @@
 package member.controller;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import common.model.vo.Member;
+import member.exception.MemberException;
+import member.model.service.MemberService;
 
 /**
  * Servlet implementation class MemberSelectServlet
@@ -26,8 +32,27 @@ public class MemberSelectServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		
+		response.setContentType("text/html; charset=utf-8");
+		String userId = (String)request.getSession().getAttribute("userId");
+		Member member = null;
+		RequestDispatcher view = null;
+		
+		try{
+			
+			member = new MemberService().selectMember(userId);
+			System.out.println("member : " + member);
+			if(member != null){
+				view = request.getRequestDispatcher("views/member/memberCorrectView.jsp");
+				request.setAttribute("member", member);
+				view.forward(request, response);
+			}
+			
+		} catch(MemberException e){
+			//현재 접속중인 회원이 본인 정보를 가져 올수 없을때
+			System.out.println(e.getMessage());
+			
+		}
 	}
 
 	/**

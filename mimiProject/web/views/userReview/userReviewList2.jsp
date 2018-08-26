@@ -6,7 +6,7 @@
 	//String userId = (String)session.getAttribute("userId");
 %>
 <%@include file="../../head.jsp"%>
-<%@include file="../../header.jsp"%>
+<%-- <%@include file="../../header.jsp"%> --%>
 
 <style>
 table {

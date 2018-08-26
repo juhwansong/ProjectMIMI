@@ -4,7 +4,6 @@
 
 
 <%@include file="../../head.jsp"%>
-<%@include file="../../header.jsp"%>
 <!-- ----------- -->
 
 <!-- <title>adminPage</title> -->

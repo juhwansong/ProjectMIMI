@@ -156,10 +156,10 @@
                         <a href="#page-top"></a>
                     </li> 
                     <li>
-                        <a  href="/mimi/views/notice/noticeList.jsp">공지사항</a>
+                        <a  href="/mimi/noticelist">공지사항</a>
                     </li>
                     <li>
-                        <a  href="/mimi/views/board/adminReview.jsp">MIMI 리뷰</a>
+                        <a  href="/mimi/adminboardlist">MIMI 리뷰</a>
                     </li>
                     <li>
                         <a  href="/mimi/views/bestReview/bestReviewList.jsp">Best리뷰</a>
@@ -189,18 +189,19 @@
 			<!-- 관리자 로그인 상태에서 메뉴 버튼 누를시 -->
 			<div class="admin-menu-box">
 				<div>
-					<p align="center" style="margin:0px;font-size:7pt;">level1</p>
-					<p align="center" style="margin:0px;">Nickname</p>
-					<p align="center" style="font-size:7pt;">admin</p>
+					<p id="menu-gradename" align="center" style="margin:0px;font-size:7pt;"></p>
+					<p id="menu-nickname" align="center" style="margin:0px;"></p>
+					<p id="menu-userid" align="center" style="font-size:7pt;"><%=session.getAttribute("userId") %></p>
 				</div>
 				<div align="center">
-					<a href="#">로그아웃</a>
+					<a href="/mimi/memberlogout">로그아웃</a>
 				</div>
 				<hr style="border: thin 1px black;">
 			
 				<div style="padding-top:20px;" align="center">	
 					<span style="width:100px;">	
-						<a href="/mimi/views/board/myContent.jsp">
+						<!-- <a href="/mimi/views/board/myContent.jsp"> -->
+						<a href="/mimi/myboardlist?nickname=NICKNAME&user=관리자">
 							<div>
 								<p style="font-size:25pt;" class="far fa-file-alt" aria-hidden="true"></p>
 								<p>작성한 글</p>	
@@ -208,7 +209,8 @@
 						</a>
 					</span>			
 					<span style="width:100px;">	
-						<a href="/mimi/views/board/myComment.jsp">
+						<!-- <a href="/mimi/views/board/myComment.jsp"> -->
+						<a href="/mimi/mycommentlist?nickname=NICKNAME&user=관리자">
 							<div>
 								<p style="font-size:25pt;" class="far fa-comments" aria-hidden="true"></p>
 								<p>작성한 댓글</p>	
@@ -219,7 +221,7 @@
 			
 				<div style="padding-top:20px;" align="center">	
 					<span style="width:100px;">
-						<a href="/mimi/views/board/favoriteList.jsp">
+						<a href="/mimi/bookmarklist">
 							<div>
 								<p style="font-size:25pt;" class="fas fa-map-marker-alt" aria-hidden="true"></p>
 								<p>즐겨찾기</p>
@@ -241,20 +243,39 @@
    
     <script type="text/javascript">
 		$(function(){
+			//화면 로딩 시 바로 ajax 통해서 회원 닉네임, 등급이름 가져온다.
+			$.ajax({
+	      		url : "/mimi/membermenuinfo",
+	      		type : "post",
+	      		success : function(data){
+	      			var json = data;
+	      			$("#menu-gradename").html(decodeURI(json.gradeName));
+	      			$("#menu-nickname").html(decodeURI(json.nickName));
+	      		}
+	      	});
+			
+			
 			$(document).on("mouseover", "#menu-box-btn", function(){
 				$("#menu-box-btn").css("cursor", "pointer");
 			});
-			$(document).on("click", "#menu-box-btn", function(){
+			
+			
+			$(document).on("click", "body", function(event){
 				if($(".admin-menu-box").css("display") === "none"){
-					$(".admin-menu-box").slideDown("slow", function() {
-						
-					});
+					if($(event.target).is("#menu-box-btn,#menu-box-btn *")){
+						$(".admin-menu-box").slideDown("slow", function() {	
+						});	
+					}
 				}
-				else{
-					$(".admin-menu-box").slideUp("slow", function() {
-						
-					});
+				else{					
+					if(!$(event.target).is(".admin-menu-box,.admin-menu-box *")){
+						$(".admin-menu-box").slideUp("slow", function() {	
+						});	
+					}
 				}
 			});	
+			
+			
+			
 		});
 	</script>

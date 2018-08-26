@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
@@ -45,6 +46,7 @@ public class UserBoardInsertServlet extends HttpServlet {
 						
 		int maxSize = 1024 * 1024 * 10;
 		
+		HttpSession session = request.getSession();		
 		RequestDispatcher view = null;
 		
 		/*
@@ -55,7 +57,16 @@ public class UserBoardInsertServlet extends HttpServlet {
 		}
 		*/
 		// 파일이 업로드되어 저장될 폴더 지정
-		String savePath = request.getSession().getServletContext().getRealPath("/bupfiles");
+		String savePath = request.getSession().getServletContext().getRealPath("/resources/files/userboard");
+		
+		// 디렉토리가 없을 경우 생성  *********************************     
+        File targetDir = new File(savePath);  
+        
+        if(!targetDir.exists()) {    //디렉토리 없으면 생성.
+        	targetDir.mkdirs();
+        }
+
+        // 디렉토리가 없을 경우 생성  *********************************
 
 		// request 를 MultipartRequest 로 변환함
 		MultipartRequest mrequest = new MultipartRequest(request, savePath, maxSize, "UTF-8",
@@ -64,8 +75,7 @@ public class UserBoardInsertServlet extends HttpServlet {
 		// 전송온 값 꺼내서 변수/객체에 저장하기
 		Board board = new Board();
 		board.setCategoryNo(mrequest.getParameter("categoryNo"));	//카테고리 연결필요
-		//board.setUserId(mrequest.getParameter("userId")); 세션에서 아이디 획득 필요
-		board.setUserId("user04");
+		board.setUserId((String)session.getAttribute("userId"));
 		board.setBoardGb(mrequest.getParameter("boardGb"));
 		board.setTitle(mrequest.getParameter("title"));
 		board.setContents(mrequest.getParameter("content_tag"));

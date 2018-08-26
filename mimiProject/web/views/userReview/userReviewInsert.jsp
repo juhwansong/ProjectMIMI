@@ -1,11 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%
-	//String userId = (String)session.getAttribute("userId");
-%>
 
 <%@include file="../../head.jsp"%>
-<%@include file="../../header.jsp"%>
 <script type="text/javascript">
 var openWin;
 //var cateVal = "카페";
@@ -24,6 +20,7 @@ function cateSelect(btnVal){
 }
 	
 </script>
+
 
 <style type="text/css">
 
@@ -45,7 +42,7 @@ function cateSelect(btnVal){
 				<td width="*"><input type="text" class="form-control"
 					id="user_title" placeholder="제목" name="title"></td>
 				<th width="15%">작성자</th>
-				<td width="15%">NICKNAME</td>
+				<td width="15%"><%= nickName %></td>
 			</tr>
 			<tr>
 				<th><label for="text_category" class="control-label">카테고리</label></th>
@@ -116,8 +113,7 @@ function cateSelect(btnVal){
 	</div>
 	<hr class="margin2">
 	<div style="text-align: center;">
-		<button type="submit" class="btn btn-default" style="outline: none;">작성
-			완료</button>
+		<button type="submit" class="btn btn-default" style="outline: none;">작성	완료</button>
 		<input type="button" class="btn btn-default"
 			onclick="window.history.back();" value="취소" style="outline: none;">
 	</div>

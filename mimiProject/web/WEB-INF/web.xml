@@ -4,4 +4,18 @@
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
+  <!-- 비밀번호 암호와 관련 필터 -->
+  <filter>
+    <filter-name>memberpassword</filter-name>
+    <filter-class>member.filter.MemberPasswordFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>memberpassword</filter-name>
+    <url-pattern>/memberenroll</url-pattern>
+    <url-pattern>/memberlogin</url-pattern>
+    <url-pattern>/memberpasswordcheck</url-pattern>
+    <url-pattern>/memberupdate</url-pattern>
+    <url-pattern>/memberupdatepassword</url-pattern>
+  </filter-mapping>
+  <!-- 비밀번호 암호와 관련 필터 끝 -->
 </web-app>

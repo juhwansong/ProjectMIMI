@@ -1,8 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 
-<%@include file="../../head.jsp" %> 
-<%-- <%@include file="../../header.jsp" %> --%>
+<%-- <%@include file="../../head.jsp" %>  --%>
+<%@include file="../../nonHeaderHead.jsp" %> 
+<!-- head.jsp에 header.jsp가 들어가 있기때문에 header.jsp가 미포함된 head.jsp추가  -->
+
 <script type="text/javascript">
 $(function getParentText(){
 	document.getElementById("store_name").value = opener.document.getElementById("store_name").value;

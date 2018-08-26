@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%> 
 
 <title>MIMI</title>
 <!-- 상단에 노출되서 주석처리.. <title>header</title> -->
@@ -161,10 +161,10 @@
                         <a href="#page-top"></a>
                     </li> 
                     <li>
-                        <a href="/mimi/views/notice/noticeList.jsp">공지사항</a>
+                        <a href="/mimi/noticelist">공지사항</a>
                     </li>
                     <li>
-                        <a href="/mimi/views/board/adminReview.jsp">MIMI 리뷰</a>
+                        <a href="/mimi/adminboardlist">MIMI 리뷰</a>
                     </li>
                     <li>
                         <a href="/mimi/views/bestReview/bestReviewList.jsp">Best리뷰</a>
@@ -193,18 +193,18 @@
 				<h3 align="center">로그인 및 회원가입</h3>
 				<hr style="border: thin 1px black;">
 				
-				<form role="form">
+				<form role="form" >
             		<div class="form-group" align="center">
-              			<input type="email" class="form-control" id="InputEmail" style="width:150pt;" placeholder="아이디 입력">
+              			<input type="text" class="form-control" id="menu-userid" name="menu-userid" style="width:150pt;" maxlength="20" placeholder="아이디 입력">
               		</div>
               		<div class="form-group" align="center">	
-              			<input type="email" class="form-control" id="InputEmail" style="width:150pt;" placeholder="비밀번호 입력">
+              			<input type="password" class="form-control" id="menu-userpassword" name="menu-userpassword" style="width:150pt;" maxlength="20" placeholder="비밀번호 입력">
               		</div>	
               		<div class="form-group">
-              			<p class="help-block" align="right" style="color:#d9534f; font-size:12px;"><a href="#">아이디/비밀번호 찾기</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+              			<p class="help-block" align="right" style="color:#d9534f; font-size:12px;"><a href="/mimi/views/member/idFindView.jsp">아이디</a>&nbsp;/&nbsp;<a href="/mimi/views/member/passwordFindView.jsp">비밀번호 찾기</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
               		</div>
               		<div class="form-group" align="center">	
-              			<button type="submit" class="btn btn-info" style="width:80%; margin:0px; outline: none;">로그인&nbsp;<i class="fa fa-check spaceLeft"></i></button>		
+              			<button type="button" id="login-btn" class="btn btn-info" style="width:80%; margin:0px; outline: none;">로그인&nbsp;<i class="fa fa-check spaceLeft"></i></button>		
             		</div>	
             	</form>	
             	<hr style="margin: 0px 1px 10px 1px;">		
@@ -217,19 +217,49 @@
     
     <script type="text/javascript">
 		$(function(){
+			//미니 메뉴 관련 동작 (해당 메뉴를 제외한 위치를 클릭했을때 미니 메뉴 사라짐)
 			$(document).on("mouseover", "#menu-box-btn", function(){
 				$("#menu-box-btn").css("cursor", "pointer");
 			});
-			$(document).on("click", "#menu-box-btn", function(){
+			
+			
+			$(document).on("click", "body", function(event){
 				if($(".menu-box").css("display") === "none"){
-					$(".menu-box").slideDown("slow", function() {			
-					});			
+					if($(event.target).is("#menu-box-btn,#menu-box-btn *")){
+						$(".menu-box").slideDown("slow", function() {	
+						});	
+					}
 				}
-				else{
-					$(".menu-box").slideUp("slow", function() {
-					});
+				else{					
+					if(!$(event.target).is(".menu-box,.menu-box *")){
+						$(".menu-box").slideUp("slow", function() {	
+						});	
+					}
 				}
-			});	
+			});
+			
+			//로그인 ajax 이용(실패 했을때 바로 처리를 위해)
+			$(document).on("click", "#login-btn", function(){
+				$.ajax({
+	  	       		url : "/mimi/memberlogin",
+	  	       		type : "post",
+	  	          	data : {
+	  	          			"userid" : $("#menu-userid").val(),
+	  	          			"userpassword" : $("#menu-userpassword").val()
+	  	          	},
+	  	          	success : function(data){
+	  	      
+	  	          		if(data === "success"){  //아이디,비번 입력 성공시
+	  	          			window.location = "/mimi/index.jsp";//현재 페이지 새로고침
+	  	          		}
+	  	          		else{
+	  	          			alert(data);  //에러 메세지 화면에 보여주기
+	  	          		}
+	  	        	}                     
+	  	  		});
+			});
+			
+			
 		});
 	</script>	
 	

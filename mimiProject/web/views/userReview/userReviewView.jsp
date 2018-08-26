@@ -4,57 +4,279 @@
 <%
 	Board board = (Board)request.getAttribute("board");
 	int currentPage = ((Integer)request.getAttribute("currentPage")).intValue();
-	//String userId = (String)session.getAttribute("userId");
 %>
 
-<%@include file="../../head.jsp"%>
-<%@include file="../../header.jsp"%>
+<!DOCTYPE html>
+<html>
+<head>
 
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+<link rel="stylesheet" href="/mimi/resources/css/bootstrap.css">
+<script type="text/javascript" src="/mimi/resources/js/jquery-3.3.1.min.js"></script>
+<link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
+</head>
+<body onload="commentList(1)">
+<!-- 바디 태그 시작 -->
+
+<%
+	String ssuserId = (String)session.getAttribute("userId");
+	String authority = (String)session.getAttribute("authority");
+	String nickName = (String)session.getAttribute("nickName");
+	
+	if(ssuserId == null){
+%>		
+		<%@include file="../../header.jsp" %>
+<% 		
+	}
+	else if(authority.equals("U")){
+%>		
+		<%@include file="../../memberHeader.jsp" %>
+<%	
+	}
+	else if(authority.equals("A")){
+%>		
+		<%@include file="../../adminHeader.jsp" %>
+<%		
+	}
+%>
 
 <!-- ---------------------- -->
 
-<script src="https://cdn.jsdelivr.net/clipboard.js/1.5.3/clipboard.min.js"></script>
-<script src="/mimi/resources/js/kakao.min.js"></script>
 <script src="//code.jquery.com/jquery.min.js"></script>
 <script type="text/javascript">
-	$(function(){
+
+</script>
+
+<script type="text/javascript">
+function cmtedit(obj, cmtNo){
+    var checkBtn = $(obj);
+	//var trashParam = $(obj).parent().attr('id');
+    //var index = $( "#comment" ).index( obj );
+    var table = checkBtn.parent().parent().parent();
+    var tr = table.children()
+    var td = tr.children()
+    
+    var d0 = td.eq(0).text();
+    var d1 = td.eq(1).text();
+    var d2 = td.eq(2).text();
+    var d3 = td.eq(3).text();
+    var d4 = td.eq(4).text();
+    
+    var cmtcontent= td.eq(4).text();
+    
+    td.eq(2).empty();
+    td.eq(3).empty();
+    td.eq(4).empty();
+    td.eq(2).append("<td style='width: 50px' class='text-center'><a href='javascript:void(0);' onclick='cmtupdate(\""+ cmtNo + "\");'>완료</a></td>");
+    td.eq(3).append("<td style='width: 50px' class='text-center'><a href='javascript:void(0);' onclick='commentList(currentPage);'>취소</a></td>");
+    td.eq(4).append("<textarea style=\"width: 100%;\" rows=\"3\" class=\"cmtEditcontent\" name=\"cmtEditcontent\">"+cmtcontent+"</textarea>");
+}
+
+function cmtupdate(cmtNo){
+    var cmtEditcontent = $(".cmtEditcontent").val();
+    console.log("cmtEditcontent : " + cmtEditcontent);
+    console.log("cmtNo : " + cmtNo); 
+	$.ajax({
+		url : "/mimi/userboardreplyupdate",
+		type : "post",
+		data : {cmtNo : cmtNo, cmtEditcontent : cmtEditcontent},
+		success : function(data){		
+			commentList(1); 
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
+
+function cmtdelete(cmtNo){
+	if (confirm("삭제 하시겠습니까?")){ 
 		$.ajax({
-			url : "/mimi/userboardreplylist",
-			type : "get",
-			dataType : "json",
-			success : function(data){				
-				//console.log("success : " + data);			
-				var jsonStr = JSON.stringify(data);
-				//console.log(jsonStr);
-				var json = JSON.parse(jsonStr);
-				//console.log(json);
-				
-				var values = "";
-				for(var i in json.list){
-					values += "<tr>"
-						+ "<td><table id='comment' style='width:100%'>"
-							+ "<tr>"
-								+ "<td style='width: 40px'><img src='/mimi/resources/images/icon/icon_human.ico' width=40 height=40></td>"
-								+ "<td class='text-left'>&nbsp;" + json.list[i].cmtNo + "<span style='font-size: 8px'>&nbsp;&nbsp;" + json.list[i].cmtDate + "</span></td>"
-								+ "<td style='width: 50px' class='text-center'><a href='/mimi/views/userReview/userReviewList.jsp'>수정</a></td>"
-								+ "<td style='width: 50px' class='text-center'><a href='#'>삭제</a></td>"
-							+"</tr>"
-						+"<tr>"
-							+"<td colspan='4' class='text-left'><div class='margin5'>" + json.list[i].cmtContents + "</div></td>"
-						+"</tr>"
-						+"</table></td>"
-					+"</tr>"
-				}
-				
-				$("#cmtlist").html(values);
+			url : "/mimi/userboardreplydelete",
+			type : "post",
+			data : {cmtNo : cmtNo},
+			success : function(data){		
+				commentList(1); 
 			},
 			error : function(jqXHR, textstatus, errorThrown){
 				console.log("error : " + jqXHR + ", " + 
 						textstatus + ", " + errorThrown);
 			}
 		});  //ajax close
-	});
+		}else{ 
+		return; 
+	} 
+} 
+
 </script>
+<script type="text/javascript">
+	//var listCount = json.listCount;
+	//var startPage = json.startPage;
+	//var endPage = json.endPage;
+	var maxPage = "";
+	var currentPage = "";
+	function commentList(page){
+	$.ajax({
+		url : "/mimi/userboardreplylist",
+		type : "get",
+		dataType : "json",
+		data : {bnum : "<%= board.getBoardNo() %>", page : page},
+		success : function(data){					
+			var jsonStr = JSON.stringify(data);
+			var json = JSON.parse(jsonStr);
+			var values = "";
+			var pageValues = "";
+			
+			for(var i in json.list){
+				values += "<tr>"
+					+ "<td><table id='comment' style='width:100%'>"
+						+ "<tr>"
+							+ "<td style='width: 40px'><img src='/mimi/resources/images/icon/icon_human.ico' width=40 height=40></td>"
+							+ "<td class='text-left'>&nbsp;" + json.list[i].cmtNickname + "<span style='font-size: 8px'>&nbsp;&nbsp;" + json.list[i].cmtDate + "</span></td>"
+							//+ "<td style='width: 50px' class='text-center' id=\"abc\"><a href='#a' class='cmtedit'>수정</a></td>"
+							+ "<td style='width: 50px' class='text-center'>";
+			if(json.list[i].cmtUserId=="<%= ssuserId %>"){
+				values += "<a href='javascript:void(0);' onclick=\"cmtedit(this, \'"+ json.list[i].cmtNo + "\');\">수정</a></td>"
+			}
+				values += "</td><td style='width: 50px' class='text-center'>";
+			if(json.list[i].cmtUserId=="<%= ssuserId %>"){
+				values += "<a href='javascript:void(0);' onclick=\"cmtdelete('"+ json.list[i].cmtNo + "');\">삭제</a>"
+			}		
+				values +="</td></tr>"
+					+"<tr>"
+					+"<td colspan='4' class='text-left' id='cmtContentsview'><div class='margin5'>" + json.list[i].cmtContents + "</div></td>"
+					+"</tr>"
+					+"</table></td>"
+				+"</tr>";
+			}	
+			$("#cmtlist").html(values);
+			//$("#paging").paging();
+			maxPage = json.maxPage;
+			currentPage = json.currentPage;
+			$("#adminPagination").empty();
+
+			//<< 1
+			if(json.currentPage <= 1){
+				pageValues += '<li><span style="color:#ccc;">&laquo;</span></li><li>';
+			}else{
+				pageValues += '<li><a href="javascript:void(0)" onclick="paging(1);" title="맨처음"><span style="color:#444;">&laquo;</span></a></li><li>'
+			}
+			
+			//< -10
+			if((json.currentPage - 10) <= json.startPage && (json.currentPage - 10) > 1){
+				pageValues += '<a href="javascript:void(0)" onclick="commentList(' + (json.currentPage - 10) + ');" title="이전"><span style="color:#444;">&lt;</span></a></li>'	
+			}else if(json.currentPage != 1){ //1페이지 아니면 항상 활성화
+				pageValues += '<a href="javascript:void(0)" onclick="commentList(1);" title="이전"><span style="color:#444;">&lt;</span></a></li>'
+			}else{
+				pageValues += '<span style="color:#ccc;">&lt;</span></li>'
+			}
+			 	//123
+			for(var p = json.startPage; p <= json.endPage; p++){
+				if(p == json.currentPage){
+						pageValues += '<li><span style="color:#ccc;">' + p + '</span></li>'
+			 	}else{ 
+					pageValues += '<li><a href="javascript:void(0)" onclick="commentList(' + p + ');"><span style="color:#444;">' + p + '</span></a></li>'
+				}
+			}
+				
+			//> +10
+			if((json.currentPage + 10) <= json.maxPage){
+		 		pageValues += '<li><a href="javascript:void(0)" onclick="commentList(' + (json.currentPage + 10) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>'
+			}else if((json.currentPage + 10 ) > json.maxPage && json.currentPage < json.maxPage){ //마지막 페이지 아닐시 항상 활성화
+				pageValues += '<li><a href="javascript:void(0)" onclick="commentList(' + (json.maxPage) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>'
+			}else{
+				pageValues += '<li><span style="color:#ccc;">&gt;</span></li>'
+			}
+				
+			//>> max
+			if(json.currentPage >= json.maxPage){
+				pageValues += '<li><span style="color:#ccc;">&raquo;</span></li>'
+			}else{
+				pageValues += '<li><a href="javascript:void(0)" onclick="commentList(' + json.maxPage + ');" title="맨끝"><span style="color:#444;">&raquo;</span></a></li>'	
+			}
+			$("#adminPagination").html(pageValues);//페이지네이션
+			},
+			error : function(jqXHR, textstatus, errorThrown){
+				console.log("error : " + jqXHR + ", " + 
+						textstatus + ", " + errorThrown);
+			}
+		});  //ajax close
+	}
+</script>
+
+<script type="text/javascript">
+function recommendCheck(){
+    var bnum = $("#bnum").val();
+    var cmtContent = $("#cmtContent").val();
+	$.ajax({
+		url : "/mimi/recommendcheck",
+		type : "get",
+		dataType : "json",
+		data : {bnum : "<%= board.getBoardNo() %>"},
+		success : function(data){					
+			console.log(data);
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
+</script>
+
+<script type="text/javascript">
+function cmtinsert(){
+    var bnum = $("#bnum").val();
+    var cmtContent = $("#cmtContent").val();
+	$.ajax({
+		url : "/mimi/userboardreplyinsert",
+		type : "post",
+		data : {userid : "ssuserId", bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
+		success : function(data){		
+			commentList(maxPage); 
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
+</script>
+<script type="text/javascript">
+   $(function(){
+      //버튼 클릭시 즐겨찾기 작동
+      $("#bookmarkBtn").on('click', function(){   
+         var icon = ($(this).children().attr('class') === 'fas fa-star') ? 'far fa-star' : 'fas fa-star';
+         $(this).children().prop('class', icon); //아이콘 변경
+
+          var urlValue = "";         
+         if($(this).children().attr('class') === 'fas fa-star'){ //추가
+            urlValue = "bookmarkinsert";
+         }else{//삭제
+            urlValue = "bookmarkdelete";
+         }
+         //console.log("url값 : " + urlValue);
+         $.ajax({
+            url : urlValue,
+            data : {boardNo : <%= board.getBoardNo() %>},
+            type : "post"
+         })//ajax
+            
+         })//btn event
+      
+   })//document
+</script>
+
+
 <style type="text/css">
 
 #text_context {
@@ -108,9 +330,8 @@
 	
 </script>
 
-
-
 <!-- <title>유저리뷰보기</title> -->
+
 <div class="container" style="width:1150px;">
 	<h3>유저리뷰</h3>
 	<div id="inner">
@@ -122,9 +343,9 @@
 				<i class="fas fa-pen"></i><%= board.getNickName() %>&nbsp;<%= board.getGradeName() %>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-eye"></i><%= board.getHits() %>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-calendar"></i><%= board.getBoardDate() %></th>
-				<th width="8%"><button type="button" class="btn btn-default btn-lg" id="favorites" onclick="imgToggle()">
-						<span class="glyphicon glyphicon-star" aria-hidden="true" style="color: yellow"></span>
-					</button></th>
+				<th width="8%"><button type="button" class="btn btn-default btn-lg" id="bookmarkBtn" style="outline: none;">
+				<span class="far fa-star" aria-hidden="true" style="color: #fd0"></span>
+				</button></th>
 			</tr>
 			<tr>
 				<th>카테고리</th>
@@ -167,28 +388,11 @@
 	<br>
 	<hr>
 	</div>
-	<!--  이미지영역
-	<div id="image_l" style="text-align: center;">
-		<img src="/mimi/resources/images/userReview/s_1.jpg" width=400
-			height=300><br>
+	<div style="text-align: center;" id="recommed">
+		<img class="btn-img"
+			src="/mimi/resources/images/icon/icon_thumb_up.png" width=50 onclick="recommendCheck();">
+		<p id="good_qta"><%= board.getRecommed() %></p>
 	</div>
-	<br>
-	<div id="image_s" style="text-align: center;">
-		<img src="/mimi/resources/images/userReview/s_1.jpg" width=150
-			height=100> <img
-			src="/mimi/resources/images/userReview/s_3.jpg" width=150 height=100>
-		<img src="/mimi/resources/images/userReview/s_1.jpg" width=150
-			height=100>
-	</div>
-	<br>
-	<hr>
-	<div style="text-align: center;">
-			<img class="btn-img"
-				src="/mimi/resources/images/icon/icon_thumb_up.png" width=100
-				 onclick="#">
-		<p id="good_qta">111</p>
-	</div>
-	-->
 	<!-- comment -->
 	<div style="text-align: center;">
 		<!-- 기존 댓글 -->
@@ -209,33 +413,50 @@
 		</table>
 
 		<hr class="margin2">
-		
+		<table style="width:100%">
+	<tr>
+		<td width="10%"></td><!-- 빈칸 -->
+		<td width="*"><!-- 페이지 -->
+		<!-- Pagination -->
+			<ul class="pagination" id="adminPagination" style="float: center; display: flex; justify-content: center;">
+			</ul>	
+		</td>
+	</tr>
+</table>	
 		
 		<!-- 댓글 작성부분 -->
-		<form>
+		<!--<form>-->
+		<input type="hidden" id="bnum" name="bnum" value="<%= board.getBoardNo() %>">
+		<input type="hidden" id="userid" name="userid" value="user02">
 		<table style="width:100%;">
 			<tr>
 				<td width="15%"><img src="/mimi/resources/images/icon/icon_human.ico" width=40
-				height=40>&nbsp;&nbsp;<label>user03</label></td>
-				<td width="*"><textarea style="width: 100%;" rows="3" id="texta_content"></textarea></td>
-				<td width="8%"><button type="submit" class="btn btn-default" style="outline: none;">등록</button></td>
+				height=40>&nbsp;&nbsp;<label><%= nickName %></label></td>
+				<td width="*"><textarea style="width: 100%;" rows="3" id="cmtContent" name="cmtContent"></textarea></td>
+				<td width="8%"><button class="btn btn-default" style="outline: none;" value="등록" id="cmtsubmit" onclick="cmtinsert()">등록</button></td>
 			</tr>
 		</table>
-		</form>
+		<!--</form>->
 		<!-- /댓글 작성부분 -->
 	</div>
 	<hr>
 	<div class="row">
 		<div class="col-xs-6 text-left">
 			<input type="button" class="btn btn-default"
-				onClick="window.history.back();" value="목록">
+				onClick="location.href='/mimi/userboardlist'" value="목록">
 		</div>
+		<% if(board.getUserId().equals(ssuserId)){ %>
 		<div class="col-xs-6 text-right">
 			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/userboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>'">
 			<input type="submit" class="btn btn-default" value="삭제" style="outline: none;" onClick="location.href='/mimi/userboarddelete?bnum=<%= board.getBoardNo() %>'">
 		</div>
+		<% } %>
 	</div>
 	<br>
+</div>
+<!-- 페이징 처리 -->
+<div style="text-align: center" id="paging">
+
 </div>
 
 <!-- 카톡공유용 -->

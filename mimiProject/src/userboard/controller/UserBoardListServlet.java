@@ -36,13 +36,12 @@ public class UserBoardListServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.setContentType("text/html; charset=utf-8");
-		
 		//페이지 값 처리용 변수
 		int currentPage = 1;
 		//한 페이지당 출력할 목록 갯수
 		int limit = 10;
-		
 		//전달된 페이지값 추출
+		System.out.println(currentPage);
 		if(request.getParameter("page") != null){
 			currentPage = Integer.parseInt(request.getParameter("page"));
 		}

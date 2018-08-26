@@ -1,11 +1,19 @@
 package myboard.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import common.model.vo.Board;
+import myboard.exception.MyBoardException;
+import myboard.model.service.MyBoardService;
 
 /**
  * Servlet implementation class MyBoardListServlet
@@ -26,8 +34,82 @@ public class MyBoardListServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.setContentType("text/html; charset=utf-8");
+		
+		String category = request.getParameter("category");
+		String searchText = request.getParameter("searchText");
+		String nickname = request.getParameter("nickname");
+		String user = request.getParameter("user");
+		
+		if(searchText == null) 
+			searchText = request.getParameter("searchText");
+		
+		HashMap<String, String> searchMap = new HashMap<String, String>();
+		searchMap.put(nickname, user);
+		
+		int currentPage = 1;
+		int limit = 15;
+		int pageLimit = 10;
+		
+		if(category == null || category.equals("ALL")) {
+			category = "ALL";
+		}
+		
+		if(request.getParameter("page") != null) {
+			currentPage = Integer.parseInt(request.getParameter("page"));
+		}
+		
+		MyBoardService service = new MyBoardService();
+		RequestDispatcher view = null;
+		try {
+			int searchListCount = service.getSearchListCount(searchMap);
+			ArrayList<Board> list = service.searchMyBoard(searchMap);
+			
+			int maxPage = (int)((double)searchListCount / limit + 0.9);
+			int startPage = (((int)((double)currentPage / pageLimit + 0.9)) - 1) * pageLimit + 1;
+			int endPage = startPage + pageLimit - 1;
+			int startRow = (currentPage - 1) * limit + 1;
+			int endRow = startRow;
+			if(maxPage < endPage) {
+				endPage = maxPage;
+			}
+			if(currentPage == maxPage) {
+				endRow = startRow + (searchListCount - ((maxPage - 1) * limit)) - 1;
+			} else if(searchListCount < limit) {
+				endRow = searchListCount;
+			} else {
+				endRow = startRow + limit - 1;
+			}
+
+			ArrayList<Board> currentList = new ArrayList<Board>();
+			if(list.size() > 0) {
+				for(int i = startRow; i <= endRow; i++)
+					currentList.add(list.get(i - 1));
+			}
+			
+			if(currentList.size() > 0) {
+				view = request.getRequestDispatcher("views/board/myContent.jsp");
+				request.setAttribute("list", currentList);
+				request.setAttribute("currentPage", currentPage);
+				request.setAttribute("maxPage", maxPage);
+				request.setAttribute("startPage", startPage);
+				request.setAttribute("endPage", endPage);
+				request.setAttribute("listCount", searchListCount);
+				request.setAttribute("category", category);
+				request.setAttribute("searchText", searchText);
+				request.setAttribute("nickname", nickname);
+				request.setAttribute("user", user);
+				view.forward(request, response);
+			} else {
+				view = request.getRequestDispatcher("views/board/boardError.jsp");
+				request.setAttribute("message", "조건에 맞는 목록이 존재하지 않습니다.");
+				view.forward(request, response);
+			}
+		} catch (MyBoardException e) {
+			view = request.getRequestDispatcher("views/board/boardError.jsp");
+			request.setAttribute("message", e.getMessage());
+			view.forward(request, response);
+		}
 	}
 
 	/**
