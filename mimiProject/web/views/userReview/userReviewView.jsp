@@ -22,6 +22,9 @@
 <link rel="stylesheet" href="/mimi/resources/css/bootstrap.css">
 <script type="text/javascript" src="/mimi/resources/js/jquery-3.3.1.min.js"></script>
 <link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
+<!-- 다음맵 인증키 (직접 발급받아야됨) -->
+<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=795b33c97453a44f73949c94f447f347&libraries=services,clusterer,drawing"></script>
+<link rel="stylesheet" type = "text/css" href = "/mimi/resources/css/mapPage.css">
 </head>
 <body onload="commentList(1)">
 <!-- 바디 태그 시작 -->
@@ -450,7 +453,7 @@ function cmtinsert(){
 		<% if(board.getUserId().equals(ssuserId)){ %>
 		<div class="col-xs-6 text-right">
 			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/userboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>'">
-			<input type="submit" class="btn btn-default" value="삭제" style="outline: none;" onClick="location.href='/mimi/userboarddelete?bnum=<%= board.getBoardNo() %>'">
+			<input type="submit" id="user-delete-btn" class="btn btn-default" value="삭제" style="outline: none;">
 		</div>
 		<% } %>
 	</div>

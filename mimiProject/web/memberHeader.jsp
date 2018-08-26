@@ -256,9 +256,8 @@
 	      		type : "post",
 	      		success : function(data){
 	      			var json = data;
-<<<<<<< HEAD
 	      			json.gradeName = decodeURI(json.gradeName);  			
-	      			$("#menu-gradename").html(decodeURI(json.gradeName));
+	      			$("#menu-gradename").html(json.gradeName);
 	      			$("#menu-nickname").html(decodeURI(json.nickName));
 	      			if(json.gradeName === "손님"){
 	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level1.png");
@@ -276,10 +275,9 @@
 	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level4.png");
 	      			}
 	      			
-=======
-	      			$("#menu-gradename").html(decodeURI(json.gradeName));
-	      			$("#menu-nickname").html(decodeURI(json.nickName));
->>>>>>> refs/heads/kyi
+
+	      		
+
 	      		}
 	      	});
 			
@@ -289,11 +287,8 @@
 			});
 			
 			
-<<<<<<< HEAD
 			$(document).on("click", "body", function(event){  //미니 메뉴 박스 이외의 지역 클릭시 미니 메뉴 사라지고, 메뉴 버튼 누르면 미니 메뉴 나타남
-=======
-			$(document).on("click", "body", function(event){
->>>>>>> refs/heads/kyi
+
 				if($(".member-menu-box").css("display") === "none"){
 					if($(event.target).is("#menu-box-btn,#menu-box-btn *")){
 						$(".member-menu-box").slideDown("slow", function() {	

@@ -12,10 +12,7 @@ public class MemberPasswordWrapper extends HttpServletRequestWrapper {
 	public MemberPasswordWrapper(HttpServletRequest request){
 		super(request);
 	}
-<<<<<<< HEAD
-=======
-	
->>>>>>> refs/heads/kyi
+
 	@Override
 	public String getParameter(String name) {
 		if(name != null && name.equals("userpassword")){

@@ -239,10 +239,7 @@
 					<th width="30%">글제목</th>
 				</tr>
     			<tbody>
-<<<<<<< HEAD
-    			
-=======
->>>>>>> refs/heads/kyi
+
     				<% for(Board b : list) { %>
 						<tr>
 							<td><input type="checkbox" class="select-item checkbox"
