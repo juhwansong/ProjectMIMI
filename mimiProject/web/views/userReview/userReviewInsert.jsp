@@ -11,8 +11,8 @@ var openWin;
 
 function openAddress()
 {
-    // window.open("open할 window", "자식창 이름", "팝업창 옵션");
-    openWin = window.open('/mimi/views/userReview/storeAddress.jsp','_blank'
+    // window.open("open할 window", "자식창 이름", "팝업창 옵션");  (자식창 이름을 설정해줘야 중복 팝업이 안된다.)
+    openWin = window.open('/mimi/views/userReview/storeAddress.jsp','지도표시창'
 			, 'toolbar=no, location=no, status=no, menubar=no, scrollbars=auto, resizable=yes,directories=no, width=1100, height=850, top=70, left=100');
 }
 
@@ -146,8 +146,9 @@ function cateSelect(btnVal){
 </div>
 
 <script type = "text/javascript">
+//새로고침이나 페이지 나갈 시 적용
+var checkUnload = true; 
 //마커를 담을 배열입니다
-var checkUnload = true; //새로고침이나 페이지 나갈 시 적용
 var markers = [];
 var geocoder = new daum.maps.services.Geocoder(); //주소-좌표 변환 객체 생성
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
@@ -283,6 +284,7 @@ function sendFile(file, el){
 		cache : false,
 		contentType : false,
 		processData : false,
+		async : false, //동기화설정을 안하면  파일 연속 추가할때 섹션에 이미지 경로 데이터가 제대로 안들어감
 		success:function(data){
 			//에디터에 이미지 출력
 			$(el).summernote('editor.insertImage', data);//서머노트 에디터에 이미지 등록
@@ -336,6 +338,7 @@ onbeforeunload = function() {
 }
 $(window).on("unload",function(){ //페이 종료,이동 시 뜨는 confirm 확인 버튼 클릭 시
 	if(checkUnload != false){
+		openWin.close(); //창을 닫거나 다른 페이지로 이동시 지도팝업창을 닫는다.
 		$.ajax({
 			url : "/mimi/waitimagedelete",	// 이미지 삭제 필터로 직접 전송
 			cache : "false", //캐시사용금지

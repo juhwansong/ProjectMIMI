@@ -85,9 +85,9 @@ public class UserFileUploadServlet extends HttpServlet {
 		//convertFileName = sdf.format(new Date(System.currentTimeMillis()))+ "." + originFileName.substring(originFileName.indexOf(".")+1);
 		convertFileName = sdf.format(new Date(System.currentTimeMillis())) + "_" + originFileName;
 		
-		File oldFile = new File( savePath + "\\" + originFileName );
+		File oldFile = new File( savePath + "/" + originFileName );
 		
-		File newFile = new File( savePath + "\\" + convertFileName );
+		File newFile = new File( savePath + "/" + convertFileName );
 
 		// 파일명 변경
 		if(!oldFile.renameTo(newFile)){
@@ -127,10 +127,8 @@ public class UserFileUploadServlet extends HttpServlet {
 			session.setAttribute("imgList", imgList);
 		}
 		
-		JSONObject jobj = new JSONObject();
-		String imgUrl = request.getContextPath() + "/resources/waitimage/" + convertFileName;
-		 
-		//jobj.put("url", URLEncoder.encode(imgUrl, "utf-8")); //서머노트 에디터에서 서버로 읽어올 경로
+		
+		String imgUrl = request.getContextPath() + "/resources/waitimage/" + convertFileName;		 
 			
 		PrintWriter out = response.getWriter();
 		out.print(imgUrl);

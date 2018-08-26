@@ -25,20 +25,20 @@
     /* .wrap:after {content: '';position: absolute;margin-left: -12px;left: 50%;bottom:10px;width: 22px;height: 12px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_black.png')} */ 
     .wrap:after 
 	{
-	content: '';
-	position: absolute;
-	border-style: solid;	
-	margin-left: -12px;
-	left : 50%;
-	border-width: 15px 13px 0;
-	border-color: #2b2d36 transparent;
-	opacity:0.9;
-	display: block;
-	width: 22px;
-	height: 12px;
-	z-index: 1;
-	bottom: 7px;
-	left: 143px;
+		content: '';
+		position: absolute;
+		border-style: solid;	
+		margin-left: -12px;
+		left : 50%;
+		border-width: 15px 13px 0;
+		border-color: #2b2d36 transparent;
+		opacity:0.9;
+		display: block;
+		width: 22px;
+		height: 12px;
+		z-index: 1;
+		bottom: 7px;
+		left: 143px;
 	}
     .infowin .link {color: #5085BB;} 
 </style>
@@ -287,7 +287,7 @@ function displayPlaces(places) {
             			//addressDiv.value = $(this).find("> div > span").first().text();
             			//telDiv.value = $(this).find(" .tel").text();
 						
-            			if(placelistclicked !== -1){ //초기값일땐 클릭을 안했으니
+            			if(placelistclicked !== -1 && placelistclicked != i){ //초기값일땐 클릭을 안했으니
 							infowindow[placelistclicked].setMap(null);
 						}
             			

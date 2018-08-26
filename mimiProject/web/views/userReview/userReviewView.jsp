@@ -4,6 +4,10 @@
 <%
 	Board board = (Board)request.getAttribute("board");
 	int currentPage = ((Integer)request.getAttribute("currentPage")).intValue();
+	//int currentPage = 1; //1로 초기화 (파라미터 currentPage 없을땐 목록버튼 눌렀을 시 1페이지로 가게)
+	//if(request.getAttribute("currentPage") != null){
+		
+	//}	
 	//String userId = (String)session.getAttribute("userId");
 %>
 
@@ -152,11 +156,11 @@
 
 		</table>
 	</div>
-	<hr class="margin2">
-	<div style="margin:20px;">
+	
+	<hr class="margin2">			
 	<p id="text_context">
-		<%= board.getContentsTag() %><br>
-	</p>
+		<%= board.getContentsTag()%>
+	</p> 
 	</div>
 	<hr>
 	<div style="text-align: right;">
@@ -212,7 +216,7 @@
 
 		<hr class="margin2">
 		
-		
+		<!--<textarea style="width: 100%;" rows="3" id="texta_content"> -->
 		<!-- 댓글 작성부분 -->
 		<form>
 		<table style="width:100%;">
@@ -230,7 +234,7 @@
 	<div class="row">
 		<div class="col-xs-6 text-left">
 			<input type="button" class="btn btn-default"
-				onClick="window.history.back();" value="목록">
+				onClick="location.href='/mimi/userboardlist?page=<%=currentPage%>';" value="목록">
 		</div>
 		<div class="col-xs-6 text-right">
 			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/userboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>'">
@@ -239,7 +243,6 @@
 	</div>
 	<br>
 </div>
-
 <!-- 카톡공유용 -->
 <script type='text/javascript'>
 	Kakao.init('86bba96268a8b3515e937b123d69953a'); //kakao 키번호

@@ -54,8 +54,7 @@ public class UserBoardDao {
 				+ "BOARD_NO, TITLE, USER_ID, NICKNAME, "
 				+ "BOARD_DATE, HITS, RECOMMEND, CONTENTS, "
 				+ "CATEGORY_FOOD, COMMENT_NUM, THUMBNAIL_NAME "
-				+ "from V_USER_REVIEW_LIST "
-				+ "order by BOARD_NO desc) "
+				+ "from V_USER_REVIEW_LIST) "
 				+ "where rnum >= ? and rnum <= ?";
 
 		int startRow = (currentPage - 1) * limit + 1;

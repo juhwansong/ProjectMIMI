@@ -16,5 +16,4 @@
     <url-pattern>/memberupdate</url-pattern>
     <url-pattern>/memberupdatepassword</url-pattern>
   </filter-mapping>
-  
 </web-app>
