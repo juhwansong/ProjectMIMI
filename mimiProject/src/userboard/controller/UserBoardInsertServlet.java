@@ -108,6 +108,11 @@ public class UserBoardInsertServlet extends HttpServlet {
 				for (String img : imgList) {
 					if (uploadImg.contains(img)) {
 						String newSavePath = request.getSession().getServletContext().getRealPath("resources/files/userboard");   //옮기는 저장폴더 경로
+				        File targetDir = new File(newSavePath);  
+				        
+				        if(!targetDir.exists()) {    //디렉토리 없으면 생성.
+				        	targetDir.mkdirs();
+				        }
 						File oldFile = new File(uploadImg);
 						File newFile = new File(newSavePath + "/" + img);
 					

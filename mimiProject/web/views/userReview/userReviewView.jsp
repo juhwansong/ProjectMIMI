@@ -30,7 +30,7 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
 <script type="text/javascript" src="/mimi/resources/js/kakao.min.js"></script>
 </head>
-<body onload="commentList(1)">
+<body onload="commentList(1);recommendCheck();">
 <!-- 바디 태그 시작 -->
 <%
 	String ssuserId = (String)session.getAttribute("userId");
@@ -217,21 +217,81 @@ function cmtdelete(cmtNo){
 
 <script type="text/javascript">
 function recommendCheck(){
+	//추천 상태 체크
     var bnum = $("#bnum").val();
     var cmtContent = $("#cmtContent").val();
+    var recommendbtn = document.getElementById("recommendbtn");
+    var recommendState = document.getElementById("recommedState");
 	$.ajax({
 		url : "/mimi/recommendcheck",
 		type : "get",
 		dataType : "json",
 		data : {bnum : "<%= board.getBoardNo() %>"},
-		success : function(data){					
-			console.log(data);
+		success : function(data){
+			var jsonStr = JSON.stringify(data);
+			var json = JSON.parse(jsonStr);
+			if(json.result==1){
+				recommendbtn.src="/mimi/resources/images/icon/icon_thumb_up.png"
+				recommendState.value = "up";
+			} else{
+				recommendbtn.src="/mimi/resources/images/icon/icon_thumb_down.png"
+				recommendState.value = "down";
+			}
+			$('#good_qta').text(json.recommendCount);
 		},
 		error : function(jqXHR, textstatus, errorThrown){
 			console.log("error : " + jqXHR + ", " + 
 					textstatus + ", " + errorThrown);
 		}
 	});  //ajax close
+}
+</script>
+
+<script type="text/javascript">
+function recommendInsert(){
+	//추천 업
+    var bnum = $("#bnum").val();
+    var cmtContent = $("#cmtContent").val();
+    var recommendbtn = document.getElementById("recommendbtn");
+	$.ajax({
+		url : "/mimi/recommendinsert",
+		type : "get",
+		data : {bnum : "<%= board.getBoardNo() %>"},
+		success : function(data){	
+			recommendCheck();
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
+
+function recommendDown(){
+	//추천 업
+    var bnum = $("#bnum").val();
+    var cmtContent = $("#cmtContent").val();
+    var recommendbtn = document.getElementById("recommendbtn");
+	$.ajax({
+		url : "/mimi/recommenddelete",
+		type : "get",
+		data : {bnum : "<%= board.getBoardNo() %>"},
+		success : function(data){	
+			recommendCheck();
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
+
+function recommendClick(){
+	if(document.getElementById("recommedState").value == "down"){
+		recommendInsert();
+	} else{
+		recommendDown();
+	}
 }
 </script>
 
@@ -398,9 +458,11 @@ function cmtinsert(){
 	<br>
 	<hr>
 	</div>
+	<!-- 추천 영역 -->
 	<div style="text-align: center;" id="recommed">
+		<input type="hidden" id="recommedState" value="down" >
 		<img class="btn-img"
-			src="/mimi/resources/images/icon/icon_thumb_up.png" width=50 onclick="recommendCheck();">
+			src="/mimi/resources/images/icon/icon_thumb_down.png" width=50 onclick="recommendClick();" id="recommendbtn">
 		<p id="good_qta"><%= board.getRecommed() %></p>
 	</div>
 	<!-- comment -->
