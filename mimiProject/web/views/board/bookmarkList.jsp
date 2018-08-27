@@ -11,7 +11,95 @@
 %>
 <%@include file="../../head.jsp" %>
 
+<script type="text/javascript">
+	function callback(data){ //목록, 페이지네이션 처리
+		//console.log("콜백함수 실행중...");
+		var searchText = $("#textSearch").val();
+		var jsonStr = JSON.stringify(data);			
+		var json = JSON.parse(jsonStr);
+		
+		$("#row").empty(); //기존 목록 전부 지우기
+		values = ""; //변수 선언
+		console.log("row html 확인하기  :: " + values);
+		
+		
+		for(var i in json.list){
+			var num = json.list[i].boardNo.substring(2).replace(/(^0+)/,"");//글번호만 추출
+			var gb = json.list[i].boardGb === "AR" ? "MIMI리뷰" : "유저리뷰";
 
+			values += '<tr><td><input type="checkbox" name="checkOne" id="checkOne" value="' + json.list[i].boardNo + '"></td>'
+					+ '<td>' + gb + '</td><td>' + num + '</td><td class="tbl-td-title"><a href="' + json.list[i].boardLink + '">'
+					+ '<img class="img-thumb img-mover"  src="' + json.list[i].thumbnail + '" onerror="this.onerror=null;this.src=\'/mimi/resources/images/main/img3.jpg\'"></a>'
+					+ '&nbsp;&nbsp;<a href="' + json.list[i].boardLink + '">' + json.list[i].title
+					+ '&nbsp;&nbsp;<span class="span-c"><i class="fas fa-comments"></i>&nbsp;' + json.list[i].commentNum + '</span></a></td>'
+					+ '<td>' + json.list[i].nickname + '</td><td>' + json.list[i].boardDate + '</td></tr>'
+					
+			
+		}//for 
+		
+		$("#row").html(values); //목록 채우기
+	
+		//pagination
+		$("#searchListPagination").empty(); //기존 페이지네이션 지우기
+		pageValues = "";
+
+	 	//<< 1
+		if(json.currentPage <= 1){
+			pageValues += '<li><span style="color:#ccc;">&laquo;</span></li><li>';
+		}else{
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(1);" title="맨처음"><span style="color:#444;">&laquo;</span></a></li><li>'
+		}
+	
+	 	//< -10
+		if((json.currentPage - 10) <= json.startPage && (json.currentPage - 10) > 1){
+			pageValues += '<a href="javascript:void(0)" onclick="paging(' + (json.currentPage - 10) + ');" title="이전"><span style="color:#444;">&lt;</span></a></li>'	
+		}else if(json.currentPage != 1){ //1페이지 아니면 항상 활성화
+			pageValues += '<a href="javascript:void(0)" onclick="paging(1);" title="이전"><span style="color:#444;">&lt;</span></a></li>'
+		}else{
+			pageValues += '<span style="color:#ccc;">&lt;</span></li>'
+		}
+		
+		
+	 	//123
+		for(var p = json.startPage; p <= json.endPage; p++){
+			if(p == json.currentPage){
+					pageValues += '<li><span style="color:#ccc;">' + p + '</span></li>'
+		 	}else{ 
+		 		pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + p + ');"><span style="color:#444;">' + p + '</span></a></li>'
+			}}
+		
+	 	//> +10
+		if((json.currentPage + 10) <= json.maxPage){
+		 	pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + (json.currentPage + 10) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>'
+		}else if((json.currentPage + 10 ) > json.maxPage && json.currentPage < json.maxPage){ //마지막 페이지 아닐시 항상 활성화
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + (json.maxPage) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>'
+		}else{
+			pageValues += '<li><span style="color:#ccc;">&gt;</span></li>'
+		}
+		
+		//>> max
+		if(json.currentPage >= json.maxPage){
+			pageValues += '<li><span style="color:#ccc;">&raquo;</span></li>'
+		}else{
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + json.maxPage + ');" title="맨끝"><span style="color:#444;">&raquo;</span></a></li>'
+			
+		}
+		$("#searchListPagination").html(pageValues);//페이지네이션
+		$('html, body').scrollTop(0); //상단으로 이동
+		}//callback function		
+		
+		function paging(p){
+			$.ajax({		
+				url : "bookmarksearch",
+				data : {category : categoryValue, keyword : searchText, page : p},
+				type : "post",
+				dataType : "json",
+				success : function(data){	
+					callback(data);
+				}//success
+			})//ajax
+		}//paging
+</script>
 <script type="text/javascript">
 	$(function() {
 		//체크박스 전체선택,해제
@@ -24,27 +112,46 @@
 		});
 		
 		
-		//셀렉트박스 선택시 자동...ajax
+		var page = <%= currentPage%>;
+		//select box 변경 시 ajax 실행
 		$("#selectReview").change(function(){
-			//console.log(this.value + "확인용");
+			categoryValue = $("#selectReview option:selected").val();
+			searchText = $("#textSearch").val();
+			console.log("변경된 카테고리 값 : " + categoryValue);
+
+			$.ajax({
+				url : "bookmarksearch",
+				data : {category : categoryValue, page : page},
+				type : "post",
+				dataType : "json",
+				success : function(data){					
+					callback(data);
+				}//success
+			});//ajax
 			
-/* 			$.ajax({
-				type:'post',
-				url:url,
-				data:this.value,
-				dataType:'json'
-				success:function(args){
-					$("#result").html(args);}, 
-				beforeSend:showRequest, 
-				error:function(e){
-					alert(e.responseText);}
-			})//ajax */
-			
-			
-			
-			
-		});
+		})//select box change
 		
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////	 		
+		
+		//검색버튼 클릭 시 ajax 실행
+		$("#submitBtn").on('click', function(){
+			categoryValue = $("#selectReview option:selected").val();
+			searchText = $("#search-text").val();
+			//console.log("버튼 실행 확인...");
+			$.ajax({
+				
+				url : "bookmarksearch",
+				data : {category : categoryValue, keyword : searchText, page : page},
+				type : "post",
+				dataType : "json",
+				success : function(data){	
+					callback(data);
+				}//success
+			})//ajax
+
+			//console.log("categoryValue : " + categoryValue + "\nsearchText : " + searchText);
+		})//submitBtn click
+
 		
 	});//document
 </script>
@@ -65,8 +172,10 @@
 		<div class="form-group" style="float: right; margin: 1px;">
 			<input type="text" class="form-control" name="textSearch"
 				id="textSearch" size="8">​​​​​​​
-			<button type="submit" class="btn" name="btn" style="outline: none;">
+			<button type="button" class="btn" id="submitBtn" style="outline: none;">
 				검색&nbsp;<i class="fas fa-search"></i>
+			<!-- <button type="submit" class="btn" name="btn" style="outline: none;">
+				검색&nbsp;<i class="fas fa-search"></i> -->
 			</button>
 		</div>
 	</form>
@@ -83,24 +192,20 @@
 		<th width="8%">게시판구분</th><th width="8%">글번호</th><th width="*">제목</th><th width="12%"><i class="fas fa-pen"></i>작성자</th><th width="12%"><i class="far fa-calendar"></i>작성일</th>
 	</tr>
 	</thead>
-	<tbody>
+	<tbody id="row">
 	
 	<% for(Board b : list){ 
 		String num = b.getBoardNo().substring(2).replaceAll("^0*","");//글번호만 추출
-		String gb = null;
-		if(b.getBoardGb().equals("AR"))
-			gb = "MIMI리뷰";
-		else
-			gb = "유저리뷰";
+		String gb = b.getBoardGb().equals("AR") ? "MIMI리뷰" : "유저리뷰";
 	%>
 	
 	<tr>
 		<td><input type="checkbox" name="checkOne" id="checkOne" value="<%= b.getBoardNo()%>"></td>
 		<td><!-- 게시판구분 --><%= gb %></td>
 		<td><!-- 글번호 --><%= num %></td>
-		<td class="tbl-td-title"><!-- 썸네일 --><a href="#<%-- <%= b.getBoardLink() %> --%>"><%-- <img class="img-thumb img-mover" src="<%= b.getThumbnailName() %>"> --%>
-		<img class="img-thumb img-mover" src="/mimi/resources/images/main/img4.jpg"></a>
-		<!-- 제목 -->&nbsp;&nbsp;<a href="#<%-- <%= b.getBoardLink() %> --%>"><%= b.getTitle() %>
+		<td class="tbl-td-title"><!-- 썸네일 --><a href="<%= b.getBoardLink() %>">
+		<img class="img-thumb img-mover"  src="<%= b.getThumbnailName()%>" onerror="this.onerror=null;this.src='/mimi/resources/images/main/img3.jpg'"></a>
+		<!-- 제목 -->&nbsp;&nbsp;<a href="<%= b.getBoardLink() %>"><%= b.getTitle() %>
 		<!-- 댓글수 -->&nbsp;&nbsp;<span class="span-c"><i class="fas fa-comments"></i>&nbsp;<%= b.getCommentNum() %></span></a></td>
 		<td><!-- 작성자 --><%= b.getNickName() %></td>
 		<td><!-- 작성일 --><%= b.getBoardDate() %></td>
@@ -122,7 +227,7 @@
 		<td width="10%"></td><!-- 빈칸 -->
 		<td width="*"><!-- 페이지 -->
 	<!-- Pagination -->
-		<ul class="pagination" style="float: center; display: flex; justify-content: center;">
+		<ul id="searchListPagination" class="pagination" style="float: center; display: flex; justify-content: center;">
 			<!-- 맨앞으로 -->
 			<li>
 			<% if(currentPage <= 1){ %>

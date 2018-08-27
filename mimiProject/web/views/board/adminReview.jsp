@@ -29,7 +29,8 @@
 			values += '<div class="col-lg-4 col-sm-6 portfolio-item"><div class="rounded"><div class="img-div"><div class="cb">'
 					+ '<span class="text"><i class="fas fa-comments"></i>' + json.list[i].commentNum
 					+ '&nbsp;&nbsp;<i class="far fa-thumbs-up"></i>' + json.list[i].recommend
-					+ '</span> </div> <a href="#"><img class="img img-mover" src="/mimi/resources/images/main/img3.jpg" alt="/mimi/resources/images/main/img3.jpg"></a>'
+					+ '</span> </div> <a href="#"><img class="img img-mover" src="' + json.list[i].thumbnail
+					+ '" onerror="this.onerror=null;this.src=\'/mimi/resources/images/main/img3.jpg\'"></a>'
 					+ '</div> <div class="r-body"> <table class="r-table"><tr><td><h4><a href="#">' + decodeURIComponent(json.list[i].title)
 					+ '</a></h4></td><td class="td-ast" style="font-size: 12px;">' + json.list[i].boardDate
 					+ '</td></tr></table><p class="r-text">' + decodeURIComponent(json.list[i].contents) + '</p></div></div></div>'
@@ -190,14 +191,14 @@
 			<select class="form-control" id="select-category">
 				<option value="C0" selected disabled hidden>Category</option>
 				<option value="C0">전체</option>
-				<option value="C1">1</option>
-				<option value="C2">2</option>
-				<option value="C3">3</option>
-				<option value="C4">4</option>
-				<option value="C5">5</option>
-				<option value="C6">6</option>
-				<option value="C7">7</option>
-				<option value="C8">8</option>
+				<option value="C1">커피/디저트</option>
+				<option value="C2">패스트푸드</option>
+				<option value="C3">한식</option>
+				<option value="C4">양식</option>
+				<option value="C5">일식</option>
+				<option value="C6">중식</option>
+				<option value="C7">분식</option>
+				<option value="C8">기타</option>
 			</select>&nbsp;&nbsp;&nbsp; <span style="color: #555; font-size: 12px;">
 			<a href="javascript:void(0)" id="r-sort">추천수&nbsp;<i id="recommend" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
 			<a href="javascript:void(0)" id="h-sort">조회수&nbsp;<i id="hits" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
@@ -228,7 +229,7 @@
 						</span>
 					</div>
 					<a href="#"><img class="img img-mover"
-						src="/mimi/resources/images/main/img4.jpg" alt=""></a>
+						 src="<%= b.getThumbnailName()%>" onerror="this.onerror=null;this.src='/mimi/resources/images/main/img3.jpg'"></a>
 				</div>
 				<div class="r-body"><!-- 본문영역 -->
 					<table class="r-table"><!-- 본문영역 테이블 지정 -->
