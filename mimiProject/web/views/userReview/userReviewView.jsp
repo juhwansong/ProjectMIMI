@@ -30,7 +30,7 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
 <script type="text/javascript" src="/mimi/resources/js/kakao.min.js"></script>
 </head>
-<body onload="commentList(1);recommendCheck();">
+<body onload="commentList(1);recommendCheck();bookmarkCheck();">
 <!-- 바디 태그 시작 -->
 <%
 	String ssuserId = (String)session.getAttribute("userId");
@@ -219,7 +219,6 @@ function cmtdelete(cmtNo){
 function recommendCheck(){
 	//추천 상태 체크
     var bnum = $("#bnum").val();
-    var cmtContent = $("#cmtContent").val();
     var recommendbtn = document.getElementById("recommendbtn");
     var recommendState = document.getElementById("recommedState");
 	$.ajax({
@@ -245,13 +244,37 @@ function recommendCheck(){
 		}
 	});  //ajax close
 }
-</script>
-
-<script type="text/javascript">
+function recommendCheck1(){
+	//추천 상태 체크
+    var bnum = $("#bnum").val();
+    var recommendbtn = document.getElementById("recommendbtn");
+    var recommendState = document.getElementById("recommedState");
+	$.ajax({
+		url : "/mimi/recommendcheck",
+		type : "get",
+		dataType : "json",
+		data : {bnum : "<%= board.getBoardNo() %>"},
+		success : function(data){
+			var jsonStr = JSON.stringify(data);
+			var json = JSON.parse(jsonStr);
+			if(json.result==1){
+				recommendbtn.src="/mimi/resources/images/icon/icon_thumb_up.png"
+				recommendState.value = "up";
+			} else{
+				recommendbtn.src="/mimi/resources/images/icon/icon_thumb_down.png"
+				recommendState.value = "down";
+			}
+			$('#good_qta').text(json.recommendCount);
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
 function recommendInsert(){
 	//추천 업
     var bnum = $("#bnum").val();
-    var cmtContent = $("#cmtContent").val();
     var recommendbtn = document.getElementById("recommendbtn");
 	$.ajax({
 		url : "/mimi/recommendinsert",
@@ -268,10 +291,107 @@ function recommendInsert(){
 }
 
 function recommendDown(){
-	//추천 업
+	//추천 다운
+    var bnum = $("#bnum").val();
+    var recommendbtn = document.getElementById("recommendbtn");
+	$.ajax({
+		url : "/mimi/recommenddelete",
+		type : "get",
+		data : {bnum : "<%= board.getBoardNo() %>"},
+		success : function(data){	
+			recommendCheck();
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
+
+function recommendClick(){
+	//추천버튼클릭
+	if(document.getElementById("recommedState").value == "down"){
+		recommendInsert();
+	} else{
+		recommendDown();
+	}
+}
+</script>
+
+<script type="text/javascript">
+function cmtinsert(){
     var bnum = $("#bnum").val();
     var cmtContent = $("#cmtContent").val();
-    var recommendbtn = document.getElementById("recommendbtn");
+	$.ajax({
+		url : "/mimi/userboardreplyinsert",
+		type : "post",
+		data : {userid : "ssuserId", bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
+		success : function(data){		
+			commentList(maxPage); 
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
+</script>
+
+<!-- 즐겨찾기 -->
+<script type="text/javascript">
+function bookmarkCheck(){
+	//즐겨찾기 상태 체크
+	var addbook = 'fas fa-star';
+	var subbook = 'far fa-star';
+	$.ajax({
+		url : "/mimi/bookmarkCheck",
+		type : "get",
+		data : {bnum : "<%= board.getBoardNo() %>"},
+		success : function(data){
+			if(data==1){
+				console.log(data);
+				$("#bookmarkBtn").children().prop('class', addbook); //즐겨찾기 등록 아이콘
+			} else{
+				console.log(data);
+			    $("#bookmarkBtn").children().prop('class', subbook); //즐겨찾기 미등록 아이콘
+			}
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
+</script>
+
+<script type="text/javascript">
+
+function bookmarkAdd(){
+	//즐겨찾기 추가
+    var bnum = $("#bnum").val();
+    var urlstr = "/mimi/bookmarkinsert";
+    var i = 0;
+    if($("#bookmarkBtn").children().attr('class') === 'far fa-star')
+    	urlstr = "/mimi/bookmarkinsert";
+    else
+    	urlstr = "/mimi/bookmarkdeleteAjax";
+	$.ajax({
+		url : urlstr,
+		type : "get",
+		data : {bnum : "<%= board.getBoardNo() %>"},
+		success : function(data){	
+			bookmarkCheck();
+		},
+		error : function(jqXHR, textstatus, errorThrown){
+			console.log("error : " + jqXHR + ", " + 
+					textstatus + ", " + errorThrown);
+		}
+	});  //ajax close
+}
+
+function bookmarkSub(){
+	//추천 업
+    var bnum = $("#bnum").val();
 	$.ajax({
 		url : "/mimi/recommenddelete",
 		type : "get",
@@ -314,6 +434,7 @@ function cmtinsert(){
 }
 </script>
 <script type="text/javascript">
+/*
    $(function(){
       //버튼 클릭시 즐겨찾기 작동
       $("#bookmarkBtn").on('click', function(){   
@@ -327,15 +448,20 @@ function cmtinsert(){
             urlValue = "bookmarkdelete";
          }
          //console.log("url값 : " + urlValue);
-         $.ajax({
-            url : urlValue,
-            data : {boardNo : <%= board.getBoardNo() %>},
-            type : "post"
-         })//ajax
-            
-         })//btn event
+		$.ajax({
+			url : "/mimi/user",
+			type : "post",
+			data : {userid : "ssuserId", bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
+			success : function(data){		
+				commentList(maxPage); 
+			},
+			error : function(jqXHR, textstatus, errorThrown){
+				console.log("error : " + jqXHR + ", " + 
+						textstatus + ", " + errorThrown);
+			}
+		});  //ajax close
       
-   })//document
+   })//document*/
 </script>
 
 <style type="text/css">
@@ -407,7 +533,7 @@ function cmtinsert(){
 				<i class="fas fa-pen"></i><%= board.getNickName() %>&nbsp;<%= board.getGradeName() %>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-eye"></i><%= board.getHits() %>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-calendar"></i><%= board.getBoardDate() %></th>
-				<th width="8%"><button type="button" class="btn btn-default btn-lg" id="bookmarkBtn" style="outline: none;">
+				<th width="8%"><button type="button" class="btn btn-default btn-lg" id="bookmarkBtn" style="outline: none;" onclick="bookmarkAdd();">
 				<span class="far fa-star" aria-hidden="true" style="color: #fd0"></span>
 				</button></th>
 					

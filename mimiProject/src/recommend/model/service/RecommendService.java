@@ -39,7 +39,6 @@ public class RecommendService {		//추천하기 기능
 		int result = 0;	
 		result = new RecommendDao().checkRecommend(con, userId, boardNo);
 		close(con);
-		
 		return result;
 	}
 	

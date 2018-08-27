@@ -95,13 +95,11 @@ public class RecommendDao {
 
 	public int countRecommend(Connection con, String boardNo) throws RecommendException{
 		int listCount = 0;
-		//PreparedStatement pstmt = null;
-		Statement pstmt = null;
+		PreparedStatement pstmt = null;
 		ResultSet rset = null;
-		System.out.println("boardNo : " + boardNo);
 		String query = "select RECOMMEND from V_USER_REVIEW_LIST "
 						+ "where BOARD_NO = '" + boardNo + "'";
-						//+ "where BOARD_NO = '?' ";
+						//+ "where BOARD_NO = ? ";
 		
 		try {
 			pstmt = con.prepareStatement(query);

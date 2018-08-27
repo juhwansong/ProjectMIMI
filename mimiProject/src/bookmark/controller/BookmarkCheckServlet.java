@@ -2,6 +2,7 @@ package bookmark.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,18 +14,19 @@ import javax.servlet.http.HttpSession;
 
 import bookmark.exception.BookmarkException;
 import bookmark.model.service.BookmarkService;
+import common.model.vo.Board;
 
 /**
- * Servlet implementation class BookmarkInsertServlet
+ * Servlet implementation class BookmarkListServlet
  */
-@WebServlet("/bookmarkinsert")
-public class BookmarkInsertServlet extends HttpServlet {
+@WebServlet("/bookmarkCheck")
+public class BookmarkCheckServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public BookmarkInsertServlet() {
+    public BookmarkCheckServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -32,18 +34,16 @@ public class BookmarkInsertServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html; charset=utf-8");	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {	
+		response.setContentType("text/html; charset=utf-8");
 		HttpSession session = request.getSession();		
 		
 		String userId = (String)session.getAttribute("userId");
 		String boardNo = request.getParameter("bnum");
 		int result = 0;
-		
 		try {
-			result = new BookmarkService().insertBookmark(userId, boardNo);
-			
-			response.setContentType("text/html; charset=utf-8");
+			result = new BookmarkService().checkBookmark(userId, boardNo);
+
 			PrintWriter out = response.getWriter();
 			out.print(result);
 			out.flush();
@@ -52,7 +52,6 @@ public class BookmarkInsertServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
