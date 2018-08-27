@@ -1,12 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-<%
-	//String nickName = (String)session.getAttribute("nickname"); //head.jsp 에 있음
-	//String userId = (String)session.getAttribute("userid");  //head.jsp 에 있음
-%>
 
 <%@include file="../../head.jsp" %>
+
 
 <style type="text/css">
 .filebox input[type="file"] { 
@@ -63,20 +60,18 @@
 	}); 
 
 </script>
-
-<!-- <title>MIMI</title> -->
-
+<% if(authority != null && authority.equals("A")){ %>
 <div class="container" style="width:1150px;">
 	<h3>공지사항 작성</h3>
 	<div class="form-group">
 	<form action="/mimi/noticeinsert" method="post" enctype="multipart/form-data">
-	<input type="hidden" name="userid" value="<%-- <%=userId%> --%>admin1"><!-- userid로 join이라 가져가야함 -->
+	<input type="hidden" name="userId" value="<%=userId%>">
 		<table class="table" id="table-css2">
 			<tr>
 				<th width="15%">제목</th>
 				<td><input type="text" name="title" class="form-control" placeholder="제목 입력"></td>
 				<th width="15%">작성자</th>
-				<td id="notice-nickname-input" width="20%"><%=nickName%><!-- 닉네임 --></td>
+				<td width="20%"><%=nickName%></td>
 			</tr>
 			<tr>
 				<th>내용</th>
@@ -99,6 +94,9 @@
 		</form>
 	</div>
 </div><!-- /container -->
+<% }else{ //관리지 아닌데 어찌저찌 공지사항 작성페이지로 넘어 왔을 경우%>
+	error : 잘못된 접근입니당.. 
+<% } %>
 
 
 <%@include file="../../footer.jsp" %> 	

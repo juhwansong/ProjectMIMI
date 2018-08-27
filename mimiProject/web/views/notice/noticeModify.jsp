@@ -5,15 +5,9 @@
 <%
 	Notice notice = (Notice)request.getAttribute("notice");
 	int currentPage = ((Integer)request.getAttribute("page")).intValue();
-	//String nickName = (String)session.getAttribute("nickname");  //header.jsp 에서 ajax로 가져옴
-	//String userId = (String)session.getAttribute("userid");  //head.jsp에 있음
 %>
 
 <%@include file="../../head.jsp" %>
-<%-- <%@include file="../../header.jsp" %> --%>
-<%-- <%@include file="../../memberHeader.jsp" %> --%>
-<%-- <%@include file="../../adminHeader.jsp" %> --%>
-
 
 <style type="text/css">
 .filebox input[type="file"] { 
@@ -70,11 +64,13 @@
 	}); 
 
 </script>
+
+<% if(authority != null && authority.equals("A")){ %>
 <div class="container" style="width:1150px;">
 	<h3>공지사항 수정</h3>
 	<div class="form-group">
 	<form action="/mimi/noticeupdate" method="post" enctype="multipart/form-data">
-	<input type="hidden" name="userid" value="<%=userId%>"><!-- userid로 join이라 가져가야함 -->
+	<input type="hidden" name="userid" value="<%=nickName%>">
 	<input type="hidden" name="noticeno" value="<%= notice.getNoticeNo()%>">
 		<table class="table" id="table-css2">
 			<tr>
@@ -107,7 +103,9 @@
 		</form>
 	</div>
 </div><!-- /container -->
-
+<% }else{ //관리지 아닌데 어찌저찌 공지사항 작성페이지로 넘어 왔을 경우%>
+	error : 잘못된 접근입니당.. 
+<% } %>
 
 
 <%@include file="../../footer.jsp" %> 	

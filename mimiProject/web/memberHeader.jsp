@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+    
 <title>MIMI</title>
 <!-- 상단에 노출되서 주석처리.. <title>memberHeader</title> -->
 
@@ -171,7 +171,7 @@
                         <a href="/mimi/adminboardlist">MIMI 리뷰</a>
                     </li>
                     <li>
-                        <a href="/mimi/views/bestReview/bestReviewList.jsp">Best리뷰</a>
+                        <a href="/mimi/bestboardlist">Best리뷰</a>
                     </li>
                     <li>
                         <a href="/mimi/userboardlist">유저리뷰</a>
@@ -180,7 +180,7 @@
                         <a href="/mimi/views/board/nearShop.jsp">주변매장</a>
                     </li>
                     <li>
-                        <a href="/mimi/views/member/customer.jsp">고객센터</a>
+                        <a href="/mimi/supportlist">고객센터</a>
                     </li>
                     <li>
                         <a href="/mimi/views/intro/information.jsp">사이트소개</a>
@@ -192,7 +192,7 @@
         <!-- /.container-fluid -->
         <nav id="mini-menu-box">
 			<!-- <div id="menu-box-btn" class="fas fa-user-circle" aria-hidden="true"></div> -->
-			<div id="menu-box-btn"  aria-hidden="true"><img src="/mimi/resources/images/icon/icon_level1.png" width="60px" ></img></div>
+			<div id="menu-box-btn"  aria-hidden="true"><img id="menu-gradeimg" src=""  width="60px" ></img></div>
 			<!-- 회원 로그인 상태에서 메뉴 버튼 누를시 -->
 			<div class="member-menu-box">
 				<div>
@@ -208,7 +208,7 @@
 				<div style="padding-top:20px;" align="center">	
 					<span style="width:100px;">	
 						<!-- <a href="/mimi/views/board/myContent.jsp"> -->
-						<a href="/mimi/myboardlist?nickname=70억&user=user04">
+						<a href="/mimi/myboardlist?attr=NICKNAME&nickName=<%=session.getAttribute("nickName")%>">
 							<div>
 								<p style="font-size:25pt;" class="far fa-file-alt" aria-hidden="true"></p>
 								<p>작성한 글</p>	
@@ -217,7 +217,7 @@
 					</span>			
 					<span style="width:100px;">	
 						<!-- <a href="/mimi/views/board/myComment.jsp"> -->
-						<a href="/mimi/mycommentlist?nickname=NICKNAME&user=유저">
+						<a href="/mimi/mycommentlist?attr=NICKNAME&nickName=<%=session.getAttribute("nickName")%>">
 							<div>
 								<p style="font-size:25pt;" class="far fa-comments" aria-hidden="true"></p>
 								<p>작성한 댓글</p>	
@@ -256,8 +256,28 @@
 	      		type : "post",
 	      		success : function(data){
 	      			var json = data;
-	      			$("#menu-gradename").html(decodeURI(json.gradeName));
+	      			json.gradeName = decodeURI(json.gradeName);  			
+	      			$("#menu-gradename").html(json.gradeName);
 	      			$("#menu-nickname").html(decodeURI(json.nickName));
+	      			if(json.gradeName === "손님"){
+	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level1.png");
+	      			}
+	      			else if(json.gradeName === "종업원"){
+	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level1.png");
+	      			}
+	      			else if(json.gradeName === "주방보조"){
+	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level2.png");
+	      			}
+	      			else if(json.gradeName === "주방장"){
+	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level3.png");
+	      			}
+	      			else if(json.gradeName === "식신"){
+	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level4.png");
+	      			}
+	      			
+
+	      		
+
 	      		}
 	      	});
 			
@@ -267,7 +287,8 @@
 			});
 			
 			
-			$(document).on("click", "body", function(event){
+			$(document).on("click", "body", function(event){  //미니 메뉴 박스 이외의 지역 클릭시 미니 메뉴 사라지고, 메뉴 버튼 누르면 미니 메뉴 나타남
+
 				if($(".member-menu-box").css("display") === "none"){
 					if($(event.target).is("#menu-box-btn,#menu-box-btn *")){
 						$(".member-menu-box").slideDown("slow", function() {	

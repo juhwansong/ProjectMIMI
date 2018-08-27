@@ -66,6 +66,13 @@ public class UserBoardService {	//유저 리뷰 게시판 기능
 		return list;
 	}
 	
+	public ArrayList<Board> selectUserBoardList2() throws UserBoardException{//전체 게시물 조회
+		Connection con = getConnection();
+		ArrayList<Board> list = new UserBoardDao().selectList2(con);
+		close(con);
+		return list;
+	}
+	
 	public int updateUserBoard(Board board) throws UserBoardException{ //게시물 수정
 		Connection con = getConnection();
 		int result = new UserBoardDao().updateBoard(con, board);
@@ -126,5 +133,22 @@ public class UserBoardService {	//유저 리뷰 게시판 기능
 			rollback(con);
 		close(con);
 		return result;
+	}
+	
+	//게시물 검색
+	public ArrayList<Board> searchUserBoard(String query, int currentPage, int countList) throws UserBoardException {
+		Connection conn = getConnection();
+		ArrayList<Board> list = new UserBoardDao().searchUserBoard(conn, query, currentPage, countList);
+		close(conn);
+		return list;
+	}
+
+	//검색한 게시물 개수
+	public int getSearchListCount(String query) throws UserBoardException {
+		Connection conn = getConnection();
+		int listCount = new UserBoardDao().getListCount(conn, query);
+		close(conn);
+		return listCount;
+
 	}
 }

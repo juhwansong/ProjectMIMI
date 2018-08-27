@@ -50,7 +50,7 @@ public class NoticeUpdateServlet extends HttpServlet {
 		}
 		
 		int maxSize = 1024 * 1024 * 10;
-		String savePath = request.getSession().getServletContext().getRealPath("/resources/files/notice"); //경로수정했습니다.
+		String savePath = request.getSession().getServletContext().getRealPath("/files/notice");
 		MultipartRequest mrequest = new MultipartRequest(request, savePath, maxSize, "utf-8", new DefaultFileRenamePolicy());
 		
 		Notice n = new Notice();
@@ -109,6 +109,7 @@ public class NoticeUpdateServlet extends HttpServlet {
 			view.forward(request, response);
 		}
 		
+
 	}
 
 	/**

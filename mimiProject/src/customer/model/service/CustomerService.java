@@ -59,4 +59,17 @@ public class CustomerService {	//관리자 기능 중 전체 회원 관리 기�
 		return list;
 	}
 
+	//검색한 회원수
+	public int getSearchListCount(String column, String value) throws CustomerException{
+		Connection conn = getConnection();
+		int result = new CustomerDao().getSearchListCount(conn, column, value);
+		if(result > 0)
+			commit(conn);
+		else
+			rollback(conn);
+		close(conn);
+		return result;	
+
+	}
+
 }

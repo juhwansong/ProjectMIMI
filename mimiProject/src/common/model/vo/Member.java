@@ -90,6 +90,7 @@ public class Member implements Serializable {
 	}
 
 	public void setBirth(String birth) {
+
 		this.birth = birth;
 	}
 

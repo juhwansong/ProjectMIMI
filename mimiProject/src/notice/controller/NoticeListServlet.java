@@ -64,7 +64,7 @@ public class NoticeListServlet extends HttpServlet {
 				endPage = maxPage;
 
 			
-			if(noticeList.size() > 0){
+//			if(noticeList.size() > 0){
 				view = request.getRequestDispatcher("views/notice/noticeList.jsp");
 				request.setAttribute("noticeList", noticeList);
 				request.setAttribute("currentPage", currentPage);
@@ -73,16 +73,17 @@ public class NoticeListServlet extends HttpServlet {
 				request.setAttribute("endPage", endPage);
 				request.setAttribute("totalCount", totalCount);
 				view.forward(request, response);
-			}else{
-				view = request.getRequestDispatcher("views/notice/noticeError.jsp");
-				request.setAttribute("message", "공지사항 글이 없습니다...!");
-				view.forward(request, response);
-			}
+//			}else{
+//				view = request.getRequestDispatcher("views/notice/noticeError.jsp");
+//				request.setAttribute("message", "공지사항 글이 없습니다...!");
+//				view.forward(request, response);
+//			}
 		} catch (NoticeException e) {
 			view = request.getRequestDispatcher("views/notice/noticeError.jsp");
 			request.setAttribute("message", e.getMessage());
 			view.forward(request, response);
 		}
+
 	}
 
 	/**

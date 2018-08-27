@@ -16,6 +16,9 @@
 <link rel="stylesheet" href="/mimi/resources/css/bootstrap.css">
 <script type="text/javascript" src="/mimi/resources/js/jquery-3.3.1.min.js"></script>
 <link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
+
+<link rel="stylesheet" type = "text/css" href = "/mimi/resources/css/mapPage.css">
+
 </head>
 <body>
 

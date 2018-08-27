@@ -1,6 +1,10 @@
 package member.controller;
 
+import java.io.File;
 import java.io.IOException;
+
+import java.util.ArrayList;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,6 +40,19 @@ public class MemberLogoutServlet extends HttpServlet {
 			session.removeAttribute("authority");
 			session.removeAttribute("nickName");
 			
+
+			//파일 업로드 시 바로 로그아웃 할 경우
+			if (session.getAttribute("imgList") != null) {
+				ArrayList<String> removeImgList = (ArrayList<String>)session.getAttribute("imgList");
+				for (String removeImg : removeImgList) {
+					File removeFile = new File(removeImg);
+					removeFile.delete();
+				}
+				// 임시폴더 안 이미지 경로들을 담고있는 세션 제거
+				session.removeAttribute("imgList");
+			}
+
+
 			session.invalidate(); //섹션 삭제
 				
 		}

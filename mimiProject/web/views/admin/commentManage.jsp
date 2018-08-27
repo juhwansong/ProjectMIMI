@@ -20,7 +20,8 @@
     height: 35%; /* 변경 */
     width: 0;
     position: fixed;
-    z-index: 0;
+    /* z-index: 0; */
+    z-index: 1;
     top: 0;
     left: 0;
      background-color: #fff; 
@@ -30,7 +31,9 @@
     /* margin-left: 100px; */
     /* /////////////////////////추가////////////////////////// */
     display: none;
+    opacity: 0.9;
 }
+
 
 .sidenav a {
     padding: 3px 3px 3px 1px;
@@ -79,13 +82,82 @@
    /*  float: left; */
 }
 
+/* #main, #menuTitle { */
+#main {
+	position: relative;
+	width: 1150px;
+}
+
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
 }
+@media screen and (max-width: 600px) {
+	#main { width: 100%; }
+	#title-td { 
+		width: 90%;
+		display: block;
+		margin-left: 5%;
+	}
+	#form-td { 
+		width: 90%;
+		display: block;
+		margin-left: 5%;
+	} 
+	.form-group { width: 100%; }
+	.btn { width: 100%; }	
 
-#main, #menuTitle {
-	position: relative;
+	tr { display: block;}
+	#table-css { width: 90%;}
+	#table-css th { display: none; }
+	#table-css td {
+		border: 0;
+		display: block;
+		width: 100%;
+		text-align: left;
+		margin-left: 1.5%;
+	}
+	#table-css tbody tr {
+		border: 1px solid #91ced4;
+		border-radius: 10px 10px 10px 10px;
+		margin: 3% 0 5% 0;
+	}
+	
+	#table-css td:first-child {
+		/* border-bottom: 1px solid #91ced4;
+		border-radius: 10px 10px 0 0; */
+		position: relative;
+		top: 0;
+		-webkit-transform: translateY(0);
+		transform: translateY(0);
+		/* width: 100%; */
+	}
+	#table-css td:not (:first-child ) {
+		margin: 0;
+		padding: 5px 1em;
+		width: 100%;
+	}
+	#table-css td:last-child {
+		padding-bottom: 1rem !important;
+	}
+	#table-css td:first-child {
+		display: none;
+	} 
+	#table-css td:nth-child(2):before {
+		content: '글번호:';
+	}
+	#table-css td:nth-child(3):before {
+		content: '작성자:';
+	}
+	#table-css td:nth-child(4):before {
+		content: '댓글내용:';
+	}
+	#table-css td:nth-child(5):before {
+		content: '작성일:';
+	}
+	#table-css td:nth-child(6):before {
+		content: '글제목:';
+	}
 }
 </style>
 
@@ -131,6 +203,71 @@
 			})
 		});
 		
+		// when browser window size is less than 600px
+		$("#table-css tbody tr").on("click", function() {
+			if(window.matchMedia("(max-width: 600px)").matches) {	
+				var rowId = $(this).children().eq(0).children().val();
+				var idx = 0;
+				
+				$("#table-css tbody tr").each(function(index) {
+					var rowIdList = $("#table-css tbody tr").eq(index);
+					var currentRowId = rowIdList.children().eq(0).children().val();
+					
+					if(currentRowId == rowId)
+						idx = index;
+				});
+				
+				var selectBox = $("input.select-item").eq(idx);
+				
+				if(selectBox.is(":checked")) {
+					selectBox.prop("checked", false);	// jQuery에서 checked 속성은 ".attr()" 동작 안함
+					$(this).css("background", "#ffffff");
+				} else {
+					selectBox.prop("checked", true);	// jQuery에서 checked 속성은 ".attr()" 동작 안함
+					$(this).css("background", "#f8f8f8");
+				} 
+			} else {
+				$("#table-css tbody tr").each(function(index) {
+					$("#table-css tbody tr").eq(index).css("background-color", "#ffffff");
+				});
+			}
+		});
+		
+		// whenever browser window size change
+		$(window).resize(function() {
+			if(window.matchMedia("(min-width: 600px)").matches) {
+				$("#table-css tbody tr").each(function(index) {
+					$("#table-css tbody tr").eq(index).css("background-color", "#ffffff");
+				});
+				
+				<% if(list.size() == 0) { %>
+					$("#table-css tbody tr").children().css("display", "");
+				<% } %>
+			} else {
+				$("input.select-item").each(function(index, item) {
+					if($(this).is(':checked')) {
+						$(this).closest("tr").css("background", "#f8f8f8");
+					}
+				});
+				
+				<% if(list.size() == 0) { %>
+					$("#table-css tbody tr").children().css("display", "block");
+					$("#table-css tbody tr").children().css("text-align", "center");
+					$("#table-css tbody tr").css("border", "none");
+				<% } %>
+			}
+		});
+		
+		// jsp 페이지에 접근 시 list.size() == 0 이면 "검색 결과가 없습니다"를 표현하기 위한 조건
+		<% if(list.size() == 0) { %>
+			if(window.matchMedia("(max-width: 600px)").matches) {
+				$("#table-css tbody tr").children().css("display", "block");
+				$("#table-css tbody tr").children().css("text-align", "center");
+				$("#table-css tbody tr").css("border", "none");
+			}
+		<% } %>
+		
+		// not used : previous used code ----------------------------------------------------------------------------------------
  		<%-- $("#list").each(function(index){
 			$(this).append('<% for(Board b : list) { %><tr><td>'
 				+ '<input type="checkbox" class="select-item checkbox" name="select-item" id="select-item" value="index" />'
@@ -146,6 +283,7 @@
 			var index = $(this).index(":checked");
 			console.log(index);
 		}); */
+		// --------------------------------------------------------------
 	});
 	
 	function deleteRow() {
@@ -201,12 +339,12 @@
   <a href="/mimi/allcommentlist" id="menuItem">전체 댓글 관리</a>
 </div>
 
-<div class="container container-fluid" style="width:1150px;">
+<div class="container container-fluid">
 	<div class="container-fluid" id="main">
 	<table width="100%" border="0">
 		<tr>
-		<td><h3><span id="quickMenu" title="관리자 메뉴 열기">&#9776;&nbsp;</span>전체 댓글 관리</h3></td>
-			<td style="text-align: right; vertical-align: bottom; color: #777">
+		<td id="title-td"><h3><span id="quickMenu" title="관리자 메뉴 열기">&#9776;&nbsp;</span>전체 댓글 관리</h3></td>
+			<td style="text-align: right; vertical-align: bottom; color: #777" id="form-td">
 				<!-- 카테고리 -->
 				<form class="form-inline" name="select-category"
 					id="select-category" method="get" action="/mimi/allcommentsearch?page=1">
@@ -241,17 +379,21 @@
 					<th width="30%">글제목</th>
 				</tr>
     			<tbody>
-    				<% for(Board b : list) { %>
-						<tr>
-							<td><input type="checkbox" class="select-item checkbox"
-								name="select-item" id="select-item" value="<%= b.getBoardLink() %>" /></td>
-							<td><%= b.getBoardNo().substring(2).replaceAll("^0*", "") %></td>
-							<td><%= b.getNickName() %></td>
-							<td class="tbl-td-title"><%= b.getCommentContents() %></td>
-							<td><%= b.getCommentDate() %></td>
-							<td><%= b.getTitle() %></td>
-						</tr>
-					<% } %> 
+    				<% if(list.size() != 0) { %>
+	    				<% for(Board b : list) { %>
+							<tr>
+								<td><input type="checkbox" class="select-item checkbox"
+									name="select-item" id="select-item" value="<%= b.getBoardLink() %>" /></td>
+								<td><%= b.getBoardNo().substring(2).replaceAll("^0*", "") %></td>
+								<td><%= b.getNickName() %></td>
+								<td class="tbl-td-title"><%= b.getCommentContents() %></td>
+								<td><%= b.getCommentDate() %></td>
+								<td><%= b.getTitle() %></td>
+							</tr>
+						<% } %> 
+					<% } else { %>
+						<tr><td colspan="6"><h4>검색 결과가 없습니다</h4></td></tr>
+					<% } %>
 	   				<!-- <tr>
 						<td>
 							<input type="checkbox" class="select-item checkbox" name="select-item" value="1000" />

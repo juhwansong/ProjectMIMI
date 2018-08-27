@@ -1,5 +1,6 @@
 package mycomment.model.service;
 
+
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ public class MyCommentService {	//회원 기능 중 본인이 작성 한 댓글 
 		ArrayList<Board> list = new MyCommentDao().searchMyComment(con, keword);
 		jdbcTemplate.close(con);
 		return list;
+
 	}
 	
 }

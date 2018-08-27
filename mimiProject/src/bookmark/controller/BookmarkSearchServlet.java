@@ -9,6 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import bookmark.exception.BookmarkException;
 import bookmark.model.service.BookmarkService;
@@ -36,7 +37,8 @@ public class BookmarkSearchServlet extends HttpServlet {
 		//LinkedHashMap<String, String> map = new LinkedHashMap<>();
 		
 		request.setCharacterEncoding("utf-8");
-		String userId = "user01"; //////////////임시값///////////////
+		HttpSession session = request.getSession(false);
+		String userId = (String)session.getAttribute("userId");
 		String category = request.getParameter("selectReview"); //board_gb
 		String keyword = request.getParameter("textSearch"); //title + contents + shop_name + shop_address
 		String gb = null;
@@ -66,7 +68,7 @@ public class BookmarkSearchServlet extends HttpServlet {
 		try {
 			ArrayList<Board> list = new BookmarkService().searchBookmark(userId, gb, keyword, currentPage, countList);
 			
-			int totalCount = list.size();
+			int totalCount = new BookmarkService().getSearchListCount(userId, gb, keyword);
 			int maxPage = totalCount / countList;
 			if(totalCount % countList > 0)
 				maxPage++;
@@ -81,7 +83,7 @@ public class BookmarkSearchServlet extends HttpServlet {
 			if(endPage > maxPage)
 				endPage = maxPage;
 
-			//if(list.size() > 0){
+			if(userId != null){
 				view = request.getRequestDispatcher("views/board/bookmarkList.jsp");
 				request.setAttribute("list", list);
 				request.setAttribute("currentPage", currentPage);
@@ -91,17 +93,18 @@ public class BookmarkSearchServlet extends HttpServlet {
 				request.setAttribute("totalCount", totalCount);
 				view.forward(request, response);
 
-			//}else{
-//				//즐겨찾기한 목록이 없을때...
-//				view = request.getRequestDispatcher("views/board/boardError.jsp");
-//				request.setAttribute("message", "즐겨찾기한 게시물이 존재하지 않습니다.");
-//				view.forward(request, response);
-//			}
+			}else{
+				//비회원 접근시 에러
+				view = request.getRequestDispatcher("views/board/boardError.jsp");
+				request.setAttribute("message", "잘못된 접근입니다.");
+				view.forward(request, response);
+			}
 		} catch (BookmarkException e) {
 			view = request.getRequestDispatcher("views/board/boardError.jsp");
 			request.setAttribute("message", e.getMessage());
 			view.forward(request, response);
 		}
+
 	}
 
 	/**

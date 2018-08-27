@@ -167,7 +167,7 @@
                         <a href="/mimi/adminboardlist">MIMI 리뷰</a>
                     </li>
                     <li>
-                        <a href="/mimi/views/bestReview/bestReviewList.jsp">Best리뷰</a>
+                        <a href="/mimi/bestboardlist">Best리뷰</a>
                     </li>
                     <li>
                         <a href="/mimi/userboardlist">유저리뷰</a>
@@ -176,7 +176,7 @@
                         <a href="/mimi/views/board/nearShop.jsp">주변매장</a>
                     </li>
                     <li>
-                        <a href="/mimi/views/member/customer.jsp">고객센터</a>
+                        <a href="/mimi/supportlist">고객센터</a>
                     </li>
                     <li>
                         <a href="/mimi/views/intro/information.jsp">사이트소개</a>

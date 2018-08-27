@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" errorPage="noticeError.jsp"%>
 <%@ page import="java.util.*, notice.model.vo.Notice" %>
-
 <%
 	ArrayList<Notice> list = (ArrayList<Notice>)request.getAttribute("noticeList");
 	int totalCount = ((Integer) request.getAttribute("totalCount")).intValue();
@@ -11,7 +10,9 @@
 	int currentPage = ((Integer) request.getAttribute("currentPage")).intValue();
 %>
 
+
 <%@include file="../../head.jsp" %>
+
 
 <script type="text/javascript">
 	$(function(){
@@ -122,6 +123,7 @@
 				<a href="/mimi/noticelist?page=1" title="맨처음"><span style="color:#444;">&laquo;</span></a>
 			<% } %>
 			</li>
+			
 			<!-- 하나 앞으로 -->
 			<li>
 				<% if((currentPage - 10) < startPage && (currentPage - 10) > 1){ %>
@@ -159,9 +161,12 @@
 	</td>
 		<!-- 글쓰기버튼 -->
 		<td width="10%" style="vertical-align:top;">
-						<input type="button" class="btn btn-default pull-right"
+		<% if(authority != null && authority.equals("A")){ %>
+			<input type="button" class="btn btn-default pull-right"
 			onclick="location.href='/mimi/views/notice/noticeWrite.jsp'"
-			value="글쓰기" style="outline: none;"></td>
+			value="글쓰기" style="outline: none;">
+		<% } %>
+		</td>
 	</tr>
 </table>
 </div><!-- /container -->

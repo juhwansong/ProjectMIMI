@@ -45,6 +45,7 @@ public class MemberIdFindServlet extends HttpServlet {
 		out.print(resultId);
 		out.flush();
 		out.close();
+
 	}
 
 	/**

@@ -54,6 +54,7 @@ public class AllCommentDeleteServlet extends HttpServlet {
 			request.setAttribute("message", e.getMessage());
 			view.forward(request, response);
 		}
+
 	}
 
 	/**

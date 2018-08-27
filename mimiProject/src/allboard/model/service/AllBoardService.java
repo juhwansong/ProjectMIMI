@@ -50,6 +50,7 @@ public class AllBoardService {	//관리자 기능 중 전체 게시물 조회 �
 		ArrayList<Board> list = new AllBoardDao().searchAllBoard(con, keword);
 		jdbcTemplate.close(con);
 		return list;
+
 	}
 
 }

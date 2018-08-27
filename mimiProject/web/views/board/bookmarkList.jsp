@@ -10,11 +10,7 @@
 	int currentPage = ((Integer) request.getAttribute("currentPage")).intValue();
 %>
 <%@include file="../../head.jsp" %>
-<%-- <%@include file="../../header.jsp" %> --%>
-<%-- <%@include file="../../memberHeader.jsp" %> --%>
-<%-- <%@include file="../../adminHeader.jsp" %> --%>
 
-<!-- <title>MIMI</title> -->
 
 <script type="text/javascript">
 	$(function() {
@@ -68,7 +64,7 @@
 		<!-- 오른쪽 -->
 		<div class="form-group" style="float: right; margin: 1px;">
 			<input type="text" class="form-control" name="textSearch"
-				id="textSearch" size="8" placeholder="">​​​​​​​
+				id="textSearch" size="8">​​​​​​​
 			<button type="submit" class="btn" name="btn" style="outline: none;">
 				검색&nbsp;<i class="fas fa-search"></i>
 			</button>
@@ -102,9 +98,9 @@
 		<td><input type="checkbox" name="checkOne" id="checkOne" value="<%= b.getBoardNo()%>"></td>
 		<td><!-- 게시판구분 --><%= gb %></td>
 		<td><!-- 글번호 --><%= num %></td>
-		<td class="tbl-td-title"><!-- 썸네일 --><a href="#"><%-- <img class="img-thumb img-mover" src="<%= b.getThumbnailName() %>"> --%>
+		<td class="tbl-td-title"><!-- 썸네일 --><a href="#<%-- <%= b.getBoardLink() %> --%>"><%-- <img class="img-thumb img-mover" src="<%= b.getThumbnailName() %>"> --%>
 		<img class="img-thumb img-mover" src="/mimi/resources/images/main/img4.jpg"></a>
-		<!-- 제목 -->&nbsp;&nbsp;<a href="#"><%= b.getTitle() %>
+		<!-- 제목 -->&nbsp;&nbsp;<a href="#<%-- <%= b.getBoardLink() %> --%>"><%= b.getTitle() %>
 		<!-- 댓글수 -->&nbsp;&nbsp;<span class="span-c"><i class="fas fa-comments"></i>&nbsp;<%= b.getCommentNum() %></span></a></td>
 		<td><!-- 작성자 --><%= b.getNickName() %></td>
 		<td><!-- 작성일 --><%= b.getBoardDate() %></td>

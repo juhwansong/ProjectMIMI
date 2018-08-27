@@ -52,12 +52,12 @@ public class NoticeInsertServlet extends HttpServlet {
 		
 		int maxSize = 1024 * 1024 * 10; //최대용량 10Mb
 		
-		String savePath = request.getSession().getServletContext().getRealPath("/resources/files/notice");  //경로 수정했습니다.
+		String savePath = request.getSession().getServletContext().getRealPath("/files/notice");
 		MultipartRequest mrequest = new MultipartRequest(request, savePath, maxSize, "utf-8", new DefaultFileRenamePolicy());
 		
 		Notice n = new Notice();
 		n.setNoticeTitle(mrequest.getParameter("title"));
-		n.setUserId(mrequest.getParameter("userid"));
+		n.setUserId(mrequest.getParameter("userId"));
 		n.setNoticeContents(mrequest.getParameter("contents"));
 		
 		String noticeRealFile = mrequest.getFilesystemName("upfile");
@@ -91,7 +91,7 @@ public class NoticeInsertServlet extends HttpServlet {
 		
 		try {
 			if(new NoticeService().insertNotice(n) > 0){
-				response.sendRedirect("/mimi/noticelist");
+				response.sendRedirect("/mimi/noticelist"); //성공시 목록 불러옴
 			}else{
 				view = request.getRequestDispatcher("views/notice/noticeError.jsp");
 				request.setAttribute("message", "공지사항 등록에 실패하였습니다.");

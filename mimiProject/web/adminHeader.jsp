@@ -162,7 +162,7 @@
                         <a  href="/mimi/adminboardlist">MIMI 리뷰</a>
                     </li>
                     <li>
-                        <a  href="/mimi/views/bestReview/bestReviewList.jsp">Best리뷰</a>
+                        <a  href="/mimi/bestboardlist">Best리뷰</a>
                     </li>
                     <li>
                         <a  href="/mimi/userboardlist">유저리뷰</a>
@@ -171,7 +171,7 @@
                         <a  href="/mimi/views/board/nearShop.jsp">주변매장</a>
                     </li>
                     <li>
-                        <a  href="/mimi/views/member/customer.jsp">고객센터</a>
+                        <a  href="/mimi/supportlist">고객센터</a>
                     </li>
                     <li>
                         <a  href="/mimi/views/intro/information.jsp">사이트소개</a>
@@ -201,7 +201,7 @@
 				<div style="padding-top:20px;" align="center">	
 					<span style="width:100px;">	
 						<!-- <a href="/mimi/views/board/myContent.jsp"> -->
-						<a href="/mimi/myboardlist?nickname=NICKNAME&user=관리자">
+						<a href="/mimi/myboardlist?attr=NICKNAME&nickName=<%=session.getAttribute("nickName")%>">
 							<div>
 								<p style="font-size:25pt;" class="far fa-file-alt" aria-hidden="true"></p>
 								<p>작성한 글</p>	
@@ -210,7 +210,7 @@
 					</span>			
 					<span style="width:100px;">	
 						<!-- <a href="/mimi/views/board/myComment.jsp"> -->
-						<a href="/mimi/mycommentlist?nickname=NICKNAME&user=관리자">
+						<a href="/mimi/mycommentlist?attr=NICKNAME&nickName=<%=session.getAttribute("nickName")%>">
 							<div>
 								<p style="font-size:25pt;" class="far fa-comments" aria-hidden="true"></p>
 								<p>작성한 댓글</p>	

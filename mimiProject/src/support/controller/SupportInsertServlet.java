@@ -1,11 +1,19 @@
 package support.controller;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import notice.exception.NoticeException;
+import notice.model.service.NoticeService;
+import support.exception.SupportException;
+import support.model.service.SupportService;
+import support.model.vo.Support;
 
 /**
  * Servlet implementation class SupportInsertServlet
@@ -26,8 +34,29 @@ public class SupportInsertServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		RequestDispatcher view = null;
+			response.setContentType("text/html; charset=utf-8");
+			request.setCharacterEncoding("utf-8");
+			Support support = new Support();
+			
+			support.setBoardNo(request.getParameter("board_no"));			
+			support.setUserId((String)request.getSession().getAttribute("userId"));
+			support.setTitle(request.getParameter("title"));
+			support.setContents(request.getParameter("contents"));
+			support.setState(request.getParameter("state"));
+			try {
+				if(new SupportService().insertSupport(support) > 0){
+					response.sendRedirect("/mimi/supportlist");
+				}else{
+					System.out.println("게시글작성 실패");
+					
+				}
+				
+			} catch (SupportException e) {
+				view = request.getRequestDispatcher("views/member/customerError.jsp");
+				request.setAttribute("message", e.getMessage());
+				view.forward(request, response);
+			}
 	}
 
 	/**

@@ -50,5 +50,6 @@ public class AllCommentService { // 관리자 기능 중 전체 댓글 조회 �
 		ArrayList<Board> list = new AllCommentDao().searchAllBoard(con, keword);
 		jdbcTemplate.close(con);
 		return list;
+
 	}
 }

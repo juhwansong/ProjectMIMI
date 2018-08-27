@@ -64,6 +64,9 @@ public class AllBoardListServlet extends HttpServlet {
 			if(maxPage < endPage) {
 				endPage = maxPage;
 			}
+			if(endPage == 0)
+				endPage = 1;
+			
 			if(currentPage == maxPage) {
 				endRow = startRow + (listCount - ((maxPage - 1) * limit)) - 1;
 			} else if(listCount < limit) {
@@ -72,28 +75,27 @@ public class AllBoardListServlet extends HttpServlet {
 				endRow = startRow + limit - 1;
 			}
 
-			if(list.size() > 0) {
-				ArrayList<Board> currentList = new ArrayList<Board>();
-				for(int i = startRow; i <= endRow; i++) {
-					currentList.add(list.get(i - 1));
-				}
-				
-				view = request.getRequestDispatcher("views/admin/contentManage.jsp");
-				request.setAttribute("list", currentList);
-				request.setAttribute("currentPage", currentPage);
-				request.setAttribute("maxPage", maxPage);
-				request.setAttribute("startPage", startPage);
-				request.setAttribute("endPage", endPage);
-				request.setAttribute("listCount", listCount);
-				request.setAttribute("category", category);
-				request.setAttribute("searchText", searchText);
-				view.forward(request, response);
+			ArrayList<Board> currentList = new ArrayList<Board>();
+			for(int i = startRow; i <= endRow; i++) {
+				currentList.add(list.get(i - 1));
 			}
+			
+			view = request.getRequestDispatcher("views/admin/contentManage.jsp");
+			request.setAttribute("list", currentList);
+			request.setAttribute("currentPage", currentPage);
+			request.setAttribute("maxPage", maxPage);
+			request.setAttribute("startPage", startPage);
+			request.setAttribute("endPage", endPage);
+			request.setAttribute("listCount", listCount);
+			request.setAttribute("category", category);
+			request.setAttribute("searchText", searchText);
+			view.forward(request, response);
 		} catch (AllBoardException e) {
 			view = request.getRequestDispatcher("views/admin/adminPageError.jsp");
 			request.setAttribute("message", e.getMessage());
 			view.forward(request, response);
 		}
+
 	}
 
 	/**

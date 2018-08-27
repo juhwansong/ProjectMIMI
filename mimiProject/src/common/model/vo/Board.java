@@ -20,8 +20,8 @@ public class Board implements Serializable {
 	private String shopName; // 가게이름
 	private String shopAddress; // 가게주소
 	private String shopCall; // 전화번호
-	private int latitude; // 위도
-	private int longitude; // 경도
+	private double latitude; // 위도
+	private double longitude; // 경도
 	private int hits; // 조회수
 	private int commentNum;    // 댓글수
 	private int recommed; // 추천수
@@ -45,7 +45,7 @@ public class Board implements Serializable {
 
 	public Board(String boardNo, String categoryNo, String categoryName, String userId, String boardGb, String nickName,
 			String gradeName, String title, String contents, String contentsTag, Date boardDate, String shopName,
-			String shopAddress, String shopCall, int latitude, int longitude, int hits, int commentNum, int recommed,
+			String shopAddress, String shopCall, double latitude, double longitude, int hits, int commentNum, int recommed,
 			String boardLink, String state, String thumbnailName, Date delDate, String commentNo, String commentUserId,
 			String commentNickName, String commentGradeName, Date commentDate, String commentContents,
 			String commentState, Date commentDelDate) {
@@ -208,19 +208,20 @@ public class Board implements Serializable {
 		this.shopCall = shopCall;
 	}
 
-	public int getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(int latitude) {
+	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
 
-	public int getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(int longitude) {
+	public void setLongitude(double longitude) {
+
 		this.longitude = longitude;
 	}
 

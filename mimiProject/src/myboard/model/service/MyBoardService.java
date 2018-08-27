@@ -1,5 +1,6 @@
 package myboard.model.service;
 
+
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,5 +43,6 @@ public class MyBoardService {	//회원 기능 중 본인이 작성한 게시물
 		ArrayList<Board> list = new MyBoardDao().searchMyBoard(con, keword);
 		jdbcTemplate.close(con);
 		return list;
+
 	}
 }

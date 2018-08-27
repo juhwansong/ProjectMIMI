@@ -13,6 +13,7 @@
 <%@include file="../../head.jsp"%>
 
 
+
 <style>
 table {
 	text-align: center;
@@ -70,8 +71,8 @@ table {
 				<% for(Board rb : list){ %>
 				<tr>
 					<td><%= rb.getBoardNo() %></td>
-					<td style="width: 90px"><a href="#"><img class="img-thumb img-mover"
-							src="/mimi/resources/images/userReview/s_1.jpg"></a></td>
+					<td style="width: 90px"><a href="/mimi/userboarddetailview?bnum=<%= rb.getBoardNo() %>&page=<%= currentPage %>"><img class="img-thumb img-mover"
+							src="<%if(rb.getThumbnailName() != null){%><%=request.getContextPath()%>/resources/files/userboard/<%=rb.getThumbnailName()%><%}else{%>/mimi/resources/images/logo/default_logo.png<%}%>"></a></td>
 					<td class="tbl-td-title" style="vertical-align: middle;"><a href="/mimi/userboarddetailview?bnum=<%= rb.getBoardNo() %>&page=<%= currentPage %>"><%= rb.getTitle() %>&nbsp;&nbsp;
 					<span class="span-c"><i class="fas fa-comments"></i>&nbsp;<%= rb.getCommentNum() %></span></a></td>
 					<td><%= rb.getNickName() %></td>

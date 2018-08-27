@@ -44,8 +44,8 @@ public class MemberPasswordFindServlet extends HttpServlet {
 		out.print(resultId);
 		out.flush();
 		out.close();
-		
-		
+				
+
 	}
 
 	/**

@@ -14,6 +14,7 @@
 		width: 250px;
 	} */
 	
+	
 	#main {
 		width: 50%;
 	}

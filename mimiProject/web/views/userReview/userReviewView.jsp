@@ -3,7 +3,7 @@
 <%@ page import="common.model.vo.Board" %>
 <%
 	Board board = (Board)request.getAttribute("board");
-	int currentPage = ((Integer)request.getAttribute("currentPage")).intValue();
+	int currentPage = ((Integer)request.getAttribute("currentPage")).intValue();	
 %>
 
 <!DOCTYPE html>
@@ -18,14 +18,20 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
 
+
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 <link rel="stylesheet" href="/mimi/resources/css/bootstrap.css">
 <script type="text/javascript" src="/mimi/resources/js/jquery-3.3.1.min.js"></script>
 <link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
+<!-- 다음맵 인증키 (직접 발급받아야됨) -->
+<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=45af433a6af9ac0a5a32c2bb45c73262&libraries=services,clusterer,drawing"></script>
+ 
+<link rel="stylesheet" type = "text/css" href = "/mimi/resources/css/mapPage.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
+<script type="text/javascript" src="/mimi/resources/js/kakao.min.js"></script>
 </head>
 <body onload="commentList(1)">
 <!-- 바디 태그 시작 -->
-
 <%
 	String ssuserId = (String)session.getAttribute("userId");
 	String authority = (String)session.getAttribute("authority");
@@ -49,11 +55,7 @@
 %>
 
 <!-- ---------------------- -->
-
 <script src="//code.jquery.com/jquery.min.js"></script>
-<script type="text/javascript">
-
-</script>
 
 <script type="text/javascript">
 function cmtedit(obj, cmtNo){
@@ -276,14 +278,15 @@ function cmtinsert(){
    })//document
 </script>
 
-
 <style type="text/css">
 
-#text_context {
-	font-family: "Helvetica Nene", Helvetica, Arial, sans-serif;
-	font-size: 14px;
+#text_context{
+	/* font-family: "Helvetica Nene", Helvetica, Arial, sans-serif;
+	font-size: 14px; 
 	line-height: 1.42857143;
-	color: #333;
+	color: #333; */
+	width:952px;
+	margin-left: auto; 
 }
 
 #good_qta {
@@ -319,19 +322,20 @@ function cmtinsert(){
 
 </style>
 <script type="text/javascript">
-	$(function(){
+	//$(function(){
 		
 		new Clipboard('.copyBtn', {text: function() {
 			alert("클립보드에 복사되었습니다.");
 		    return document.location.href;
 		  }
 		});
-	});//onload
+	//});//onload
 	
 </script>
 
-<!-- <title>유저리뷰보기</title> -->
 
+
+<!-- <title>유저리뷰보기</title> -->
 <div class="container" style="width:1150px;">
 	<h3>유저리뷰</h3>
 	<div id="inner">
@@ -346,15 +350,20 @@ function cmtinsert(){
 				<th width="8%"><button type="button" class="btn btn-default btn-lg" id="bookmarkBtn" style="outline: none;">
 				<span class="far fa-star" aria-hidden="true" style="color: #fd0"></span>
 				</button></th>
+					
 			</tr>
 			<tr>
 				<th>카테고리</th>
 				<td id="text_category">
 				<span class="badge badge-primary"><%= board.getCategoryName() %></span>
-				</td>
-				<td style="width: 300px; align:center;" rowspan="4" colspan="2"><img
-					src="/mimi/resources/images/userReview/map.jpg" width=100%
-					height=300></td>
+				</td>			
+				<td style="width: 300px; align:center;" rowspan="5" colspan="2">
+				<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="<%=board.getLatitude()%>" >
+				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="<%=board.getLongitude()%>">	
+				
+				<div class="map_wrap" >
+	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;"></div>
+	    		</div></td>
 			</tr>
 			<tr>
 				<th>매장명</th>
@@ -371,11 +380,12 @@ function cmtinsert(){
 
 		</table>
 	</div>
+	
 	<hr class="margin2">
-	<div style="margin:20px;">
-	<p id="text_context">
-		<%= board.getContentsTag() %><br>
-	</p>
+	<div id="text_context">			
+		<p>
+			<%= board.getContentsTag()%>
+		</p> 
 	</div>
 	<hr>
 	<div style="text-align: right;">
@@ -422,8 +432,7 @@ function cmtinsert(){
 			</ul>	
 		</td>
 	</tr>
-</table>	
-		
+</table>
 		<!-- 댓글 작성부분 -->
 		<!--<form>-->
 		<input type="hidden" id="bnum" name="bnum" value="<%= board.getBoardNo() %>">
@@ -448,7 +457,7 @@ function cmtinsert(){
 		<% if(board.getUserId().equals(ssuserId)){ %>
 		<div class="col-xs-6 text-right">
 			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/userboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>'">
-			<input type="submit" class="btn btn-default" value="삭제" style="outline: none;" onClick="location.href='/mimi/userboarddelete?bnum=<%= board.getBoardNo() %>'">
+			<input type="submit" id="user-delete-btn" class="btn btn-default" value="삭제" style="outline: none;">
 		</div>
 		<% } %>
 	</div>
@@ -485,6 +494,119 @@ function cmtinsert(){
     });
 </script>
 
+<script type = "text/javascript">
+//마커를 담을 배열입니다
+var markers = [];
+var geocoder = new daum.maps.services.Geocoder(); //주소-좌표 변환 객체 생성
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = {
+        center: new daum.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+        level: 6 // 지도의 확대 레벨
+    };  
+
+// 지도를 생성합니다    
+var map = new daum.maps.Map(mapContainer, mapOption); 
+
+// 장소 검색 객체를 생성합니다
+var ps = new daum.maps.services.Places();  
+
+// 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+/* var infowindow = new daum.maps.InfoWindow({
+	zIndex:1
+}); */
+
+var count; //지도에 직접 표기하기 버튼 클릭시 값 변화
+var placelistclicked = -1; //초기값 -1
+//인포윈도우에 장소명을 표시합니다
+var infowindow = new Array();
+////////////////////////처음 불러올때 본인 위치를 표시
+// HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
+var locPosition = null;
+
+if ($("#latitude").val() !== ""){
+	locPosition = new daum.maps.LatLng($("#latitude").val(), $("#longitude").val()); 
+	addMarker(locPosition, 0);
+   	
+  //현재 위치 표시
+	map.setCenter(locPosition);
+}
+else if (navigator.geolocation) {
+    
+    // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+    navigator.geolocation.getCurrentPosition(function(position) {
+        
+        var lat = position.coords.latitude, // 위도
+            lon = position.coords.longitude; // 경도
+        
+        locPosition = new daum.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+     
+       	
+     	//현재 위치 표시
+    	map.setCenter(locPosition);
+	      
+      });
+    
+} else { // HTML5의 GeoLocation을 사용할 수 없을때
+    
+    locPosition = new daum.maps.LatLng(33.450701, 126.570667),    
+  	//현재 위치 표시
+	map.setCenter(locPosition);//맵 중심좌표 설정
+   
+}
+
+
+
+
+function addMarker(position, i) {
+	
+	var imageSrc ="/mimi/resources/images/icon/if_map-marker.png",
+		imageSize = new daum.maps.Size(48, 48), //마커 이미지 크기
+		imageOption = {offset:new daum.maps.Point(25, 45)}; //마커이미지의 옵션. 이미지 안에서의 좌표
+    
+	var markerImage = new daum.maps.MarkerImage(imageSrc, imageSize, imageOption),
+		markerPosition = position; //마커 표시 위치
+	
+	//마커 생성
+	var marker = new daum.maps.Marker({
+		position:markerPosition,
+		image: markerImage // 마커 이미지 설정
+	});
+	
+    marker.setMap(map);	   // 지도 위에 마커를 표출합니다
+    markers.push(marker);  // 배열에 생성된 마커를 추가합니다
+    
+    return marker;
+}
+
+$(function(){
+	$(document).on("click", "#user-delete-btn", function(){
+		//자바스크립트에서 post 방식으로 보내기
+		var form = document.createElement("form");
+		var input = new Array();
+		var parm = new Array(); //input 태그안의 name,value값 설정
+		//파라미터 추가
+		parm.push(["bnum", "<%=board.getBoardNo()%>"]);
+		parm.push(["content_tag", '<%=board.getContentsTag()%>']);
+		
+		for(var i=0; i<parm.length; i++){
+			input[i]=document.createElement("input");
+			input[i].setAttribute("type", "hidden");
+			input[i].setAttribute("name", parm[i][0]);
+			input[i].setAttribute("value", parm[i][1]);
+			form.appendChild(input[i]);
+		}
+		
+		form.method = "post";
+		form.action = "/mimi/userboarddelete";
+		
+		document.body.appendChild(form);
+		form.submit();
+		
+		board.getContentsTag()
+	});	
+});
+
+</script>
 
 <%@include file="../../footer.jsp"%>
 <%@include file="../../end.jsp"%>

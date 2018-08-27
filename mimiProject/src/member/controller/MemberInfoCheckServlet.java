@@ -58,6 +58,7 @@ public class MemberInfoCheckServlet extends HttpServlet {
 		out.print(result);
 		out.flush();
 		out.close();
+
 	}
 
 	/**
