@@ -1,5 +1,6 @@
 package recommend.model.service;
 
+
 import static common.jdbc.JDBCTemplate.close;
 import static common.jdbc.JDBCTemplate.getConnection;
 
@@ -24,5 +25,6 @@ public class RecommendService {		//추천하기 기능
 		close(con);
 		
 		return result;
+
 	}
 }

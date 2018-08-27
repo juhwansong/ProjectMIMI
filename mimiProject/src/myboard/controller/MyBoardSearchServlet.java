@@ -105,6 +105,7 @@ public class MyBoardSearchServlet extends HttpServlet {
 			request.setAttribute("message", e.getMessage());
 			view.forward(request, response);
 		}
+
 	}
 
 	/**

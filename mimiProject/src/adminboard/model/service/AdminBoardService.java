@@ -1,5 +1,6 @@
 package adminboard.model.service;
 
+
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,6 +83,7 @@ public class AdminBoardService {//미미 리뷰 게시판 기능
 		ArrayList<Board> list = new AdminBoardDao().searchAdminBoard(conn, query, currentPage, countList);
 		close(conn);
 		return list;
+
 	}
 
 }

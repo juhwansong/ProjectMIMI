@@ -221,6 +221,7 @@ public class Board implements Serializable {
 	}
 
 	public void setLongitude(double longitude) {
+
 		this.longitude = longitude;
 	}
 

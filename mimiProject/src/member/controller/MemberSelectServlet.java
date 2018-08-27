@@ -53,6 +53,7 @@ public class MemberSelectServlet extends HttpServlet {
 			System.out.println(e.getMessage());
 			
 		}
+
 	}
 
 	/**

@@ -74,6 +74,7 @@ public class CustomerUpdateServlet extends HttpServlet {
 				request.setAttribute("message", e.getMessage());
 			}
 		}//if else 종료
+
 	}
 
 	/**

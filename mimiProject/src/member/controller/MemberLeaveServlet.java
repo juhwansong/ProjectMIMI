@@ -50,6 +50,7 @@ public class MemberLeaveServlet extends HttpServlet {
 		out.print(message);
 		out.flush();
 		out.close();
+
 	}
 
 	/**

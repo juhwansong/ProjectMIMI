@@ -133,6 +133,7 @@ public class UserFileUploadServlet extends HttpServlet {
 		out.print(imgUrl);
 		out.flush();
 		out.close();
+
 	}
 
 	/**

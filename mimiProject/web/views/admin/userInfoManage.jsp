@@ -52,7 +52,6 @@
 	content: "▶";
 }
 
-
 #quickMenu {
 	width: 300px;
 	height: 60px;

@@ -1,9 +1,6 @@
-
-
-/userboard/
-/bestboard/
-/common/
-/member/
-/recommend/
-/nearshop/
+/myboard/
+/mycomment/
 /notice/
+/recommend/
+/userboard/
+/support/

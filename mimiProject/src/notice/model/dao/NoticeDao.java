@@ -1,5 +1,6 @@
 package notice.model.dao;
 
+
 import static common.jdbc.JDBCTemplate.close;
 
 import java.sql.Connection;
@@ -286,5 +287,6 @@ public class NoticeDao {
 		}
 		return result;
 	}
+
 
 }

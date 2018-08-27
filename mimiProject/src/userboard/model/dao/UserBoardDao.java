@@ -574,4 +574,5 @@ public class UserBoardDao {
 		}
 		return list;
 	}
+
 }

@@ -124,7 +124,7 @@ public class AdminBoardListServlet extends HttpServlet {
 			request.setAttribute("message", e.getMessage());
 			view.forward(request, response);
 		}
-	}
+
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

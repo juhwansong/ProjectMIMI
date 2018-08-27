@@ -1,12 +1,17 @@
 package support.controller;
 
 import java.io.IOException;
-import javax.servlet.ServletException;
+import java.util.ArrayList;
+
+
+import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import support.model.service.SupportService;
+import support.model.vo.Support;
 /**
  * Servlet implementation class SupportListServlet
  */
@@ -26,8 +31,53 @@ public class SupportListServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		response.setContentType("text/html; charset=utf-8");
+		// 공지사항 게시물 리스트
+		request.setCharacterEncoding("utf-8");
+		int currentPage = 1;
+		int limit = 10;
+		
+		if(request.getParameter("page") != null){
+			currentPage = Integer.parseInt(request.getParameter("page"));
+
+		}
+		
+		SupportService sservice = new SupportService();
+		
+		RequestDispatcher view = null;
+		try {
+			int listCount = sservice.getListCount();
+			ArrayList<Support> slist = sservice.selectSupportList(currentPage, limit);
+			
+			int maxPage = (int)((double)listCount / limit + 0.9);
+			int startPage = (((int)((double)currentPage / limit + 0.9)) - 1) * limit + 1;
+			int endPage = startPage + limit - 1;
+			
+			if(maxPage < endPage)
+				endPage = maxPage;
+		
+			if(slist.size() > 0){
+				view = request.getRequestDispatcher("views/member/customer1.jsp");
+
+				request.setAttribute("slist", slist);
+				request.setAttribute("currentPage", currentPage);
+				request.setAttribute("maxPage", maxPage);
+				request.setAttribute("startPage", startPage);
+				request.setAttribute("endPage", endPage);
+				request.setAttribute("listCount", listCount);
+				
+				view.forward(request, response);
+			}else{
+				view = request.getRequestDispatcher("views/member/customerError.jsp");
+				request.setAttribute("message", "게시글이 없습니다");
+				view.forward(request, response);
+			}
+			
+		}catch (Exception e) {
+			view = request.getRequestDispatcher("views/member/customerError.jsp");
+			request.setAttribute("message", e.getMessage());
+			view.forward(request, response);
+		}
 	}
 
 	/**

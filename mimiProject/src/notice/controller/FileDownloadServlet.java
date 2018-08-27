@@ -54,6 +54,7 @@ public class FileDownloadServlet extends HttpServlet {
 		}
 		downOut.close();
 		bin.close();
+
 	}
 
 	/**

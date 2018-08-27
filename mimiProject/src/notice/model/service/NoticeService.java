@@ -83,6 +83,7 @@ public class NoticeService {//공지사항 게시판 기능
 		int listCount = new NoticeDao().getListCount(conn, keyword);
 		close(conn);
 		return listCount;
+
 	}
 
 }

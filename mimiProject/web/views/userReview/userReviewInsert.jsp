@@ -6,6 +6,7 @@
 var openWin;
 //var cateVal = "카페";
 
+
 function openAddress()
 {
     // window.open("open할 window", "자식창 이름", "팝업창 옵션");  (자식창 이름을 설정해줘야 중복 팝업이 안된다.)

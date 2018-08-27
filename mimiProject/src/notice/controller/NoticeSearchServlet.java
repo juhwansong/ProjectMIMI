@@ -86,6 +86,7 @@ public class NoticeSearchServlet extends HttpServlet {
 			view.forward(request, response);
 		}
 		
+
 	}
 
 	/**

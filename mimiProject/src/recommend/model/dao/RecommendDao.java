@@ -39,4 +39,5 @@ public class RecommendDao {
 		return result;
 	}
 
+
 }

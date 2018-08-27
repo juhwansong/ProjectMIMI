@@ -54,6 +54,7 @@ public class MemberPasswordCheckServlet extends HttpServlet {
 		out.print(message);
 		out.flush();
 		out.close();
+
 	}
 
 	/**

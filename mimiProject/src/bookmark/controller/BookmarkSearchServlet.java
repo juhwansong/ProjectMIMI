@@ -104,6 +104,7 @@ public class BookmarkSearchServlet extends HttpServlet {
 			request.setAttribute("message", e.getMessage());
 			view.forward(request, response);
 		}
+
 	}
 
 	/**

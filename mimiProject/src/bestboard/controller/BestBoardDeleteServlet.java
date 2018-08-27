@@ -2,6 +2,7 @@ package bestboard.controller;
 
 import java.io.IOException;
 
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -53,6 +54,7 @@ public class BestBoardDeleteServlet extends HttpServlet {
 			request.setAttribute("message", e.getMessage());
 			view.forward(request, response);
 		}
+
 	}
 
 	/**

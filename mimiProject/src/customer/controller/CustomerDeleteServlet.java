@@ -72,6 +72,7 @@ public class CustomerDeleteServlet extends HttpServlet {
 				request.setAttribute("message", e.getMessage());
 			}
 		}//if else 종료
+
 	}
 
 	/**

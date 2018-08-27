@@ -6,6 +6,7 @@
       int currentPage = ((Integer)request.getAttribute("page")).intValue();
     %>
 
+
 <%@include file="../../head.jsp" %>
 
 <!-- <title>MIMI</title> -->

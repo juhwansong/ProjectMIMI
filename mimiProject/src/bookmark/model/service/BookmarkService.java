@@ -70,5 +70,4 @@ public class BookmarkService {	//즐겨찾기 기능
 		return result;
 	}
 
-
 }

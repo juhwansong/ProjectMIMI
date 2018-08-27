@@ -149,5 +149,6 @@ public class UserBoardService {	//유저 리뷰 게시판 기능
 		int listCount = new UserBoardDao().getListCount(conn, query);
 		close(conn);
 		return listCount;
+
 	}
 }

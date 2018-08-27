@@ -23,12 +23,13 @@ public class Support implements Serializable {
 	private String commentGradeName; // 댓글작성자 등급
 	private Date commentDate;		//댓글작성일
 	private String commentContents;	//댓글내용
+	private int boardLevel;
 	
 	public Support(){}
 
 	public Support(String boardNo, String userId, String nickName, String gradeName, String title, String contents,
 			Date writeDate, int category, String state, String commentNo, String commentUserId, String commentNickName,
-			String commentGradeName, Date commentDate, String commentContents) {
+			String commentGradeName, Date commentDate, String commentContents, int boardLevel) {
 		this.boardNo = boardNo;
 		this.userId = userId;
 		this.nickName = nickName;
@@ -48,11 +49,9 @@ public class Support implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Support [boardNo=" + boardNo + ", userId=" + userId + ", nickName=" + nickName + ", gradeName="
-				+ gradeName + ", title=" + title + ", contents=" + contents + ", writeDate=" + writeDate + ", category="
-				+ category + ", state=" + state + ", commentNo=" + commentNo + ", commentUserId=" + commentUserId
-				+ ", commentNickName=" + commentNickName + ", commentGradeName=" + commentGradeName + ", commentDate="
-				+ commentDate + ", commentContents=" + commentContents + "]";
+		return this.boardNo + ", " + this.userId + ", " + this.nickName + ", " + this.gradeName + ", " + this.title + ", " + this.contents + ", " + this.writeDate
+				 + ", " + this.category + ", " + this.state + ", " + this.commentNo + ", " + this.commentUserId + ", " + this.commentNickName
+				 + ", " + this.commentGradeName + ", " + this.commentDate + ", " + this.commentContents + ", " + this.boardLevel;
 	}
 
 	public String getBoardNo() {
@@ -173,6 +172,14 @@ public class Support implements Serializable {
 
 	public void setCommentContents(String commentContents) {
 		this.commentContents = commentContents;
+	}
+	
+	public int getBoardLevel() {
+		return boardLevel;
+	}
+
+	public void setBoardLevel(int boardLevel) {
+		this.boardLevel = boardLevel;
 	}
 
 	public static long getSerialversionuid() {

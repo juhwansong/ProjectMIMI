@@ -34,6 +34,7 @@
     opacity: 0.9;
 }
 
+
 .sidenav a {
     padding: 3px 3px 3px 1px;
     text-decoration: none;

@@ -1,5 +1,6 @@
 package bestboard.model.dao;
 
+
 import static common.jdbc.JDBCTemplate.close;
 
 import java.sql.Connection;

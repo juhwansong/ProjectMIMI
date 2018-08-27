@@ -118,6 +118,7 @@ public class MemberService {	//회원 가입 및 정보 수정 관련 기능
 		close(con);
 		
 		return result;
+
 	}
 
 }

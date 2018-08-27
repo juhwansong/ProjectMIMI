@@ -69,6 +69,7 @@ public class CustomerService {	//관리자 기능 중 전체 회원 관리 기�
 			rollback(conn);
 		close(conn);
 		return result;	
+
 	}
 
 }

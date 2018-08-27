@@ -87,6 +87,7 @@ public class CustomerListServlet extends HttpServlet {
 			view = request.getRequestDispatcher("view/admin/adminPageError.jsp");
 			request.setAttribute("message", e.getMessage());
 		}
+
 	}
 
 	/**
