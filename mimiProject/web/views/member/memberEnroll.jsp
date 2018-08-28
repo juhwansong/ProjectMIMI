@@ -63,7 +63,7 @@
             <div class="form-group">
               <label for="email">본인 확인 이메일</label>
               <div class="input-group">
-                <input type="email" class="form-control" id="email" maxlength="30" name="email" placeholder="">
+                <input type="email" class="form-control" id="email" onkeyup="emailEnterKey();" maxlength="30" name="email" placeholder="">
                 <input type="hidden" id="saveemail" value="">
                 <span class="input-group-btn">
                   <button id="emailcert_btn" type="button" class="btn btn-success" style="outline: none">인증번호 전송<i class="fa fa-mail-forward spaceLeft"></i></button>
@@ -73,13 +73,13 @@
             </div>
             <div class="form-group">
               <label for="otpnumber">인증번호 입력</label>
-              <input type="text" class="form-control" id="otpnumber" placeholder="인증번호" readonly="readonly">
+              <input type="text" class="form-control" id="otpnumber" placeholder="인증번호" readonly="readonly" onkeyup="certEnterKey();">
               <input type="hidden"  name="h_code" id="h_code" value=""> <!-- 생성한 코드를 저장하기 위한 장소 -->
               <p id="checkCode" class="help-block"></p>
             </div>
             <div class="form-group">
               <label for="phone">휴대전화</label>
-              <input type="tel" class="form-control" id="phone" name="phone" placeholder="">
+              <input type="tel" class="form-control" id="phone" name="phone" placeholder="" onkeyup="phoneEnterKey();">
               <p id="checkphone" class="help-block"></p>
             </div>
             
@@ -495,6 +495,44 @@
                 return false;
             }                       
         }
+      	
+      	function certEnterKey() {
+	        if (window.event.keyCode == 13) { 
+	            // 엔터키가 눌렸을 때 실행할 내용
+	        	if($("#otpnumber").attr("readonly") === "readonly"){
+      				return false;
+      			}
+      			checkCode();
+      			
+	        	$("#enroll-btn").trigger("click");
+	        }
+		}
+      	
+      	function emailEnterKey(){
+      		if (window.event.keyCode == 13) { 
+	             // 엔터키가 눌렸을 때 실행할 내용
+	        	$("#emailcert_btn").trigger("click");
+	        }     		
+      	}
+      	
+      	function phoneEnterKey(){
+      		if (window.event.keyCode == 13) { 
+	             // 엔터키가 눌렸을 때 실행할 내용
+      			$("#phone").val($("#phone").val().trim().replace(/-/gi, ""));  //입력한 값에 포함된 모든 "-"를 없앰.
+					
+      			if(isValidPhone($("#phone").val().trim()) != false){
+      				$("#checkphone").html("");
+      				booleanphone = true;
+      			}
+      			else{
+      				$("#checkphone").html("전화번호를 다시 확인해주세요.");
+      	      		$("#checkphone").css("color", "#d9534f");
+      	      		booleanphone = false;
+      			}
+      			
+      			$("#enroll-btn").trigger("click");
+	        }  
+      	}
       	
       	
       </script>

@@ -40,37 +40,69 @@ public class NearshopListServlet extends HttpServlet {
 		
 		Double latitude = Double.parseDouble(request.getParameter("latitude"));
 		Double longitude = Double.parseDouble(request.getParameter("longitude"));
-		ArrayList<Board> boardList = new NearshopService().selectNearshopList(latitude, longitude);
+		int currentPage = 1;
+		int countList = 10;
+		int countPage = 5;
 		
+		if(request.getParameter("page") != null){
+			currentPage = Integer.parseInt(request.getParameter("page"));
+		}
+			
+		ArrayList<Board> boardList = new NearshopService().selectNearshopList(currentPage, countList, latitude, longitude);
+		
+		int totalCount = new NearshopService().getListCount(latitude, longitude);
+		
+		int maxPage = totalCount / countList;
+		if(totalCount % countList > 0)
+			maxPage++;
+		
+		if(maxPage < currentPage)
+			currentPage = maxPage;
+		
+		
+		int startPage = ((currentPage - 1) / 5) * 5 + 1;
+		int endPage = startPage + countPage - 1;
+		
+		if(endPage > maxPage)
+			endPage = maxPage;
+	
 		JSONObject json = new JSONObject();	
 		JSONArray jarr = new JSONArray();
 		
 		if(boardList.size() > 0){
-			for(Board board : boardList){
+			for(int i=0; i< boardList.size(); i++){
 				JSONObject job = new JSONObject();
-				job.put("board_no", board.getBoardNo());
+				if(i == 0){
+					job.put("currentPage", currentPage);
+					job.put("maxPage", maxPage);
+					job.put("startPage", startPage);
+					job.put("endPage", endPage);
+					job.put("totalCount", totalCount);
+				}
+		
+				job.put("board_no", boardList.get(i).getBoardNo());
 				
-				job.put("title", URLEncoder.encode(board.getTitle(), "utf-8").replaceAll("\\+", "%20")); //인코딩되면서 공백문자가 +로 바뀜
+				job.put("title", URLEncoder.encode(boardList.get(i).getTitle(), "utf-8").replaceAll("\\+", "%20")); //인코딩되면서 공백문자가 +로 바뀜
 
 			
-				job.put("contents", URLEncoder.encode(board.getContents(), "utf-8").replaceAll("\\+", "%20"));
+				job.put("contents", URLEncoder.encode(boardList.get(i).getContents(), "utf-8").replaceAll("\\+", "%20"));
 			
 				
-				if(board.getThumbnailName() != null){
+				if(boardList.get(i).getThumbnailName() != null){
 				
-					job.put("thumbnail_name", URLEncoder.encode(board.getThumbnailName(), "utf-8").replaceAll("\\+", "%20"));
+					job.put("thumbnail_name", URLEncoder.encode(boardList.get(i).getThumbnailName(), "utf-8").replaceAll("\\+", "%20"));
 								
 				}
 				
-				job.put("y", board.getLatitude());
-				job.put("x", board.getLongitude());
-				job.put("place_name", URLEncoder.encode(board.getShopName(), "utf-8").replaceAll("\\+", "%20"));
+				job.put("y", boardList.get(i).getLatitude());
+				job.put("x", boardList.get(i).getLongitude());
+				job.put("place_name", URLEncoder.encode(boardList.get(i).getShopName(), "utf-8").replaceAll("\\+", "%20"));
 
-				job.put("address_name", URLEncoder.encode(board.getShopAddress(), "utf-8").replaceAll("\\+", "%20"));
+				job.put("address_name", URLEncoder.encode(boardList.get(i).getShopAddress(), "utf-8").replaceAll("\\+", "%20"));
 
 				
-				job.put("phone", board.getShopCall());
-				job.put("boardNo", board.getBoardNo());
+				job.put("phone", boardList.get(i).getShopCall());
+				job.put("boardNo", boardList.get(i).getBoardNo());
 				
 					
 				jarr.add(job);
@@ -80,7 +112,8 @@ public class NearshopListServlet extends HttpServlet {
 			json.put("list", jarr);
 		}
 		
-		
+		System.out.println("한번");
+		System.out.println("-----------");
 		
 		response.setContentType("application/json; charset=utf-8");
 		

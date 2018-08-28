@@ -26,6 +26,7 @@ function setParentText(){
 
 <!-- 커스텀 오버레이 꾸미기 -->
 <style>  
+	
 	.wrap {position: absolute;left:0;bottom: 40px;width: 0px;height: 0px;margin-left: -144px;text-align: left;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}
     .wrap * {padding: 0;margin: 0;}
     .wrap .infowin {position:relative;top:-62px;left:40px;width: 206px;height: 40px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;background: #2b2d36; overflow: hidden; opacity:0.9}
@@ -34,7 +35,7 @@ function setParentText(){
     .infowin .close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');}
     .infowin .close:hover {cursor: pointer;}
     .infowin .body {position: relative;overflow: hidden;}
-    .infowin .desc {position: relative;left:-48px;text-align:center;margin: 13px 0 0 90px;height: 75px;background: #2b2d36;}
+    .infowin .desc {position: relative;left:-48px;text-align:center;margin: 13px 0 0 90px;height: 75px;background: #2b2d36;               overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
     .desc .ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
     .desc .jibun {font-size: 11px;color: #888;margin-top: -2px;}
     .infowin .img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}
@@ -57,6 +58,8 @@ function setParentText(){
 		left: 143px;
 	}
     .infowin .link {color: #5085BB;} 
+    
+    
 </style>
 
 <title>상세 주소</title>
@@ -67,6 +70,12 @@ function setParentText(){
 	<!-- 지도 부분 시작 -->
 	<div class="map_wrap">
 	    	<div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+	    	<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
+    		<div class="custom_zoomcontrol radius_border" style="opacity:0.8;right:20px;top:10px;"> 
+       			<span onclick="zoomIn()"><img style="position:relative;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
+        		<span onclick="zoomOut()"><img style="position:relative;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
+    		</div>
+    		
 	    	<div id="menu_wrap" class="bg_white">
 	        	<div class="option">
 	            	<div>
@@ -221,9 +230,16 @@ function displayCenterInfo(result, status) {
 function placesSearchCB(data, status, pagination) {
 	count = count +1; //검색 클릭 시 지도에 직접 마크 표시하기 버튼 초기화
 	map.setCursor(""); //버튼 기능 초기화 됐으니  커서모양도 초기화 (직접 지도에 마커 표시 클릭시 변하는 커서모양 초기화)
-	
+	console.log(data);
     if (status === daum.maps.services.Status.OK) {
-
+		
+    	//새 검색 시 기존 윈도우 인포들을 전부 지움
+    	for(var i=0; i<infowindow.length; i++){
+	    	if(infowindow[i] !== undefined){  //이미 지워진 인덱스의 값을 또 close()할경우 undefinded 발생 (안닫힌 info창만 제거)
+	    		infowindow[i].setMap(null);
+	    	} 
+	    }
+    	
         // 정상적으로 검색이 완료됐으면
         // 검색 목록과 마커를 표출합니다
         displayPlaces(data);
@@ -280,7 +296,7 @@ function displayPlaces(places) {
         // 마커와 검색결과 항목에 mouseover 했을때
         // 해당 장소에 인포윈도우에 장소명을 표시합니다
         // mouseout 했을 때는 인포윈도우를 닫습니다
-        (function(marker, title) {
+        (function(marker, title, id) {
                
             daum.maps.event.addListener(marker, 'click', function(){
             	///////////////여기에 주소입력창에 자동으로 주소 삽입 추가
@@ -293,7 +309,7 @@ function displayPlaces(places) {
        
             	
             	for(var i=0; i<places.length; i++){  //places배열에서 클릭한 마크의 title과 같은 정보의 주소와 전화번호를 뽑아내기 위해
-            		if(places[i].place_name === title){
+            		if(places[i].id === id){
             			addressDiv.value = places[i].address_name;
             			telDiv.value = places[i].phone;
             			$("#latitude").val(places[i].y); //위도 저장
@@ -321,7 +337,7 @@ function displayPlaces(places) {
             daum.maps.event.addListener(marker, 'mouseover', function(){
             	
             	for(var i=0; i<places.length; i++){
-	            	if(places[i].place_name === title && placelistclicked !== i){
+	            	if(places[i].id === id && placelistclicked !== i){
 	        			$("#placesList > .item").eq(i).css("background","#FBE2E2");//list목록	
 	        			displayInfowindow(marker,title, i);
 	        		}	
@@ -331,7 +347,7 @@ function displayPlaces(places) {
             daum.maps.event.addListener(marker, 'mouseout', function() {
             	
                 for(var i=0; i<places.length; i++){
-	                if(places[i].place_name === title && placelistclicked !== i){
+	                if(places[i].id === id && placelistclicked !== i){
 	        			$("#placesList > .item").eq(i).css("background","none");//list목록
 	        			infowindow[i].setMap(null);
 	 		
@@ -351,7 +367,7 @@ function displayPlaces(places) {
             	daum.maps.event.trigger(marker, "mouseout");  //강제로 마우스 아웃 발생    
             };
             
-        })(marker, places[i].place_name);
+        })(marker, places[i].place_name, places[i].id);
 
         fragment.appendChild(itemEl);
     }
@@ -521,7 +537,9 @@ function displayPagination(pagination) {
             el.className = 'on';
         } else {
             el.onclick = (function(i) {
+            	
                 return function() {
+                	
                     pagination.gotoPage(i);
                 }
             })(i);
@@ -576,6 +594,16 @@ function addClickMarker(position, i) {
     
     return marker;
 } 
+
+//지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomIn() {
+    map.setLevel(map.getLevel() - 1);
+}
+
+// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomOut() {
+    map.setLevel(map.getLevel() + 1);
+}
 
 //직접 표시하기 버튼 눌렀을때
 $("#direct").click(function(){
