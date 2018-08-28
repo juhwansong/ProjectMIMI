@@ -126,6 +126,7 @@ public class MemberDao {
 				member = new Member();
 				member.setNickName(rset.getString("nickname"));
 				member.setAuthority(rset.getString("authority"));
+				member.setGradeName(rset.getString("GRADE_NAME"));
 			}
 			else{
 				throw new MemberException("아이디나 암호가 일치하지 않습니다.!");

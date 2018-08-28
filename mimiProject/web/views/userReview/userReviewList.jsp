@@ -121,46 +121,12 @@ table {
 	</td>
 		<!-- 버튼 -->
 		<td style="width:30%; vertical-align: top;">
+			<% if(userId != null){ %>
 			<input type="button" class="btn btn-default pull-right"
 			onClick="location.href='/mimi/views/userReview/userReviewInsert.jsp'" value="글쓰기" style="outline: none;"></td>
+			<% } %>
 	</tr>
 </table>		
-</div>
-<!-- 페이징 처리 -->
-<div style="text-align: center">
-<% if(currentPage <= 1){ %>
-	[맨처음]&nbsp;
-<% }else{ %>
-	<a href="/mimi/userboardlist?page=1">[맨처음]</a>
-<% } %>
-<% if((currentPage - 10) < startPage && 
-		(currentPage - 10) > 1){ %>
-	<a href="/mimi/userboardlist?page=<%= startPage - 10 %>">[이전]</a>
-<% }else{ %>
-	[이전]&nbsp;
-<% } %>
-<%-- startPage ~ endPage 출력 --%>
-<% for(int p = startPage; p <= endPage; p++){ 
-		if(p == currentPage){ 
-%>
-	<font color="red" size="4">[<%= p %>]</font>
-<%      }else{ %>
-	<a href="/mimi/userboardlist?page=<%= p %>"><%= p %></a>
-<% }} %>
-<%-- ---------------- --%>
-<% if((currentPage + 10) > endPage && 
-		(currentPage + 10) < maxPage){ %>
-	<a href="/mimi/userboardlist?page=<%= endPage + 10 %>">[다음]</a>
-<% }else{ %>
-	[다음]&nbsp;
-<% } %>
-
-<% if(currentPage >= maxPage){ %>
-	[맨끝]&nbsp;
-<% }else{ %>
-	<a href="/mimi/userboardlist?page=<%= maxPage %>">
-	[맨끝]</a>
-<% } %>
 </div>
 
 <%@include file="../../footer.jsp"%>

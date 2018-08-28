@@ -30,12 +30,13 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
 <script type="text/javascript" src="/mimi/resources/js/kakao.min.js"></script>
 </head>
-<body onload="commentList(1);recommendCheck();bookmarkCheck();">
+<body onload="commentList(1);recommendCheck();bookmarkCheck();menuDisplay();">
 <!-- 바디 태그 시작 -->
 <%
 	String ssuserId = (String)session.getAttribute("userId");
 	String authority = (String)session.getAttribute("authority");
 	String nickName = (String)session.getAttribute("nickName");
+	String gradeName = (String)session.getAttribute("gradeName");
 	
 	if(ssuserId == null){
 %>		
@@ -56,6 +57,17 @@
 
 <!-- ---------------------- -->
 <script src="//code.jquery.com/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+//로그인에 따라 메뉴 비활성화 처리
+function menuDisplay(){
+	<% if(ssuserId == null){ %>
+		$("#cmtArea").hide();
+	<% } %>
+}
+</script>
+
 
 <script type="text/javascript">
 function cmtedit(obj, cmtNo){
@@ -126,7 +138,8 @@ function cmtdelete(cmtNo){
 	//var endPage = json.endPage;
 	var maxPage = "";
 	var currentPage = "";
-	function commentList(page){
+	function commentList(page){	
+	var cmtgradeicon = document.getElementById("cmtgradeicon");
 	$.ajax({
 		url : "/mimi/userboardreplylist",
 		type : "get",
@@ -137,13 +150,41 @@ function cmtdelete(cmtNo){
 			var json = JSON.parse(jsonStr);
 			var values = "";
 			var pageValues = "";
+
+			var level0 = "/mimi/resources/images/icon/icon_human.ico";
+			var level1 = "/mimi/resources/images/icon/icon_level1.png";
+			var level2 = "/mimi/resources/images/icon/icon_level2.png";
+			var level3 = "/mimi/resources/images/icon/icon_level3.png";
+			var level4 = "/mimi/resources/images/icon/icon_level4.png";
+			
+			var a =1;
+			
+			if("<%= gradeName %>"=="손님")
+				cmtgradeicon.src=level0;
+			else if("<%= gradeName %>"=="종업원")
+				cmtgradeicon.src=level1;
+			else if("<%= gradeName %>"=="주방보조")
+				cmtgradeicon.src=level2;
+			else if("<%= gradeName %>"=="주방장")
+				cmtgradeicon.src=level3;
+			else
+				cmtgradeicon.src=level4;		
 			
 			for(var i in json.list){
 				values += "<tr>"
 					+ "<td><table id='comment' style='width:100%'>"
-						+ "<tr>"
-							+ "<td style='width: 40px'><img src='/mimi/resources/images/icon/icon_human.ico' width=40 height=40></td>"
-							+ "<td class='text-left'>&nbsp;" + json.list[i].cmtNickname + "<span style='font-size: 8px'>&nbsp;&nbsp;" + json.list[i].cmtDate + "</span></td>"
+						+ "<tr>";
+							if(json.list[i].cmtGradename=="손님")
+								values += "<td style='width: 40px'><img src='"+level0+"' width=40 height=40></td>";
+							else if(json.list[i].cmtGradename=="종업원")
+								values += "<td style='width: 40px'><img src='"+level1+"' width=40 height=40></td>";
+							else if(json.list[i].cmtGradename=="주방보조")
+								values += "<td style='width: 40px'><img src='"+level2+"' width=40 height=40></td>";
+							else if(json.list[i].cmtGradename=="주방장")
+								values += "<td style='width: 40px'><img src='"+level3+"' width=40 height=40></td>";
+							else
+								values += "<td style='width: 40px'><img src='"+level4+"' width=40 height=40></td>";
+							values += "<td class='text-left'>&nbsp;" + json.list[i].cmtNickname + "<span style='font-size: 8px'>&nbsp;&nbsp;" + json.list[i].cmtDate + "</span></td>"
 							//+ "<td style='width: 50px' class='text-center' id=\"abc\"><a href='#a' class='cmtedit'>수정</a></td>"
 							+ "<td style='width: 50px' class='text-center'>";
 			if(json.list[i].cmtUserId=="<%= ssuserId %>"){
@@ -244,34 +285,6 @@ function recommendCheck(){
 		}
 	});  //ajax close
 }
-function recommendCheck1(){
-	//추천 상태 체크
-    var bnum = $("#bnum").val();
-    var recommendbtn = document.getElementById("recommendbtn");
-    var recommendState = document.getElementById("recommedState");
-	$.ajax({
-		url : "/mimi/recommendcheck",
-		type : "get",
-		dataType : "json",
-		data : {bnum : "<%= board.getBoardNo() %>"},
-		success : function(data){
-			var jsonStr = JSON.stringify(data);
-			var json = JSON.parse(jsonStr);
-			if(json.result==1){
-				recommendbtn.src="/mimi/resources/images/icon/icon_thumb_up.png"
-				recommendState.value = "up";
-			} else{
-				recommendbtn.src="/mimi/resources/images/icon/icon_thumb_down.png"
-				recommendState.value = "down";
-			}
-			$('#good_qta').text(json.recommendCount);
-		},
-		error : function(jqXHR, textstatus, errorThrown){
-			console.log("error : " + jqXHR + ", " + 
-					textstatus + ", " + errorThrown);
-		}
-	});  //ajax close
-}
 function recommendInsert(){
 	//추천 업
     var bnum = $("#bnum").val();
@@ -310,11 +323,15 @@ function recommendDown(){
 
 function recommendClick(){
 	//추천버튼클릭
+	<% if(ssuserId == null){ %>
+		alert("로그인이 필요합니다!");
+	<% } else{ %>
 	if(document.getElementById("recommedState").value == "down"){
 		recommendInsert();
 	} else{
 		recommendDown();
 	}
+	<% } %>
 }
 </script>
 
@@ -349,10 +366,8 @@ function bookmarkCheck(){
 		data : {bnum : "<%= board.getBoardNo() %>"},
 		success : function(data){
 			if(data==1){
-				console.log(data);
 				$("#bookmarkBtn").children().prop('class', addbook); //즐겨찾기 등록 아이콘
 			} else{
-				console.log(data);
 			    $("#bookmarkBtn").children().prop('class', subbook); //즐겨찾기 미등록 아이콘
 			}
 		},
@@ -368,6 +383,9 @@ function bookmarkCheck(){
 
 function bookmarkAdd(){
 	//즐겨찾기 추가
+	<% if(ssuserId == null){ %>
+		alert("로그인이 필요합니다!");
+	<% } else{ %>
     var bnum = $("#bnum").val();
     var urlstr = "/mimi/bookmarkinsert";
     var i = 0;
@@ -387,6 +405,7 @@ function bookmarkAdd(){
 					textstatus + ", " + errorThrown);
 		}
 	});  //ajax close
+	<% }%>
 }
 
 function bookmarkSub(){
@@ -406,13 +425,6 @@ function bookmarkSub(){
 	});  //ajax close
 }
 
-function recommendClick(){
-	if(document.getElementById("recommedState").value == "down"){
-		recommendInsert();
-	} else{
-		recommendDown();
-	}
-}
 </script>
 
 <script type="text/javascript">
@@ -595,19 +607,7 @@ function cmtinsert(){
 	<div style="text-align: center;">
 		<!-- 기존 댓글 -->
 		<table class="table table-borderless" style="width:100%" id="cmtlist">
-			 <!-- <tr>
-				<td><table id="comment" style="width:100%">
-					<tr>
-						<td style="width: 40px"><img src="/mimi/resources/images/icon/icon_human.ico" width=40 height=40></td>
-						<td class="text-left">&nbsp;user01 <span style="font-size: 8px">&nbsp;&nbsp;2018-08-02 00:02:25</span></td>
-						<td style="width: 50px" class="text-center"><a href="/mimi/views/userReview/userReviewList.jsp">수정</a></td>
-						<td style="width: 50px" class="text-center"><a href="#">삭제</a></td>
-					</tr>
-					<tr>
-					 	<td colspan="4" class="text-left"><div class="margin5">추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? 추천요11 1111111 1111?? ??fffffffffffffffff아니 왤케 끝없이 늘어나??????</div></td>
-					</tr>
-				</table></td>
-			</tr>  -->
+		
 		</table>
 
 		<hr class="margin2">
@@ -623,16 +623,18 @@ function cmtinsert(){
 </table>
 		<!-- 댓글 작성부분 -->
 		<!--<form>-->
+		<div id="cmtArea">
 		<input type="hidden" id="bnum" name="bnum" value="<%= board.getBoardNo() %>">
 		<input type="hidden" id="userid" name="userid" value="user02">
 		<table style="width:100%;">
 			<tr>
 				<td width="15%"><img src="/mimi/resources/images/icon/icon_human.ico" width=40
-				height=40>&nbsp;&nbsp;<label><%= nickName %></label></td>
+				height=40 id="cmtgradeicon">&nbsp;&nbsp;<label><%= nickName %></label></td>
 				<td width="*"><textarea style="width: 100%;" rows="3" id="cmtContent" name="cmtContent"></textarea></td>
 				<td width="8%"><button class="btn btn-default" style="outline: none;" value="등록" id="cmtsubmit" onclick="cmtinsert()">등록</button></td>
 			</tr>
 		</table>
+		</div>
 		<!--</form>->
 		<!-- /댓글 작성부분 -->
 	</div>

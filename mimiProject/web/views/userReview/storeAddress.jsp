@@ -5,22 +5,6 @@
 <%@include file="../../nonHeaderHead.jsp" %> 
 <!-- head.jsp에 header.jsp가 들어가 있기때문에 header.jsp가 미포함된 head.jsp추가  -->
 
-<script type="text/javascript">
-$(function getParentText(){
-	document.getElementById("store_name").value = opener.document.getElementById("store_name").value;
-	document.getElementById("store_phone").value = opener.document.getElementById("store_phone").value;
-	document.getElementById("store_address").value = opener.document.getElementById("store_address").value;
- });
- 
-function setParentText(){
-	opener.document.getElementById("store_name").value = document.getElementById("store_name").value;
-	opener.document.getElementById("store_phone").value = document.getElementById("store_phone").value;
-	opener.document.getElementById("store_address").value = document.getElementById("store_address").value;
-	self.close()
- }
-</script>
-
-
 <!-- 다음맵 인증키 (직접 발급받아야됨) -->
 <script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=45af433a6af9ac0a5a32c2bb45c73262&libraries=services,clusterer,drawing"></script>
 
@@ -87,6 +71,8 @@ function setParentText(){
 		<!-- 지도 부분 끝 -->
 <hr>
 		<form action="getParentText()">
+			<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="" >
+			<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="">
 			<div class="row">
 				<div class="col-xs-6">
 					<label for="store_name">매장명</label> <input type="text" class="form-control" id="store_name"  placeholder="미미 카페">
@@ -117,6 +103,8 @@ $(function getParentText(){
 	document.getElementById("store_name").value = opener.document.getElementById("store_name").value;
 	document.getElementById("store_phone").value = opener.document.getElementById("store_phone").value;
 	document.getElementById("store_address").value = opener.document.getElementById("store_address").value;
+	document.getElementById("latitude").value = opener.document.getElementById("latitude").value;
+	document.getElementById("longitude").value = opener.document.getElementById("longitude").value;
  });
 //팝업창 확인버튼 누를 시 팝업창에 입력된 데이터 값을 부모 페이지에 넘기는 함수 
 function setParentText(){
@@ -128,56 +116,62 @@ function setParentText(){
 	window.opener.mapRefresh();
 	self.close()
  }
-//마커를 담을 배열입니다
-var markers = [];
-var geocoder = new daum.maps.services.Geocoder(); //주소-좌표 변환 객체 생성
-var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-    mapOption = {
-        center: new daum.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
-        level: 3 // 지도의 확대 레벨
-    };  
-
-// 지도를 생성합니다    
-var map = new daum.maps.Map(mapContainer, mapOption); 
-
-// 장소 검색 객체를 생성합니다
-var ps = new daum.maps.services.Places();  
-
-// 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
-/* var infowindow = new daum.maps.InfoWindow({
-	zIndex:1
-}); */
-
-var count; //지도에 직접 표기하기 버튼 클릭시 값 변화
-var placelistclicked = -1; //초기값 -1
-//인포윈도우에 장소명을 표시합니다
-var infowindow = new Array();
-////////////////////////처음 불러올때 본인 위치를 표시
-// HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
-var locPosition = null;
-if (navigator.geolocation) {
-    
-    // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-    navigator.geolocation.getCurrentPosition(function(position) {
-        
-        
-        var lat = position.coords.latitude, // 위도
-            lon = position.coords.longitude; // 경도
-        
-        locPosition = new daum.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-     	//현재 위치 표시
-    	map.setCenter(locPosition);
-	      
-      });
-    
-} else { // HTML5의 GeoLocation을 사용할 수 없을때
-    
-    locPosition = new daum.maps.LatLng(33.450701, 126.570667),    
-  	//현재 위치 표시
-	map.setCenter(locPosition);//맵 중심좌표 설정
-   
-}
-
+ 
+	//마커를 담을 배열입니다
+	var markers = [];
+	var geocoder = new daum.maps.services.Geocoder(); //주소-좌표 변환 객체 생성
+	var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+	    mapOption = {
+	        center: new daum.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
+	        level: 3 // 지도의 확대 레벨
+	    };  
+	
+	// 지도를 생성합니다    
+	var map = new daum.maps.Map(mapContainer, mapOption); 
+	
+	// 장소 검색 객체를 생성합니다
+	var ps = new daum.maps.services.Places();  
+	
+	// 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
+	/* var infowindow = new daum.maps.InfoWindow({
+		zIndex:1
+	}); */
+	
+	var count; //지도에 직접 표기하기 버튼 클릭시 값 변화
+	var placelistclicked = -1; //초기값 -1
+	//인포윈도우에 장소명을 표시합니다
+	var infowindow = new Array();
+	////////////////////////처음 불러올때 본인 위치를 표시
+	// HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
+	var locPosition = null;
+	var lat, lon;
+	
+	if(opener.document.getElementById("latitude").value != ""){
+		lat = opener.document.getElementById("latitude").value;
+		lon = opener.document.getElementById("longitude").value;
+		
+	    locPosition = new daum.maps.LatLng(lat, lon),    
+	  	//현재 위치 표시
+	  	addClickMarker(locPosition, 0);
+		map.setCenter(locPosition);//맵 중심좌표 설정
+	} else if(navigator.geolocation){
+	    // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+	    navigator.geolocation.getCurrentPosition(function(position) {
+			lat = position.coords.latitude; // 위도
+			lon = position.coords.longitude; // 경도
+	
+	        locPosition = new daum.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+	     	//현재 위치 표시
+	    	map.setCenter(locPosition);
+	      });
+	    
+	} else { // HTML5의 GeoLocation을 사용할 수 없을때
+	    
+	    locPosition = new daum.maps.LatLng(33.450701, 126.570667),    
+	  	//현재 위치 표시
+		map.setCenter(locPosition);//맵 중심좌표 설정
+	   
+	}
 
 
 
