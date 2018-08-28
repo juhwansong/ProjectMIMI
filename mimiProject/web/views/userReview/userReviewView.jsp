@@ -205,7 +205,7 @@ function cmtdelete(cmtNo){
 			//$("#paging").paging();
 			maxPage = json.maxPage;
 			currentPage = json.currentPage;
-			$("#adminPagination").empty();
+			$("#pagination").empty();
 
 			//<< 1
 			if(json.currentPage <= 1){
@@ -246,7 +246,7 @@ function cmtdelete(cmtNo){
 			}else{
 				pageValues += '<li><a href="javascript:void(0)" onclick="commentList(' + json.maxPage + ');" title="맨끝"><span style="color:#444;">&raquo;</span></a></li>'	
 			}
-			$("#adminPagination").html(pageValues);//페이지네이션
+			$("#pagination").html(pageValues);//페이지네이션
 			},
 			error : function(jqXHR, textstatus, errorThrown){
 				console.log("error : " + jqXHR + ", " + 
@@ -616,7 +616,7 @@ function cmtinsert(){
 		<td width="10%"></td><!-- 빈칸 -->
 		<td width="*"><!-- 페이지 -->
 		<!-- Pagination -->
-			<ul class="pagination" id="adminPagination" style="float: center; display: flex; justify-content: center;">
+			<ul class="pagination" id="pagination" style="float: center; display: flex; justify-content: center;">
 			</ul>	
 		</td>
 	</tr>

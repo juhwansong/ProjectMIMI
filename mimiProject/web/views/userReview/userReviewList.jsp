@@ -11,8 +11,185 @@
 	//String userId = (String)session.getAttribute("userId");
 %>
 <%@include file="../../head.jsp"%>
+<script type="text/javascript">
 
 
+</script>
+<script type="text/javascript">
+	function callback(data){ //목록, 페이지네이션 처리
+		console.log("콜백함수 실행중...");
+		var searchText = $("#search-text").val();
+		var jsonStr = JSON.stringify(data);			
+		var json = JSON.parse(jsonStr);
+		
+		$("#table").empty(); //기존 목록 전부 지우기
+		values = "<thead>"
+				+ "<tr><th width=\"8%\">글번호</th>"
+				+ "<th width=\"*\" colspan=\"2\">제목</th>"
+				+ "<th width=\"12%\"><i class=\"fas fa-pen\"></i>작성자</th>"
+				+ "<th width=\"8%\"><i class=\"far fa-calendar\"></i>작성일</th>"
+				+ "<th width=\"8%\"><i class=\"far fa-eye\"></i>조회수</th>"
+				+ "<th width=\"8%\"><i class=\"far fa-thumbs-up\"></i>추천</th>"
+				+ "</tr></thead><tbody>";
+		for(var i in json.list){
+			values += "<tr><td>"+json.list[i].boardNum+"</td>"
+					+ "<td style=\"width: 90px\"><a href=\"/mimi/userboarddetailview?bnum="+json.list[i].boardNo+"&page="+ json.currentPage +"\"><img class=\"img-thumb img-mover\""
+					+ " src=\"";
+			if(json.list[i].thumbnail != null){
+				values += "<%=request.getContextPath()%>" + "/resources/files/userboard/"+ json.list[i].getThumbnailName();
+			}else{
+				values += "/mimi/resources/images/logo/default_logo.png\"></a></td>";
+			}
+			values += "<td class=\"tbl-td-title\" style=\"vertical-align: middle;\"><a href=\"/mimi/userboarddetailview?bnum="
+				+ json.list[i].boardNo + "&page="+ json.currentPage+"\">"+ json.list[i].title + "&nbsp;&nbsp;"
+				+ "<span class=\"span-c\"><i class=\"fas fa-comments\"></i>&nbsp;"+json.list[i].commentNum+"</span></a></td>"
+				+ "<td>"+ json.list[i].nickname + "</td>"
+				+ "<td>"+ json.list[i].boardDate + "</td>"
+				+ "<td>"+ json.list[i].hit + "</td>"
+				+ "<td>"+ json.list[i].recommend + "</td>"
+				+ "</tr>";
+			}												
+		values += "</tbody>"
+
+		$("#table-css").html(values); //목록 채우기
+
+		//pagination
+		$("#pagination").empty(); //기존 페이지네이션 지우기
+		pageValues = "";
+	 	//<< 1
+		if(json.currentPage <= 1){
+			pageValues += '<li><span style="color:#ccc;">&laquo;</span></li><li>';
+		}else{
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(1);" title="맨처음"><span style="color:#444;">&laquo;</span></a></li><li>'
+		}
+	
+	 	//< -10
+		if((json.currentPage - 10) <= json.startPage && (json.currentPage - 10) > 1){
+			pageValues += '<a href="javascript:void(0)" onclick="paging(' + (json.currentPage - 10) + ');" title="이전"><span style="color:#444;">&lt;</span></a></li>'	
+		}else if(json.currentPage != 1){ //1페이지 아니면 항상 활성화
+			pageValues += '<a href="javascript:void(0)" onclick="paging(1);" title="이전"><span style="color:#444;">&lt;</span></a></li>'
+		}else{
+			pageValues += '<span style="color:#ccc;">&lt;</span></li>'
+		}
+		
+		
+	 	//123
+		for(var p = json.startPage; p <= json.endPage; p++){
+			if(p == json.currentPage){
+					pageValues += '<li><span style="color:#ccc;">' + p + '</span></li>'
+		 	}else{ 
+		 		pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + p + ');"><span style="color:#444;">' + p + '</span></a></li>'
+			}}
+		
+	 	//> +10
+		if((json.currentPage + 10) <= json.maxPage){
+		 	pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + (json.currentPage + 10) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>'
+		}else if((json.currentPage + 10 ) > json.maxPage && json.currentPage < json.maxPage){ //마지막 페이지 아닐시 항상 활성화
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + (json.maxPage) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>'
+		}else{
+			pageValues += '<li><span style="color:#ccc;">&gt;</span></li>'
+		}
+		
+		//>> max
+		if(json.currentPage >= json.maxPage){
+			pageValues += '<li><span style="color:#ccc;">&raquo;</span></li>'
+		}else{
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + json.maxPage + ');" title="맨끝"><span style="color:#444;">&raquo;</span></a></li>'
+			
+		}
+		$("#pagination").html(pageValues);//페이지네이션
+		$('html, body').scrollTop(0); //상단으로 이동
+	}//callback function		
+		
+		function paging(p){
+			console
+			$.ajax({		
+				url : "/mimi/userboardsearch",
+				data : {category : categoryValue, keyword : searchText, page : p},
+				type : "post",
+				dataType : "json",
+				success : function(data){	
+					callback(data);
+				}//success
+			})//ajax
+		}//paging
+</script>
+<!-------------같이 두면 인식 못해서 분리----------------------------------------------------------------------->
+<script type="text/javascript">
+	$(function(){		
+		var page = <%= currentPage%>;
+
+		//select box 변경 시 ajax 실행
+		$("#select-category").change(function(){
+			categoryValue = $("#select-category option:selected").val();
+			searchText = $("#search-text").val();
+			//console.log("변경된 카테고리 값 : " + categoryValue);
+
+			$.ajax({
+				url : "/mimi/userboardsearch",
+				data : {category : categoryValue, page : page},
+				type : "post",
+				dataType : "json",
+				success : function(data){					
+					callback(data);
+				}//success
+			});//ajax
+			
+		})//select box change
+		
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////	 		
+		
+		//검색버튼 클릭 시 ajax 실행
+		$("#submitBtn").on('click', function(){
+			categoryValue = $("#select-category option:selected").val();
+			searchText = $("#search-text").val();
+			console.log(searchText);
+			//console.log("버튼 실행 확인...");
+			$.ajax({
+
+				url : "/mimi/userboardsearch",
+				data : {category : categoryValue, keyword : searchText, page : page},
+				type : "post",
+				dataType : "json",
+				success : function(data){	
+					callback(data);
+				}//success
+			})//ajax
+
+			//console.log("categoryValue : " + categoryValue + "\nsearchText : " + searchText);
+		})//submitBtn click
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+ 
+		//정렬 선택 시 ajax 실행
+		$("#r-sort, #h-sort, #d-sort").on('click', function(){
+			var icon = ($(this).children().attr('class') === 'fas fa-sort-down') ? 'fas fa-sort-up' : 'fas fa-sort-down'; 
+			
+			//현재 선택영역 제외하고 나머지 원래 아이콘으로 변경
+			$("#r-sort, #h-sort, #d-sort").children().not($(this).children()).attr('class', 'fas fa-sort');
+			$(this).children().prop('class', icon); //아이콘 바꾸기
+			
+			var sort = $(this).children().attr('class');
+			var order = $(this).children().attr('id');
+			categoryValue = $("#select-category option:selected").val();
+			searchText = $("#search-text").val();
+			
+			//값 확인
+			//console.log("order : " + order + "\nsort : " + sort);
+			//console.log("categoryValue : " + categoryValue + "\nsearchText : " + searchText);
+			
+			$.ajax({
+				url : "adminboardsearch",
+				data : {category : categoryValue, keyword : searchText, order : order, sort : sort, page : page},
+				type : "post",
+				dataType : "json",
+				success : function(data){
+					callback(data);					
+				}//success
+			})//ajax
+		})//sort
+	})//document close
+</script>
 
 <style>
 table {
@@ -27,28 +204,30 @@ table {
 <div class="container" style="width:1150px;">
 	<h3>유저 리뷰</h3>
 	<hr class="margin1" style="margin: auto auto 5px auto;">
-	<form class="form-inline" name="select-category" id="select-category" method="get" action="#">
+	<form class="form-inline" name="select" id="select" method="post" action="#">
 		<!-- 왼쪽 -->
 		<div class="form-group">
-			<select class="form-control">
-				<option value="" selected disabled hidden>Category</option>
-				<option value="1">전체</option>
-				<option value="2">대분류1</option>
-				<option value="3">대분류2</option>
-				<option value="4">대분류3</option>
-				<option value="5">대분류4</option>
-				<option value="5">대분류5</option>
+			<select class="form-control" id="select-category">
+				<option value="C0" selected disabled hidden>Category</option>
+				<option value="C0">전체</option>
+				<option value="C1">1</option>
+				<option value="C2">2</option>
+				<option value="C3">3</option>
+				<option value="C4">4</option>
+				<option value="C5">5</option>
+				<option value="C6">6</option>
+				<option value="C7">7</option>
+				<option value="C8">8</option>
 			</select>&nbsp;&nbsp;&nbsp; <span style="color: #555; font-size: 12px;">
-				<a href="#">추천수&nbsp;<i class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp;
-				<a href="#">조회수&nbsp;<i class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp;
-				<a href="#">기간&nbsp;<i class="fas fa-sort"></i></a>
+			<a href="javascript:void(0)" id="r-sort">추천수&nbsp;<i id="recommend" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
+			<a href="javascript:void(0)" id="h-sort">조회수&nbsp;<i id="hits" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
+			<a href="javascript:void(0)" id="d-sort">기간&nbsp;<i id="board_date" class="fas fa-sort"></i></a></span>
 			</span>
 		</div>
 		<!-- 오른쪽 -->
 		<div class="form-group" style="float: right; margin: 1px;">
-			<input type="text" class="form-control" name="search-text"
-				id="search-text" size="12" placeholder=" ">​​​​​​​
-			<button type="button" class="btn" name="btn" style="outline: none;">
+			 <input type="text" class="form-control" name="search-text" id="search-text" size="12">​​​​​​​
+			<button type="button" id="submitBtn" class="btn" name="btn" style="outline: none">
 				검색&nbsp;<i class="fas fa-search"></i>
 			</button>
 		</div>
@@ -92,7 +271,7 @@ table {
 		<td width="30%"></td><!-- 빈칸 -->
 		<td width="*"><!-- 페이지 -->
 	<!-- Pagination -->
-		<ul class="pagination" style="float: center; display: flex; justify-content: center;">
+		<ul class="pagination" id="pagination" style="float: center; display: flex; justify-content: center;">
 		<% if((currentPage - 10) < startPage && 
 				(currentPage - 10) > 1){ %>
 			<li>

@@ -135,7 +135,7 @@
 				data : {category : categoryValue, keyword : searchText, page : page},
 				type : "post",
 				dataType : "json",
-				success : function(data){	
+				success : function(data){
 					callback(data);
 				}//success
 			})//ajax
@@ -175,8 +175,7 @@
 		})//sort
 		
 	})//document close
-	
-	
+
 </script>
 
 <div class="container" style="width:1150px;">
