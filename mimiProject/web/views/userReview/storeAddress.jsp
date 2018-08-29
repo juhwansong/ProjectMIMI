@@ -22,7 +22,7 @@ function setParentText(){
 
 
 <!-- 다음맵 인증키 (직접 발급받아야됨) -->
-<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=a48da9f7088f3a6744080ebf6b1ca3b7&libraries=services,clusterer,drawing"></script>
+<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=795b33c97453a44f73949c94f447f347&libraries=services,clusterer,drawing"></script>
 
 <!-- 커스텀 오버레이 꾸미기 -->
 <style>  
