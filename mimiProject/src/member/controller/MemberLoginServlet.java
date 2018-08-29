@@ -47,6 +47,7 @@ public class MemberLoginServlet extends HttpServlet {
 				session.setAttribute("userId", userId);
 				session.setAttribute("authority", member.getAuthority());
 				session.setAttribute("nickName", member.getNickName());
+				session.setAttribute("gradeName", member.getGradeName());
 				
 				message = "success";
 			}

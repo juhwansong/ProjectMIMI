@@ -63,6 +63,7 @@ public class MemberEnrollServlet extends HttpServlet {
 				HttpSession session = request.getSession();
 				session.setAttribute("userId", userId);
 				session.setAttribute("authority", "U");
+				session.setAttribute("gradeName", "손님");
 				
 				message = String.valueOf(result);
 			}

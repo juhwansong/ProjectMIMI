@@ -45,6 +45,7 @@
 	String userId = (String)session.getAttribute("userId");
 	String authority = (String)session.getAttribute("authority");
 	String nickName = (String)session.getAttribute("nickName");
+	String gradeName = (String)session.getAttribute("gradeName");
 	
 	if(userId == null){
 %>		
