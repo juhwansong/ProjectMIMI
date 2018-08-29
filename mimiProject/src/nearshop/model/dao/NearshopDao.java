@@ -18,7 +18,7 @@ public class NearshopDao {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
-		String query = "select * from (select rownum rnum, contents, board_no, shop_name, shop_address, shop_call, title, thumbnail_name, latitude, longitude, distance from(select contents, board_no, shop_name, shop_address, shop_call, title, thumbnail_name, latitude, longitude, DISTNACE_WGS84(?, ?, latitude, longitude) as distance from tb_board_review where state = 'SN' order by distance) where distance < 10) where rnum >= ? and rnum <= ? ";
+		String query = "select * from (select rownum rnum, contents, board_no, shop_name, shop_address, shop_call, title, thumbnail_name, latitude, longitude, distance from(select contents, board_no, shop_name, shop_address, shop_call, title, thumbnail_name, latitude, longitude, DISTNACE_WGS84(?, ?, latitude, longitude) as distance from tb_board_review where state = 'SN' and BOARD_GB = 'UR' order by distance) where distance < 10) where rnum >= ? and rnum <= ? ";
 		
 		int startRow = (currentPage - 1) * countList +1;
 		int endRow = startRow + countList -1;

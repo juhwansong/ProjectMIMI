@@ -356,7 +356,7 @@
 	    el.href="#";
 	    el.innerHTML = "&gt;";
 	    $(el).addClass("tonextpage");
-	    if(!((pagination.current+5)>pagination.end && (pagination.current + 5)<=pagination.max)){
+	    if(!((pagination.current+5)>pagination.end && (pagination.start + 5)<=pagination.max)){
 	    	$(el).addClass("on");	    	
 	    	$(el).css("pointer-events", "none");   	
 	    }
