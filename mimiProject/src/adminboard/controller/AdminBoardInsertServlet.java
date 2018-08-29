@@ -62,14 +62,13 @@ public class AdminBoardInsertServlet extends HttpServlet {
 		int count = 0;
 		if(content.contains("<img src=")){ //그림첨부를 했을때만
 				
-			while(count <= content.lastIndexOf("<img src=\"")+37){ //html포함 컨텐츠에서 img 경로만 빼는 작업
-				int firstIndex = content.indexOf("<img src=\"", count)+37; //폴더경로에 따라 달라질수있음
-				int lastIndex = content.indexOf("\"", content.indexOf("<img src=\"", count)+37);
+			while(count <= content.lastIndexOf("<img src=\"")+36){ //html포함 컨텐츠에서 img 경로만 빼는 작업
+				int firstIndex = content.indexOf("<img src=\"", count)+36; //폴더경로에 따라 달라질수있음
+				int lastIndex = content.indexOf("\"", content.indexOf("<img src=\"", count)+36);
 				imgList.add(content.substring(firstIndex, lastIndex));
-	
+				
 				if(count == 0){
 					board.setThumbnailName(content.substring(firstIndex, lastIndex));
-					System.out.println("썸네일이름:" +content.substring(firstIndex, lastIndex));
 				}
 				
 				count = content.indexOf("\"", content.indexOf("<img src=\"", count)+10) + 1;	

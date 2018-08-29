@@ -145,7 +145,7 @@
 				
 				
 					<% if(userId != null && authority.equals("A")) { %>
-						<td id="admin-option-td"><SELECT  class="form-control" id="statecol_<%= s.getBoardNo() %>" onchange="changeState('<%= s.getBoardNo() %>')" name="statecol"> 
+						<td id="admin-option-td"><SELECT style="width:105px;"  class="form-control" id="statecol_<%= s.getBoardNo() %>" onchange="changeState('<%= s.getBoardNo() %>')" name="statecol"> 
 								<% if(s.getState().equals("SD")){ %>
 								<OPTION value="SD">확인완료</OPTION>	
 								<OPTION value="SN">확인중</OPTION>						
