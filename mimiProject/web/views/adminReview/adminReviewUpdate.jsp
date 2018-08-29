@@ -98,10 +98,9 @@ function cateSelect(btnVal){
 				<td style="width: 300px" rowspan="5" colspan="2">
 				<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="<%=board.getLatitude()%>">
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="<%=board.getLongitude()%>">		
-				<div class="map_wrap" >
 	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;"></div>
 	    			<button type="button" id="mapcheck-btn" class="btn btn-info" onclick="openAddress();">지도에 위치 표시</button>
-	    		</div></td> 
+	    		</td> 
 	    		
 			</tr>
 			<tr>

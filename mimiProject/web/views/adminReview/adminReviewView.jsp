@@ -557,9 +557,9 @@ function cmtinsert(){
 				<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="<%=board.getLatitude()%>" >
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="<%=board.getLongitude()%>">	
 				
-				<div class="map_wrap" >
-	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;"></div>
-	    		</div></td>
+				
+	    		<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;"></div>
+	    	
 			</tr>
 			<tr>
 				<th>매장명</th>

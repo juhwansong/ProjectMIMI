@@ -91,7 +91,7 @@ function cateSelect(btnVal){
 				<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="" >
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="">
 				
-				<div class="map_wrap" >
+			
 	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;"></div>
 	    			<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
     				<div class="custom_zoomcontrol radius_border" style="opacity:0.8;top:10px;"> 
@@ -99,7 +99,7 @@ function cateSelect(btnVal){
         				<span onclick="zoomOut()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
     				</div>
 	    			<button type="button" id="mapcheck-btn" class="btn btn-info" onclick="openAddress();">지도에 위치 표시</button>
-	    		</div></td> 
+	    		</td> 
 				 <!-- <img
 					src="/mimi/resources/images/userReview/map.jpg" width=300
 					height=300></td>  -->
