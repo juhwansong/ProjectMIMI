@@ -38,12 +38,13 @@ function cateSelect(btnVal){
 }
 #mapcheck-btn{
 	position: absolute;
-	top:2%;
-	left:66%;
+	top:80%;
+	right:5%;
 	z-index: 6;
 	height: 40px;
 	width: 110px;
 	opacity: 0.8;
+	width: 130px;
 	
 }
 </style>
@@ -98,8 +99,13 @@ function cateSelect(btnVal){
 				<td style="width: 300px" rowspan="5" colspan="2">
 				<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="<%=board.getLatitude()%>">
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="<%=board.getLongitude()%>">		
-	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;"></div>
-	    			<button type="button" id="mapcheck-btn" class="btn btn-info" onclick="openAddress();">지도에 위치 표시</button>
+	    		<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;">
+	    				<div class="custom_zoomcontrol radius_border" style="z-index:5; opacity:0.8;top:20px; right:20px;"> 
+       						<span onclick="zoomIn()" ><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
+        					<span onclick="zoomOut()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
+    					</div>
+	    			<button  type="button" id="mapcheck-btn" class="btn btn-info" onclick="openAddress();">지도에 위치 표시</button>
+	    		</div>
 	    		</td> 
 	    		
 			</tr>
@@ -296,6 +302,16 @@ function sendFile(file, el){
 			
 		}
 	});
+}
+
+//지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomIn() {
+    map.setLevel(map.getLevel() - 1);
+}
+
+// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomOut() {
+    map.setLevel(map.getLevel() + 1);
 }
 
 $(document).on("click", "#result-btn", function(){

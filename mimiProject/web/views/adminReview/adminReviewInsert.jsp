@@ -29,12 +29,13 @@ function cateSelect(btnVal){
 }
 #mapcheck-btn{
 	position: absolute;
-	top:33%;
-	left:66%;
+	top:80%;
+	right:5%;
 	z-index: 6;
 	height: 40px;
 	width: 110px;
 	opacity: 0.8;
+	width: 130px;
 	
 }
 </style>
@@ -90,13 +91,13 @@ function cateSelect(btnVal){
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="">
 				
 				
-	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;"></div>
-	    			<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
-    				<div class="custom_zoomcontrol radius_border" style="opacity:0.8;top:10px;"> 
-       					<span onclick="zoomIn()" ><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
-        				<span onclick="zoomOut()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
-    				</div>
-	    			<button type="button" id="mapcheck-btn" class="btn btn-info" onclick="openAddress();">지도에 위치 표시</button>
+	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;">
+	    				<div class="custom_zoomcontrol radius_border" style="z-index:5; opacity:0.8;top:20px; right:20px;"> 
+       						<span onclick="zoomIn()" ><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
+        					<span onclick="zoomOut()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
+    					</div>
+	    			<button  type="button" id="mapcheck-btn" class="btn btn-info" onclick="openAddress();">지도에 위치 표시</button>
+	    			</div>
 	    		</td> 
 			</tr>
 			<tr>

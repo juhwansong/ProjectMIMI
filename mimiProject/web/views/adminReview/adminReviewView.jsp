@@ -558,7 +558,12 @@ function cmtinsert(){
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="<%=board.getLongitude()%>">	
 				
 				
-	    		<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;"></div>
+	    		<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;">
+	    				<div class="custom_zoomcontrol radius_border" style="z-index:5; opacity:0.8;top:20px; right:20px;"> 
+       						<span onclick="zoomIn()" ><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
+        					<span onclick="zoomOut()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
+    					</div>
+	    		</div>
 	    	
 			</tr>
 			<tr>
@@ -623,7 +628,7 @@ function cmtinsert(){
 		<!--<form>-->
 		<div id="cmtArea">
 		<input type="hidden" id="bnum" name="bnum" value="<%= board.getBoardNo() %>">
-		<input type="hidden" id="userid" name="userid" value="user02"><!-- -------------------------------------------------------------------------------------------------------- -->
+		<input type="hidden" id="userid" name="userid" value="<%= ssuserId %>"><!-- -------------------------------------------------------------------------------------------------------- -->
 		<table style="width:100%;">
 			<tr>
 				<td width="15%"><img src="/mimi/resources/images/icon/icon_human.ico" width=40
@@ -764,6 +769,16 @@ function addMarker(position, i) {
     markers.push(marker);  // 배열에 생성된 마커를 추가합니다
     
     return marker;
+}
+
+//지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomIn() {
+    map.setLevel(map.getLevel() - 1);
+}
+
+// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomOut() {
+    map.setLevel(map.getLevel() + 1);
 }
 
 $(function(){
