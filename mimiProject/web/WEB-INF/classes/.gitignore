@@ -1,40 +1,11 @@
-/adminboard/
-<<<<<<< HEAD
+/userboard/
+/recommend/
 /bookmark/
+/adminboard/
 /nearshop/
-=======
+/member/
+/support/
 /allboard/
 /allcomment/
-/bestboard/
-/bookmark/
-/category/
-/common/
-/customer/
-/member/
 /myboard/
 /mycomment/
-/nearshop/
-/notice/
->>>>>>> refs/heads/kcs
-/recommend/
-<<<<<<< HEAD
-/userboard/
-=======
-/support/
-<<<<<<< HEAD
-/adminboard/
-/allboard/
-/allcomment/
-/bestboard/
-/bookmark/
-/category/
-/customer/
->>>>>>> refs/heads/kcs
-/member/
-<<<<<<< HEAD
-/support/
-=======
-=======
-/userboard/
->>>>>>> branch 'kcs' of https://github.com/juhwansong/ProjectMIMI.git
->>>>>>> refs/heads/kcs

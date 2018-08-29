@@ -29,7 +29,8 @@
 			values += '<div class="col-lg-4 col-sm-6 portfolio-item"><div class="rounded"><div class="img-div"><div class="cb">'
 					+ '<span class="text"><i class="fas fa-comments"></i>' + json.list[i].commentNum
 					+ '&nbsp;&nbsp;<i class="far fa-thumbs-up"></i>' + json.list[i].recommend
-					+ '</span> </div> <a href="/mimi/adminboarddetailview?bnum=' + json.list[i].boardNo + '&page=' + json.currentPage + '"><img class="img img-mover" src="' + json.list[i].thumbnail
+					+ '</span> </div> <a href="/mimi/adminboarddetailview?bnum=' + json.list[i].boardNo + '&page='
+					+ json.currentPage + '"><img class="img img-mover" src="/mimi/resources/files/adminboard/' + json.list[i].thumbnail
 					+ '" onerror="this.onerror=null;this.src=\'/mimi/resources/images/main/img3.jpg\'"></a>'
 					+ '</div> <div class="r-body"> <table class="r-table"><tr><td><h4><a href="/mimi/adminboarddetailview?bnum=' + json.list[i].boardNo + '&page=' + json.currentPage + '">' + decodeURIComponent(json.list[i].title)
 					+ '</a></h4></td><td class="td-ast" style="font-size: 12px;">' + json.list[i].boardDate
@@ -229,7 +230,7 @@
 						</span>
 					</div>
 					<a href="/mimi/adminboarddetailview?bnum=<%=b.getBoardNo() %>&page=<%=currentPage%>"><img class="img img-mover"
-						 src="<%= b.getThumbnailName()%>" onerror="this.onerror=null;this.src='/mimi/resources/images/main/img3.jpg'"></a>
+						 src="/mimi/resources/files/adminboard/<%= b.getThumbnailName()%>" onerror="this.onerror=null;this.src='/mimi/resources/images/main/img3.jpg'"></a>
 				</div>
 				<div class="r-body"><!-- 본문영역 -->
 					<table class="r-table"><!-- 본문영역 테이블 지정 -->

@@ -29,6 +29,49 @@
 <link rel="stylesheet" type = "text/css" href = "/mimi/resources/css/mapPage.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
 <script type="text/javascript" src="/mimi/resources/js/kakao.min.js"></script>
+<style type="text/css">
+
+#text_context{
+	/* font-family: "Helvetica Nene", Helvetica, Arial, sans-serif;
+	font-size: 14px; 
+	line-height: 1.42857143;
+	color: #333; */
+	width:952px;
+	margin-left: auto; 
+}
+
+#good_qta {
+	font-family: "Helvetica Nene", Helvetica, Arial, sans-serif;
+	font-size: 12px;
+	line-height: 1.42857143;
+	color: #333;
+	background-color: #fff;
+}
+
+#comment {
+	font-family: "Helvetica Nene", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #333;
+	background-color: #fff;
+}
+
+#table-css2 th{
+	background:#fff;
+	font-size: 13px;
+	color: #666;
+}
+
+#table-css2 td{
+	text-align:left;
+}
+
+.margin5{
+	width: 100%;
+	margin: 15px 15px 10px 15px;
+}
+
+</style>
 </head>
 <body onload="commentList(1);recommendCheck();bookmarkCheck();menuDisplay();">
 <!-- 바디 태그 시작 -->
@@ -476,49 +519,7 @@ function cmtinsert(){
    })//document*/
 </script>
 
-<style type="text/css">
 
-#text_context{
-	/* font-family: "Helvetica Nene", Helvetica, Arial, sans-serif;
-	font-size: 14px; 
-	line-height: 1.42857143;
-	color: #333; */
-	width:952px;
-	margin-left: auto; 
-}
-
-#good_qta {
-	font-family: "Helvetica Nene", Helvetica, Arial, sans-serif;
-	font-size: 12px;
-	line-height: 1.42857143;
-	color: #333;
-	background-color: #fff;
-}
-
-#comment {
-	font-family: "Helvetica Nene", Helvetica, Arial, sans-serif;
-	font-size: 14px;
-	line-height: 1.42857143;
-	color: #333;
-	background-color: #fff;
-}
-
-#table-css2 th{
-	background:#fff;
-	font-size: 13px;
-	color: #666;
-}
-
-#table-css2 td{
-	text-align:left;
-}
-
-.margin5{
-	width: 100%;
-	margin: 15px 15px 10px 15px;
-}
-
-</style>
 <script type="text/javascript">
 	//$(function(){
 		
@@ -537,10 +538,10 @@ function cmtinsert(){
 	<div id="inner">
 		<table class="table table-borderless" id="table-css2">
 			<tr>
-				<th width="12%">No.<%= board.getBoardNo() %></th>
+				<th width="12%">No.<%= board.getBoardNo().substring(2).replaceAll("^0*","") %></th>
 				<th width="*" style="text-align:left;"><%= board.getTitle() %></th>
 				<th width="28%">
-				<i class="fas fa-pen"></i><%= board.getNickName() %>&nbsp;<%= board.getGradeName() %>
+				<i class="fas fa-pen"></i><%= board.getNickName() %>&nbsp;<img src="/mimi/resources/images/icon/icon_level4.png" style="width:25px; height:25px;">
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-eye"></i><%= board.getHits() %>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-calendar"></i><%= board.getBoardDate() %></th>
 				<th width="8%"><button type="button" class="btn btn-default btn-lg" id="bookmarkBtn" style="outline: none;" onclick="bookmarkAdd();">
@@ -571,8 +572,8 @@ function cmtinsert(){
 				<td><%= board.getShopName() %></td>
 			</tr>
 			<tr>
-				<th>연락처</th>
-				<td><%= board.getShopCall() %></td>
+				<th>연락처</th><% String call = (board.getShopCall() != null) ? board.getShopCall() : "-"; %>
+				<td><%= call %></td>
 			</tr>
 			<tr>
 				<th>매장 주소</th>
@@ -583,7 +584,7 @@ function cmtinsert(){
 	</div>
 	
 	<hr class="margin2">
-	<div id="text_context">			
+	<div id="text_context" style="min-height:300px;">			
 		<p>
 			<%= board.getContentsTag()%>
 		</p> 

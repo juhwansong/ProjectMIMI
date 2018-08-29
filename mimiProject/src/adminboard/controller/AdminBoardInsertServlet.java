@@ -69,6 +69,7 @@ public class AdminBoardInsertServlet extends HttpServlet {
 	
 				if(count == 0){
 					board.setThumbnailName(content.substring(firstIndex, lastIndex));
+					System.out.println("썸네일이름:" +content.substring(firstIndex, lastIndex));
 				}
 				
 				count = content.indexOf("\"", content.indexOf("<img src=\"", count)+10) + 1;	
