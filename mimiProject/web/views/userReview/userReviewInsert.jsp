@@ -351,6 +351,7 @@ $(document).on("click", "#result-btn", function(){
 		document.body.appendChild(form);
 		form.submit();
 		//location.href = "/file/upcontent?smallcontent=" + smallcontent + "&content=" + content;
+	}
 });
 
 onbeforeunload = function() {

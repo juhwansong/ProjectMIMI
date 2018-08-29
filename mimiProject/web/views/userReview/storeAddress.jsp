@@ -5,22 +5,6 @@
 <%@include file="../../nonHeaderHead.jsp" %> 
 <!-- head.jsp에 header.jsp가 들어가 있기때문에 header.jsp가 미포함된 head.jsp추가  -->
 
-<script type="text/javascript">
-$(function getParentText(){
-	document.getElementById("store_name").value = opener.document.getElementById("store_name").value;
-	document.getElementById("store_phone").value = opener.document.getElementById("store_phone").value;
-	document.getElementById("store_address").value = opener.document.getElementById("store_address").value;
- });
- 
-function setParentText(){
-	opener.document.getElementById("store_name").value = document.getElementById("store_name").value;
-	opener.document.getElementById("store_phone").value = document.getElementById("store_phone").value;
-	opener.document.getElementById("store_address").value = document.getElementById("store_address").value;
-	self.close()
- }
-</script>
-
-
 <!-- 다음맵 인증키 (직접 발급받아야됨) -->
 <script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=795b33c97453a44f73949c94f447f347&libraries=services,clusterer,drawing"></script>
 
@@ -57,9 +41,7 @@ function setParentText(){
 		bottom: 7px;
 		left: 143px;
 	}
-    .infowin .link {color: #5085BB;} 
-    
-    
+    .infowin .link {color: #5085BB;}   
 </style>
 
 <title>상세 주소</title>
@@ -74,8 +56,7 @@ function setParentText(){
     		<div class="custom_zoomcontrol radius_border" style="opacity:0.8;right:20px;top:10px;"> 
        			<span onclick="zoomIn()"><img style="position:relative;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
         		<span onclick="zoomOut()"><img style="position:relative;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
-    		</div>
-    		
+    		</div>  		
 	    	<div id="menu_wrap" class="bg_white">
 	        	<div class="option">
 	            	<div>
@@ -95,7 +76,10 @@ function setParentText(){
 		</div>
 		<!-- 지도 부분 끝 -->
 <hr>
+
 		<form action="getParentText()">
+			<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="" >
+			<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="">
 			<div class="row">
 				<div class="col-xs-6">
 					<label for="store_name">매장명</label> <input type="text" class="form-control" id="store_name"  placeholder="미미 카페">
@@ -126,6 +110,8 @@ $(function getParentText(){
 	document.getElementById("store_name").value = opener.document.getElementById("store_name").value;
 	document.getElementById("store_phone").value = opener.document.getElementById("store_phone").value;
 	document.getElementById("store_address").value = opener.document.getElementById("store_address").value;
+	document.getElementById("latitude").value = opener.document.getElementById("latitude").value;
+	document.getElementById("longitude").value = opener.document.getElementById("longitude").value;
  });
 //팝업창 확인버튼 누를 시 팝업창에 입력된 데이터 값을 부모 페이지에 넘기는 함수 
 function setParentText(){
@@ -164,14 +150,21 @@ var infowindow = new Array();
 ////////////////////////처음 불러올때 본인 위치를 표시
 // HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
 var locPosition = null;
-if (navigator.geolocation) {
-    
+var lat, lon;
+
+if(opener.document.getElementById("latitude").value != ""){
+		lat = opener.document.getElementById("latitude").value;
+		lon = opener.document.getElementById("longitude").value;
+		
+	    locPosition = new daum.maps.LatLng(lat, lon),    
+	  	//현재 위치 표시
+	  	addClickMarker(locPosition, 0);
+		map.setCenter(locPosition);//맵 중심좌표 설정
+}else if (navigator.geolocation) { 
     // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-    navigator.geolocation.getCurrentPosition(function(position) {
-        
-        
-        var lat = position.coords.latitude, // 위도
-            lon = position.coords.longitude; // 경도
+    navigator.geolocation.getCurrentPosition(function(position) { 
+        lat = position.coords.latitude;// 위도
+        lon = position.coords.longitude; // 경도
         
         locPosition = new daum.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
      	//현재 위치 표시
@@ -230,7 +223,6 @@ function displayCenterInfo(result, status) {
 function placesSearchCB(data, status, pagination) {
 	count = count +1; //검색 클릭 시 지도에 직접 마크 표시하기 버튼 초기화
 	map.setCursor(""); //버튼 기능 초기화 됐으니  커서모양도 초기화 (직접 지도에 마커 표시 클릭시 변하는 커서모양 초기화)
-	console.log(data);
     if (status === daum.maps.services.Status.OK) {
 		
     	//새 검색 시 기존 윈도우 인포들을 전부 지움
@@ -536,10 +528,8 @@ function displayPagination(pagination) {
         if (i===pagination.current) {
             el.className = 'on';
         } else {
-            el.onclick = (function(i) {
-            	
-                return function() {
-                	
+            el.onclick = (function(i) {           	
+                return function() {              	
                     pagination.gotoPage(i);
                 }
             })(i);

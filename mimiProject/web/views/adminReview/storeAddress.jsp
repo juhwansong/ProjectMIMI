@@ -18,7 +18,7 @@
     .infowin .close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');}
     .infowin .close:hover {cursor: pointer;}
     .infowin .body {position: relative;overflow: hidden;}
-    .infowin .desc {position: relative;left:-48px;text-align:center;margin: 13px 0 0 90px;height: 75px;background: #2b2d36;}
+    .infowin .desc {position: relative;left:-48px;text-align:center;margin: 13px 0 0 90px;height: 75px;background: #2b2d36; overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
     .desc .ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
     .desc .jibun {font-size: 11px;color: #888;margin-top: -2px;}
     .infowin .img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}
@@ -51,6 +51,11 @@
 	<!-- 지도 부분 시작 -->
 	<div class="map_wrap">
 	    	<div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+	    	<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
+    		<div class="custom_zoomcontrol radius_border" style="opacity:0.8;right:20px;top:10px;"> 
+       			<span onclick="zoomIn()"><img style="position:relative;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
+        		<span onclick="zoomOut()"><img style="position:relative;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
+    		</div>
 	    	<div id="menu_wrap" class="bg_white">
 	        	<div class="option">
 	            	<div>
@@ -570,6 +575,16 @@ function addClickMarker(position, i) {
     
     return marker;
 } 
+
+//지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomIn() {
+    map.setLevel(map.getLevel() - 1);
+}
+
+// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomOut() {
+    map.setLevel(map.getLevel() + 1);
+}
 
 //직접 표시하기 버튼 눌렀을때
 $("#direct").click(function(){

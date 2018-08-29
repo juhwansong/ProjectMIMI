@@ -68,7 +68,6 @@ function menuDisplay(){
 </script>
 
 
-
 <script type="text/javascript">
 function cmtedit(obj, cmtNo){
     var checkBtn = $(obj);

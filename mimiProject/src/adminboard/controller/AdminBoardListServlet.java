@@ -105,6 +105,44 @@ public class AdminBoardListServlet extends HttpServlet {
 //			out.close();
 				
 			
+//			JSONObject json = new JSONObject();
+//			JSONArray jarr = new JSONArray();
+//			
+//			SimpleDateFormat sdf = new SimpleDateFormat("MM.dd");
+//			
+//			for(Board board : boardList){
+//				JSONObject job = new JSONObject();
+//				String date = sdf.format(board.getBoardDate());
+//				
+//				job.put("boardNo", board.getBoardNo());
+//				job.put("commentNum", board.getCommentNum());
+//				job.put("recommend", board.getRecommed());
+//				job.put("thumbnail", board.getThumbnailName());
+//				job.put("title", board.getTitle());
+//				job.put("boardDate", date);
+//				job.put("contents", board.getContents());
+//				
+//				jarr.add(job);
+//			}
+//			
+//			json.put("list", jarr); //board 내용들
+//							
+//			//페이지 처리용
+//			json.put("currentPage", currentPage);
+//			json.put("maxPage", maxPage);
+//			json.put("startPage", startPage);
+//			json.put("endPage", endPage);
+//			json.put("totalCount", totalCount);
+//			
+//				
+//			//System.out.println("adminsearch에서 보낸 값 : \n" + json.toJSONString()); //확인용
+//				
+//			PrintWriter out = response.getWriter();
+//			out.print(json.toJSONString());
+//			out.flush();
+//			out.close();
+				
+			
 //			if(boardList.size() > 0){
 				view = request.getRequestDispatcher("views/adminReview/adminReviewList.jsp");
 				request.setAttribute("boardList", boardList);
@@ -125,6 +163,7 @@ public class AdminBoardListServlet extends HttpServlet {
 			view.forward(request, response);
 		}
 	}
+
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

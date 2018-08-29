@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import adminboard.exception.AdminBoardException;
 import common.model.vo.Board;
@@ -166,6 +168,7 @@ public class AdminBoardDao {
 		}
 		return list;
 	}
+
 
 	public int addReadCount(Connection con, String boardNo) throws AdminBoardException{
 		int result = 0;
