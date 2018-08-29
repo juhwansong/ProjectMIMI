@@ -2,6 +2,7 @@ package userboard.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -70,6 +71,7 @@ public class UserBoardSearchServlet extends HttpServlet {
 		}
 		
 		//System.out.println("서블릿 쿼리확인 :" + query );
+		//response.setContentType("application/json charset=utf-8");
 		response.setContentType("text/html; charset=utf-8");
 		
 		int currentPage = 1; //맨 첫화면은 1페이지
