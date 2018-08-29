@@ -67,9 +67,9 @@ public class AdminBoardUpdateOriginServlet extends HttpServlet {
 		ArrayList<String> oldImgList = new ArrayList<>();
 		int oldCount = 0;
 		if(oldContent.contains("<img src=")){ //그림첨부를 했을때만
-			while(oldCount <= oldContent.lastIndexOf("<img src=\"")+42){ //html포함 컨텐츠에서 img 경로만 빼는 작업
-				int firstIndex = oldContent.indexOf("<img src=\"", oldCount)+42; //폴더경로에 따라 달라질수있음
-				int lastIndex = oldContent.indexOf("\"", oldContent.indexOf("<img src=\"", oldCount)+42);
+			while(oldCount <= oldContent.lastIndexOf("<img src=\"")+43){ //html포함 컨텐츠에서 img 경로만 빼는 작업
+				int firstIndex = oldContent.indexOf("<img src=\"", oldCount)+43; //폴더경로에 따라 달라질수있음
+				int lastIndex = oldContent.indexOf("\"", oldContent.indexOf("<img src=\"", oldCount)+43);
 				oldImgList.add(oldContent.substring(firstIndex, lastIndex));				
 				oldCount = oldContent.indexOf("\"", oldContent.indexOf("<img src=\"", oldCount)+10) + 1;	
 			}
@@ -80,9 +80,9 @@ public class AdminBoardUpdateOriginServlet extends HttpServlet {
 		int count = 0;
 		if(content.contains("<img src=")){ //그림첨부를 했을때만
 				
-			while(count <= content.lastIndexOf("<img src=\"")+42){ //html포함 컨텐츠에서 img 경로만 빼는 작업
-				int firstIndex = content.indexOf("<img src=\"", count)+42; //폴더경로에 따라 달라질수있음
-				int lastIndex = content.indexOf("\"", content.indexOf("<img src=\"", count)+42);
+			while(count <= content.lastIndexOf("<img src=\"")+43){ //html포함 컨텐츠에서 img 경로만 빼는 작업
+				int firstIndex = content.indexOf("<img src=\"", count)+43; //폴더경로에 따라 달라질수있음
+				int lastIndex = content.indexOf("\"", content.indexOf("<img src=\"", count)+43);
 				imgList.add(content.substring(firstIndex, lastIndex));
 				if(count == 0){
 					board.setThumbnailName(content.substring(firstIndex, lastIndex));

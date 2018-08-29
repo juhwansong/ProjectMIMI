@@ -196,16 +196,25 @@
 	
 	<% for(Board b : list){ 
 		String num = b.getBoardNo().substring(2).replaceAll("^0*","");//글번호만 추출
-		String gb = b.getBoardGb().equals("AR") ? "MIMI리뷰" : "유저리뷰";
+		String gb = null, imgsrc = null, rink = null;
+		if(b.getBoardGb().equals("AR")){
+			gb = "MIMI리뷰";
+			imgsrc = "/mimi/resources/files/adminboard/";
+			rink = "/mimi/adminboarddetailview";
+		}else{
+			gb = "유저리뷰";
+			imgsrc = "/mimi/resources/files/userboard/";
+			rink = "/mimi/userboarddetailview";
+		}
 	%>
 	
 	<tr>
 		<td><input type="checkbox" name="checkOne" id="checkOne" value="<%= b.getBoardNo()%>"></td>
 		<td><!-- 게시판구분 --><%= gb %></td>
 		<td><!-- 글번호 --><%= num %></td>
-		<td class="tbl-td-title"><!-- 썸네일 --><a href="<%= b.getBoardLink() %>">
-		<img class="img-thumb img-mover"  src="<%= b.getThumbnailName()%>" onerror="this.onerror=null;this.src='/mimi/resources/images/main/img3.jpg'"></a>
-		<!-- 제목 -->&nbsp;&nbsp;<a href="<%= b.getBoardLink() %>"><%= b.getTitle() %>
+		<td class="tbl-td-title"><!-- 썸네일 --><a href="<%= rink %>?bnum=<%=b.getBoardNo() %>&page=1">
+		<img class="img-thumb img-mover"  src="<%= imgsrc %><%= b.getThumbnailName()%>" onerror="this.onerror=null;this.src='/mimi/resources/images/main/img3.jpg'"></a>
+		<!-- 제목 -->&nbsp;&nbsp;<a href="<%= rink %>?bnum=<%=b.getBoardNo() %>&page=1"><%= b.getTitle() %>
 		<!-- 댓글수 -->&nbsp;&nbsp;<span class="span-c"><i class="fas fa-comments"></i>&nbsp;<%= b.getCommentNum() %></span></a></td>
 		<td><!-- 작성자 --><%= b.getNickName() %></td>
 		<td><!-- 작성일 --><%= b.getBoardDate() %></td>
