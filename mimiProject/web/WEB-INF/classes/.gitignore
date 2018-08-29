@@ -1,9 +1,19 @@
+/adminboard/
+/allboard/
+/allcomment/
+/bestboard/
+/bookmark/
+/category/
+/common/
+/customer/
+/member/
 /myboard/
 /mycomment/
+/nearshop/
 /notice/
 /recommend/
-/userboard/
 /support/
+<<<<<<< HEAD
 /adminboard/
 /allboard/
 /allcomment/
@@ -12,3 +22,6 @@
 /category/
 /customer/
 /member/
+=======
+/userboard/
+>>>>>>> branch 'kcs' of https://github.com/juhwansong/ProjectMIMI.git
