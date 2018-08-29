@@ -70,4 +70,11 @@ public class BookmarkService {	//즐겨찾기 기능
 		return result;
 	}
 
+	public int checkBookmark(String userId, String boardNo) throws BookmarkException {
+		Connection con = getConnection();			
+		int result = new BookmarkDao().checkBookmark(con, userId, boardNo);
+		close(con);
+		return result;
+	}
+
 }

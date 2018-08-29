@@ -11,7 +11,17 @@
 
 <!-- <title>MIMI</title> -->
 
-
+<script type="text/javascript">
+$(function(){
+	$("#deleteBtn").on("click", function(){
+		if(confirm("정말 삭제하시겠습니까?")){
+			window.location = '/mimi/noticedelete?no=<%= notice.getNoticeNo()%>';
+		}else{
+			return;
+		}
+	})
+});
+</script>
 <div class="container" style="width:1150px;">
 	<h3>공지사항</h3>
 	<div class="form-group">
@@ -51,8 +61,7 @@
 		<!-- 우측 버튼 -->
 		<td>
 		<% if(authority != null && authority.equals("A")){ %>
-		<button type="button" class="btn btn-default pull-right" style="outline:none; padding: 7px; margin:2px;"
-		 onclick="location.href='/mimi/noticedelete?no=<%= notice.getNoticeNo()%>'">삭제</button>
+		<button type="button" class="btn btn-default pull-right" id="deleteBtn" style="outline:none; padding: 7px; margin:2px;">삭제</button>
 		<button type="submit" class="btn btn-default pull-right" style="outline:none; padding: 7px; margin:2px;"
 		 onclick="location.href='/mimi/noticeupdatepage?no=<%= notice.getNoticeNo()%>&page=<%= currentPage%>'">수정</button>
 		 <% } %></td>

@@ -70,6 +70,10 @@ public class UserBoardReplyListServlet extends HttpServlet {
 			if(maxPage < endPage)
 				endPage = maxPage;
 			
+			//페이지가 0일떄 1로 교체
+			if(maxPage<=0)
+				maxPage=1;
+			
 			JSONObject json = new JSONObject();
 			JSONArray jarr = new JSONArray();
 			

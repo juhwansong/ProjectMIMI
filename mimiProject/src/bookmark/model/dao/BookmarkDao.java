@@ -190,7 +190,6 @@ public class BookmarkDao {
 		int result = 0;
 		PreparedStatement pstmt = null;
 		String query = "DELETE FROM TB_BOOKMARK WHERE BOOKMARK_USER_ID = ? AND BOARD_NO = ?";
-		
 		try {
 			for(String checkOne : checkedNo){
 				pstmt = conn.prepareStatement(query);
@@ -217,11 +216,10 @@ public class BookmarkDao {
 		PreparedStatement pstmt = null;
 //		INSERT INTO TB_BOOKMARK	VALUES ('BR0001', 'user01', TO_DATE('2018/08/10', 'RRRR/MM/DD'));
 		String query = "INSERT INTO TB_BOOKMARK VALUES (?, ?, SYSDATE)";
-		
 		try {
 			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, userId);
-			pstmt.setString(2, boardNo);
+			pstmt.setString(1, boardNo);
+			pstmt.setString(2, userId);
 			
 			result = pstmt.executeUpdate();
 			
@@ -236,6 +234,34 @@ public class BookmarkDao {
 		return result;
 	}
 
-	
+	public int checkBookmark(Connection con, String userId, String boardNo) throws BookmarkException{
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		int result = 0;
+		
+		String query = "select count(*) count from TB_BOOKMARK "
+						+ "where BOARD_NO = ? and BOOKMARK_USER_ID = ?";
+		
+		try {
+			pstmt = con.prepareStatement(query);
+			pstmt.setString(1, boardNo);
+			pstmt.setString(2, userId);
+			
+			rset = pstmt.executeQuery();
+			if(rset.next()){
+				if(rset.getInt("count")==1){
+					result = 1;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new BookmarkException(e.getMessage());
+		}finally{
+			close(rset);
+			close(pstmt);	
+		}		
+		
+		return result;
+	}
 
 }
