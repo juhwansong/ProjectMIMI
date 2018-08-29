@@ -1,6 +1,8 @@
 package userboard.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -9,6 +11,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import common.model.vo.Board;
 import userboard.exception.UserBoardException;
@@ -39,7 +44,7 @@ public class UserBoardSearchServlet extends HttpServlet {
 		String categoryby = request.getParameter("category");	
 		String category = (categoryby != null) ? categoryby : "C0";
 		
-		String keyword = request.getParameter("search-text");
+		String keyword = request.getParameter("keyword");
 		String sortby = request.getParameter("sort");
 		String order = request.getParameter("order");
 		//System.out.println("sortby : " + sortby + "\norder : " + order);
@@ -68,14 +73,94 @@ public class UserBoardSearchServlet extends HttpServlet {
 		response.setContentType("text/html; charset=utf-8");
 		
 		int currentPage = 1; //맨 첫화면은 1페이지
-		int countList = 9;	//한 화면에 출력될 리스트 개수
+		int countList = 10;	//한 화면에 출력될 리스트 개수
 		int countPage = 10; //한 화면에 출력될 페이지 개수
 		
 		if(request.getParameter("page") != null) {
 			currentPage = Integer.parseInt(request.getParameter("page"));
 		}
-		
+
 		RequestDispatcher view = null;
+		try {
+			
+			ArrayList<Board> boardList = new UserBoardService().searchUserBoard(query, currentPage, countList);;
+			
+			int totalCount = new UserBoardService().getSearchListCount(query);
+			int maxPage = totalCount / countList;
+			if(totalCount % countList > 0)
+				maxPage++;
+			
+			if(maxPage < currentPage)
+				currentPage = maxPage;
+			
+			
+			int startPage = ((currentPage - 1) / 10) * 10 + 1;
+			int endPage = startPage + countPage - 1;
+			
+			if(endPage > maxPage)
+				endPage = maxPage;
+			
+			System.out.println("검색한 전체 개수 : " + totalCount);
+			//System.out.println("start page : " + startPage + "\nendPage : " + endPage + "\ncurrentPage : " + currentPage + "\nmaxPage : " + maxPage);
+			
+			JSONObject json = new JSONObject();
+			JSONArray jarr = new JSONArray();
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("MM.dd");
+			System.out.println(boardList.size());
+			for(Board board : boardList){
+				JSONObject job = new JSONObject();
+				String date = sdf.format(board.getBoardDate());
+				
+				job.put("boardNo", board.getBoardNo());
+				job.put("commentNum", board.getCommentNum());
+				job.put("recommend", board.getRecommed());
+				job.put("hit", board.getHits());
+				job.put("thumbnail", board.getThumbnailName());
+				job.put("title", board.getTitle());
+				job.put("boardDate", date);
+				job.put("contents", board.getContents());
+				job.put("nickname", board.getNickName());
+				System.out.println(board.getThumbnailName());
+				
+				jarr.add(job);
+			}
+			
+			json.put("list", jarr); //board 내용들
+							
+			//페이지 처리용
+			json.put("currentPage", currentPage);
+			json.put("maxPage", maxPage);
+			json.put("startPage", startPage);
+			json.put("endPage", endPage);
+			json.put("totalCount", totalCount);
+			
+				
+			//System.out.println("adminsearch에서 보낸 값 : \n" + json.toJSONString()); //확인용
+				
+			PrintWriter out = response.getWriter();
+			out.print(json.toJSONString());
+			out.flush();
+			out.close();
+				
+				
+			//System.out.println(boardList.size());
+//			if(boardList.size() > 0){
+//				view = request.getRequestDispatcher("views/board/adminReview.jsp");
+//				request.setAttribute("boardList", boardList);
+//				request.setAttribute("currentPage", currentPage);
+//				request.setAttribute("maxPage", maxPage);
+//				request.setAttribute("startPage", startPage);
+//				request.setAttribute("endPage", endPage);
+//				request.setAttribute("totalCount", totalCount);
+//				view.forward(request, response);
+//			}else{
+//				view = request.getRequestDispatcher("views/board/boardError.jsp");
+//				request.setAttribute("message", "게시글이 없습니다...!");
+//				view.forward(request, response);
+//			}
+			
+		/*
 		try {
 			
 			ArrayList<Board> boardList = new UserBoardService().searchUserBoard(query, currentPage, countList);
@@ -100,6 +185,7 @@ public class UserBoardSearchServlet extends HttpServlet {
 				
 				
 			System.out.println(boardList.size());
+			System.out.println(boardList.toString());
 //			if(boardList.size() > 0){
 				view = request.getRequestDispatcher("views/userReview/userReviewList.jsp");
 				request.setAttribute("list", boardList);
@@ -114,7 +200,7 @@ public class UserBoardSearchServlet extends HttpServlet {
 //				request.setAttribute("message", "게시글이 없습니다...!");
 //				view.forward(request, response);
 //			}
-			
+			*/
 		} catch (UserBoardException e) {
 			view = request.getRequestDispatcher("views/board/boardError.jsp");
 			request.setAttribute("message", e.getMessage());

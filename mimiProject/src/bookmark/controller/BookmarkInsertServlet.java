@@ -1,6 +1,7 @@
 package bookmark.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -32,34 +33,26 @@ public class BookmarkInsertServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-//		response.setContentType("text/html; charset=utf-8");	
-//		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html; charset=utf-8");	
+		HttpSession session = request.getSession();		
 		
-		HttpSession session = request.getSession(false);
 		String userId = (String)session.getAttribute("userId");
-		String boardNo = request.getParameter("boardNo");
+		String boardNo = request.getParameter("bnum");
+		int result = 0;
 		
-		//System.out.println("받은 값 확인중... : " + userId + ", " + "boardNo : " + boardNo);
-		RequestDispatcher view = null;
 		try {
-			int result = new BookmarkService().insertBookmark(userId, boardNo);
+			result = new BookmarkService().insertBookmark(userId, boardNo);
 			
-			if(result > 0){ //즐겨찾기 추가 성공
-				//response.sendRedirect("/mimi/bookmarklist");
-
-			}else{
-				view = request.getRequestDispatcher("views/board/boardError.jsp");
-				request.setAttribute("message", "즐겨찾기 실패...ㄴ");
-				view.forward(request, response);
-			}
+			response.setContentType("text/html; charset=utf-8");
+			PrintWriter out = response.getWriter();
+			out.print(result);
+			out.flush();
+			out.close();
 		} catch (BookmarkException e) {
-			view = request.getRequestDispatcher("views/board/boardError.jsp");
-			request.setAttribute("message", e.getMessage());
-			view.forward(request, response);
+			e.printStackTrace();
 		}
-
 	}
+
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

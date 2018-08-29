@@ -534,9 +534,8 @@ public class UserBoardDao {
 		ResultSet rset = null;	
 		int startRow = (currentPage - 1) * countList + 1;
 		int endRow = startRow + countList - 1;
-		
 		String query = "SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NO, TITLE, BOARD_DATE, CATEGORY_NO, "
-					+ "CATEGORY_FOOD, COMMENT_NUM, RECOMMEND, THUMBNAIL_NAME, BOARD_LINK, NICKNAME "
+					+ "CATEGORY_FOOD, COMMENT_NUM, RECOMMEND, HITS, THUMBNAIL_NAME, BOARD_LINK, NICKNAME "
 					+ "FROM (SELECT * FROM V_USER_REVIEW_LIST " + qr
 					+ " )) WHERE RNUM >= ? AND RNUM <= ?";
 
@@ -555,6 +554,7 @@ public class UserBoardDao {
 				b.setCategoryName(rset.getString("category_food"));
 				b.setCommentNum(rset.getInt("comment_num"));
 				b.setRecommed(rset.getInt("recommend"));
+				b.setHits(rset.getInt("HITS"));
 				b.setThumbnailName(rset.getString("thumbnail_name"));
 				b.setBoardLink(rset.getString("board_link"));
 				b.setNickName(rset.getString("nickname"));

@@ -106,7 +106,7 @@ public class AdminBoardListServlet extends HttpServlet {
 				
 			
 //			if(boardList.size() > 0){
-				view = request.getRequestDispatcher("views/board/adminReview.jsp");
+				view = request.getRequestDispatcher("views/adminReview/adminReviewList.jsp");
 				request.setAttribute("boardList", boardList);
 				request.setAttribute("currentPage", currentPage);
 				request.setAttribute("maxPage", maxPage);

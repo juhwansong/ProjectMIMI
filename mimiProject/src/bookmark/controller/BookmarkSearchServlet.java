@@ -1,8 +1,6 @@
 package bookmark.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -12,9 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import bookmark.exception.BookmarkException;
 import bookmark.model.service.BookmarkService;
@@ -39,15 +34,13 @@ public class BookmarkSearchServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//LinkedHashMap<String, String> map = new LinkedHashMap<>();
 		
 		request.setCharacterEncoding("utf-8");
 		HttpSession session = request.getSession(false);
 		String userId = (String)session.getAttribute("userId");
-		
-		String category = request.getParameter("category"); //board_gb
-		String keyword = request.getParameter("keyword"); //title + contents + shop_name + shop_address
-
-		//System.out.println(category + ", " + keyword);	//확인용
+		String category = request.getParameter("selectReview"); //board_gb
+		String keyword = request.getParameter("textSearch"); //title + contents + shop_name + shop_address
 		String gb = null;
 		if(keyword == null)
 			keyword = ""; //전부
@@ -91,53 +84,14 @@ public class BookmarkSearchServlet extends HttpServlet {
 				endPage = maxPage;
 
 			if(userId != null){
-/*				view = request.getRequestDispatcher("views/board/bookmarkList.jsp");
+				view = request.getRequestDispatcher("views/board/bookmarkList.jsp");
 				request.setAttribute("list", list);
 				request.setAttribute("currentPage", currentPage);
 				request.setAttribute("maxPage", maxPage);
 				request.setAttribute("startPage", startPage);
 				request.setAttribute("endPage", endPage);
 				request.setAttribute("totalCount", totalCount);
-				view.forward(request, response);*/
-				
-				
-				JSONObject json = new JSONObject();
-				JSONArray jarr = new JSONArray();
-				
-				SimpleDateFormat sdf = new SimpleDateFormat("MM.dd");
-				
-				for(Board board : list){
-					JSONObject job = new JSONObject();
-					String date = sdf.format(board.getBoardDate());
-					
-					job.put("boardNo", board.getBoardNo());
-					job.put("commentNum", board.getCommentNum());
-					job.put("recommend", board.getRecommed());
-					job.put("thumbnail", board.getThumbnailName());
-					job.put("title", board.getTitle());
-					job.put("boardDate", date);
-					job.put("boardGb", board.getBoardGb());
-					job.put("nickname", board.getNickName());
-					
-					jarr.add(job);
-				}
-				
-				json.put("list", jarr); //board 내용들
-								
-				//페이지 처리용
-				json.put("currentPage", currentPage);
-				json.put("maxPage", maxPage);
-				json.put("startPage", startPage);
-				json.put("endPage", endPage);
-				json.put("totalCount", totalCount);
-				
-					
-				//System.out.println("adminsearch에서 보낸 값 : \n" + json.toJSONString()); //확인용
-					
-				PrintWriter out = response.getWriter();
-				out.print(json.toJSONString());
-				out.flush();
-				out.close();
+				view.forward(request, response);
 
 			}else{
 				//비회원 접근시 에러
