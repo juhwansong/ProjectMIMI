@@ -84,7 +84,7 @@ public class UserBoardSearchServlet extends HttpServlet {
 		try {
 			
 			ArrayList<Board> boardList = new UserBoardService().searchUserBoard(query, currentPage, countList);;
-			
+			System.out.println(boardList.toString());
 			int totalCount = new UserBoardService().getSearchListCount(query);
 			int maxPage = totalCount / countList;
 			if(totalCount % countList > 0)
@@ -96,9 +96,13 @@ public class UserBoardSearchServlet extends HttpServlet {
 			
 			int startPage = ((currentPage - 1) / 10) * 10 + 1;
 			int endPage = startPage + countPage - 1;
+			System.out.println("maxPage : " + maxPage);
+			System.out.println("endPage : " + endPage);
 			
 			if(endPage > maxPage)
 				endPage = maxPage;
+			System.out.println("maxPage 수정 : " + maxPage);
+			System.out.println("endPage 수정 : " + endPage);
 			
 			System.out.println("검색한 전체 개수 : " + totalCount);
 			//System.out.println("start page : " + startPage + "\nendPage : " + endPage + "\ncurrentPage : " + currentPage + "\nmaxPage : " + maxPage);
@@ -107,7 +111,7 @@ public class UserBoardSearchServlet extends HttpServlet {
 			JSONArray jarr = new JSONArray();
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("MM.dd");
-			System.out.println(boardList.size());
+			System.out.println("boardList.size() : " + boardList.size());
 			for(Board board : boardList){
 				JSONObject job = new JSONObject();
 				String date = sdf.format(board.getBoardDate());
@@ -121,7 +125,7 @@ public class UserBoardSearchServlet extends HttpServlet {
 				job.put("boardDate", date);
 				job.put("contents", board.getContents());
 				job.put("nickname", board.getNickName());
-				System.out.println(board.getThumbnailName());
+				//System.out.println(board.getThumbnailName());
 				
 				jarr.add(job);
 			}

@@ -32,7 +32,7 @@
 				+ "<th width=\"8%\"><i class=\"far fa-thumbs-up\"></i>추천</th>"
 				+ "</tr></thead><tbody>";
 		for(var i in json.list){
-			values += "<tr><td>"+json.list[i].boardNum+"</td>"
+			values += "<tr><td>"+json.list[i].boardNo+"</td>"
 					+ "<td style=\"width: 90px\"><a href=\"/mimi/userboarddetailview?bnum="+json.list[i].boardNo+"&page="+ json.currentPage +"\"><img class=\"img-thumb img-mover\""
 					+ " src=\"";
 			if(json.list[i].thumbnail != null){
@@ -54,50 +54,51 @@
 		$("#table-css").html(values); //목록 채우기
 
 		//pagination
-		$("#pagination").empty(); //기존 페이지네이션 지우기
+		$("#userPagination").empty(); //기존 페이지네이션 지우기
 		pageValues = "";
 	 	//<< 1
 		if(json.currentPage <= 1){
 			pageValues += '<li><span style="color:#ccc;">&laquo;</span></li><li>';
 		}else{
-			pageValues += '<li><a href="javascript:void(0)" onclick="paging(1);" title="맨처음"><span style="color:#444;">&laquo;</span></a></li><li>'
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(1);" title="맨처음"><span style="color:#444;">&laquo;</span></a></li><li>';
 		}
 	
 	 	//< -10
-		if((json.currentPage - 10) <= json.startPage && (json.currentPage - 10) > 1){
-			pageValues += '<a href="javascript:void(0)" onclick="paging(' + (json.currentPage - 10) + ');" title="이전"><span style="color:#444;">&lt;</span></a></li>'	
+		if(json.maxPage == 0){ //결과없을때 비활성화
+			pageValues += '<span style="color:#ccc;">&lt;</span></li>';
+		}else if((json.currentPage - 10) <= json.startPage && (json.currentPage - 10) > 1){
+			pageValues += '<a href="javascript:void(0)" onclick="paging(' + (json.currentPage - 10) + ');" title="이전"><span style="color:#444;">&lt;</span></a></li>';	
 		}else if(json.currentPage != 1){ //1페이지 아니면 항상 활성화
-			pageValues += '<a href="javascript:void(0)" onclick="paging(1);" title="이전"><span style="color:#444;">&lt;</span></a></li>'
+			pageValues += '<a href="javascript:void(0)" onclick="paging(1);" title="이전"><span style="color:#444;">&lt;</span></a></li>';
 		}else{
-			pageValues += '<span style="color:#ccc;">&lt;</span></li>'
+			pageValues += '<span style="color:#ccc;">&lt;</span></li>';
 		}
 		
 		
 	 	//123
 		for(var p = json.startPage; p <= json.endPage; p++){
 			if(p == json.currentPage){
-					pageValues += '<li><span style="color:#ccc;">' + p + '</span></li>'
+				pageValues += '<li><span style="color:#ccc;">' + p + '</span></li>';
 		 	}else{ 
-		 		pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + p + ');"><span style="color:#444;">' + p + '</span></a></li>'
+		 		pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + p + ');"><span style="color:#444;">' + p + '</span></a></li>';
 			}}
 		
 	 	//> +10
 		if((json.currentPage + 10) <= json.maxPage){
-		 	pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + (json.currentPage + 10) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>'
+		 	pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + (json.currentPage + 10) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>';
 		}else if((json.currentPage + 10 ) > json.maxPage && json.currentPage < json.maxPage){ //마지막 페이지 아닐시 항상 활성화
-			pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + (json.maxPage) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>'
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + (json.maxPage) + ');" title="다음"><span style="color:#444;">&gt;</span></a></li>';
 		}else{
-			pageValues += '<li><span style="color:#ccc;">&gt;</span></li>'
+			pageValues += '<li><span style="color:#ccc;">&gt;</span></li>';
 		}
 		
 		//>> max
 		if(json.currentPage >= json.maxPage){
-			pageValues += '<li><span style="color:#ccc;">&raquo;</span></li>'
+			pageValues += '<li><span style="color:#ccc;">&raquo;</span></li>';
 		}else{
-			pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + json.maxPage + ');" title="맨끝"><span style="color:#444;">&raquo;</span></a></li>'
-			
+			pageValues += '<li><a href="javascript:void(0)" onclick="paging(' + json.maxPage + ');" title="맨끝"><span style="color:#444;">&raquo;</span></a></li>';		
 		}
-		$("#pagination").html(pageValues);//페이지네이션
+		$("#userPagination").html(pageValues);//페이지네이션
 		$('html, body').scrollTop(0); //상단으로 이동
 	}//callback function		
 		
@@ -140,7 +141,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////	 		
 		
 		//검색버튼 클릭 시 ajax 실행
-		$("#submitBtn").on('click', function(){
+		$("#submitBtn").on('click', function search(){
 			categoryValue = $("#select-category option:selected").val();
 			searchText = $("#search-text").val();
 			console.log(searchText);
@@ -174,12 +175,8 @@
 			categoryValue = $("#select-category option:selected").val();
 			searchText = $("#search-text").val();
 			
-			//값 확인
-			//console.log("order : " + order + "\nsort : " + sort);
-			//console.log("categoryValue : " + categoryValue + "\nsearchText : " + searchText);
-			
 			$.ajax({
-				url : "adminboardsearch",
+				url : "/mimi/userboardsearch",
 				data : {category : categoryValue, keyword : searchText, order : order, sort : sort, page : page},
 				type : "post",
 				dataType : "json",
@@ -188,7 +185,16 @@
 				}//success
 			})//ajax
 		})//sort
-	})//document close
+	});//document close
+	
+	$(document).ready(function(){
+	       $("#search-text").keypress(function (e) {
+	        if (e.which == 13){
+	        	document.getElementById("submitBtn").click();;  // 실행할 이벤트
+	        }
+	    });
+	});
+
 </script>
 
 <style>
@@ -200,24 +206,23 @@ table {
 
 <!-- <title>유저리뷰게시판</title> -->
 
-
 <div class="container" style="width:1150px;">
 	<h3>유저 리뷰</h3>
 	<hr class="margin1" style="margin: auto auto 5px auto;">
-	<form class="form-inline" name="select" id="select" method="post" action="#">
+	<div class="form-inline" name="select" id="select" method="post" action="#">
 		<!-- 왼쪽 -->
 		<div class="form-group">
 			<select class="form-control" id="select-category">
 				<option value="C0" selected disabled hidden>Category</option>
 				<option value="C0">전체</option>
-				<option value="C1">1</option>
-				<option value="C2">2</option>
-				<option value="C3">3</option>
-				<option value="C4">4</option>
-				<option value="C5">5</option>
-				<option value="C6">6</option>
-				<option value="C7">7</option>
-				<option value="C8">8</option>
+				<option value="C1">커피/디저트</option>
+				<option value="C2">패스트푸드</option>
+				<option value="C3">한식</option>
+				<option value="C4">양식</option>
+				<option value="C5">일식</option>
+				<option value="C6">중식</option>
+				<option value="C7">분식</option>
+				<option value="C8">기타</option>
 			</select>&nbsp;&nbsp;&nbsp; <span style="color: #555; font-size: 12px;">
 			<a href="javascript:void(0)" id="r-sort">추천수&nbsp;<i id="recommend" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
 			<a href="javascript:void(0)" id="h-sort">조회수&nbsp;<i id="hits" class="fas fa-sort"></i></a>&nbsp;&nbsp;&nbsp; 
@@ -231,7 +236,7 @@ table {
 				검색&nbsp;<i class="fas fa-search"></i>
 			</button>
 		</div>
-	</form>
+	</div>
 	<hr class="margin2">
 	<!-- 게시물 시작 -->
 	<form>
@@ -271,30 +276,47 @@ table {
 		<td width="30%"></td><!-- 빈칸 -->
 		<td width="*"><!-- 페이지 -->
 	<!-- Pagination -->
-		<ul class="pagination" id="pagination" style="float: center; display: flex; justify-content: center;">
-		<% if((currentPage - 10) < startPage && 
-				(currentPage - 10) > 1){ %>
-			<li>
-				<a href="/mimi/userboardlist?page=<%= startPage - 10 %>" aria-label="Previous">
-				<span aria-hidden="true">&laquo;</span>
-				<span class="sr-only">Previous</span>
-				</a>
-			</li>
+		<ul class="pagination" id="userPagination" style="float: center; display: flex; justify-content: center;">
+		<!--  맨처음 -->
+		<%  if(currentPage <= 1){ %>
+			<li><span style="color:#ccc;">&laquo;</span></li><li>
+		<%  }else{  %>
+			<li><a href="/mimi/userboardlist?page=1" aria-label="Previous" title="맨처음"><span style="color:#444;">&laquo;</span></a></li><li>
 		<% } %>
+	
+		<!-- 10페이지 이전 -->
+		<% if(maxPage == 0){ //결과없을떄 비활성화 %>
+			<span style="color:#ccc;">&lt;</span></li>
+		<% }else if((currentPage - 10) <= startPage && (currentPage - 10) > 1){ %>
+			<a href="/mimi/userboardlist?page=<%= startPage - 10 %>" title="이전"><span style="color:#444;">&lt;</span></a></li>	
+		<% }else if(currentPage != 1){ //1페이지 아니면 항상 활성화%>
+			<a href="/mimi/userboardlist?page=1" title="이전"><span style="color:#444;">&lt;</span></a></li>
+		<% }else{ %>
+			<span style="color:#ccc;">&lt;</span></li>
+		<% } %>
+		
+		<!-- 페이지표시 -->
 		<% for(int p = startPage; p <= endPage; p++){ 
 				if(p == currentPage){ %>
 			<li><a href="/mimi/userboardlist?page=<%= p %>"><span style="color:red"><%= p %></a></li>
 		<% }else{ %>
 			<li><a href="/mimi/userboardlist?page=<%= p %>"><%= p %></a></li>
 			<% }} %>
-		<% if((currentPage + 10) > endPage && 
-				(currentPage + 10) < maxPage){ %>
-			<li>
-				<a href="/mimi/userboardlist?page=<%= maxPage %>" aria-label="Next">
-				<span aria-hidden="true">&raquo;</span>
-				<span class="sr-only">Next</span>
-				</a>
-			</li>
+		
+		<!-- 10페이지 다음 -->
+		<% if((currentPage + 10) <= maxPage){  %>
+		 	<li><a href="/mimi/userboardlist?page=<%= currentPage + 10 %>" title="다음"><span style="color:#444;">&gt;</span></a></li>
+		<% }else if((currentPage + 10 ) > maxPage && currentPage < maxPage){ //마지막 페이지 아닐시 항상 활성화  %>
+			<li><a href="/mimi/userboardlist?page=<%= maxPage %>" title="다음"><span style="color:#444;">&gt;</span></a></li>
+		<% }else{  %>
+			<li><span style="color:#ccc;">&gt;</span></li>
+		<% }  %>
+		
+		<!-- 마지막 페이지 -->
+		<% if(currentPage >= maxPage){ %>
+			<li><span style="color:#ccc;">&raquo;</span></li>
+		<% }else{ %>
+			<li><a href="/mimi/userboardlist?page=<%= maxPage %>"><span style="color:#444;">&raquo;</span></a></li>
 		<% } %>
 		</ul>	
 	</td>
