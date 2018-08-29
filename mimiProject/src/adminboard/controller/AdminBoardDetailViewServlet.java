@@ -48,7 +48,7 @@ public class AdminBoardDetailViewServlet extends HttpServlet {
 			bservice.addReadCount(boardNum);
 			//해당 게시글 조회해 옴
 			Board board = bservice.selectAdminBoard(boardNum);
-			System.out.println(board.getContentsTag());
+			//System.out.println(board.getContentsTag());
 			if(board != null){
 				
 				view = request.getRequestDispatcher("views/adminReview/adminReviewView.jsp");
