@@ -40,8 +40,8 @@
 						values += '<tr><% if(authority != null && authority.equals("A")){ %><td><input type="checkbox" name="checkOne" id="checkOne" value="' + json.list[i].boardNo + '"></td><% } %>'
 							+ '<td>' + json.list[i].selectedMonth + '</td><td>' + json.list[i].rank + '</td><td style="width: 160px">'
 							+ '<a href="/mimi/userboarddetailview?bnum=' + json.list[i].boardNo + '&page=1">'
-// 							+ '<img class="img-thumb2 img-mover" src="' + json.list[i].thumbnail + '"></a></td><td><table><tr>' //이미지 주소 나오면 이걸로 변경
-							+ '<img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img3.jpg"></a></td><td><table><tr>' //샘플용
+ 							+ '<img class="img-thumb2 img-mover" src="/mimi/resources/files/userboard/' + json.list[i].thumbnail + '" onerror="this.onerror=null;this.src=\'/mimi/resources/images/main/img3.jpg\'"></a></td><td><table><tr>' //이미지 주소 나오면 이걸로 변경
+//							+ '<img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img3.jpg"></a></td><td><table><tr>' //샘플용
 							+ '<td class="tbl-td-title" style="vertical-align: middle;"><a href="/mimi/userboarddetailview?bnum=' + json.list[i].boardNo + '&page=1">' + json.list[i].title + '&nbsp;&nbsp;&nbsp;'
 							+ '<span class="span-c" style="margin:5px;"><i class="fas fa-comments"></i>&nbsp;' + json.list[i].commentNum + '</span></a></td></tr>'
 							+ '<tr><td><p class="r-text2">' + json.list[i].contents + '</p></td></tr></table></td><td>' + json.list[i].nickname + '</td><td>'
@@ -139,7 +139,7 @@
 					<td><%= b.getGradeName().replace("/", ".") %></td><!-- 날짜 -->
 					<td><%= (int)b.getLongitude() %></td><!-- 랭크 -->
 					<td style="width: 160px"><a href="/mimi/userboarddetailview?bnum=<%= b.getBoardNo() %>&page=<%= currentPage %>">
-					<img class="img-thumb2 img-mover" src="<%= b.getThumbnailName()%>" onerror="this.onerror=null;this.src='/mimi/resources/images/main/img3.jpg'"></a></td> <!-- 이미지 주소나오면 이걸로 변경 -->
+					<img class="img-thumb2 img-mover" src="/mimi/resources/files/userboard/<%= b.getThumbnailName()%>" onerror="this.onerror=null;this.src='/mimi/resources/images/main/img3.jpg'"></a></td> <!-- 이미지 주소나오면 이걸로 변경 -->
 					<td>
 						<table>
 							<tr><!-- 제목/댓글 -->
