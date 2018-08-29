@@ -111,4 +111,15 @@ public class SupportService {	//고객센터 페이지 기능
 		return result;
 	}
 	
+	public int changeState(String boardNo, String state) throws SupportException {
+		Connection con = getConnection();
+		int result = new SupportDao().changeState(con, boardNo, state);
+		if(result > 0)
+			commit(con);
+		else
+			rollback(con);
+		close(con);
+		return result;
+	}
+	
 }

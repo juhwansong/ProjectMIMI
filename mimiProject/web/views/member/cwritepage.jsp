@@ -14,7 +14,7 @@
 		<tr>
 				<th width="15%">카테고리</th>
 				<td colspan="3" style="text-align: left;">
-					&nbsp;&nbsp;<input type="radio" name="ctype" value="0">문의
+					&nbsp;&nbsp;<input checked="checked" type="radio" name="ctype" value="0">문의
 					&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="ctype" value="1">신고
 					&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="ctype" value="2">기타
 				</td>

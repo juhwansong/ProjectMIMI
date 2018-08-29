@@ -3,6 +3,7 @@
 	pageEncoding="UTF-8" errorPage="adminPageError.jsp"%>
 <%@ page import="common.model.vo.Board, java.util.ArrayList, java.util.Date" %>
 <%
+
 	ArrayList<Board> list = (ArrayList<Board>)request.getAttribute("list");
 	int listCount = ((Integer)request.getAttribute("listCount")).intValue();
 	int startPage = ((Integer)request.getAttribute("startPage")).intValue();

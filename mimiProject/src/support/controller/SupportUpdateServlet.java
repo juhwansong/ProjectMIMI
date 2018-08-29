@@ -45,7 +45,7 @@ public class SupportUpdateServlet extends HttpServlet {
 			
 			if(support != null){
 				view = request.getRequestDispatcher(
-						"views/support/cupdateView.jsp");
+						"views/member/cupdateView.jsp");
 				request.setAttribute("support", support);
 				request.setAttribute("page", currentPage);
 				view.forward(request, response);
