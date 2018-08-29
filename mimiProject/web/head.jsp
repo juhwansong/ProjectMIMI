@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
 
 <!-- 다음맵 인증키 (직접 발급받아야됨) -->
-<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=795b33c97453a44f73949c94f447f347&libraries=services,clusterer,drawing"></script> 
+<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=a48da9f7088f3a6744080ebf6b1ca3b7&libraries=services,clusterer,drawing"></script> 
 
 	
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>

@@ -315,7 +315,7 @@
 <div id="mySidenav" class="sidenav" style="width:150px;"><!--추가--><!-- 
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a> -->
   <a href="views/admin/adminPage.jsp" id="menuItem" style="color: #555; font-weight: 600; font-size:15px;">관리자 메뉴</a>
-  <a href="views/admin/userInfoManage.jsp" id="menuItem">전체 회원 관리</a>
+  <a href="/mimi/customerlist" id="menuItem">전체 회원 관리</a>
   <a href="/mimi/allboardlist" id="menuItem">전체 게시글 관리</a>  
   <a href="/mimi/allcommentlist" id="menuItem">전체 댓글 관리</a>
 </div>
@@ -350,8 +350,8 @@
 	<table class="table table-hover" id="table-css">
 		<thead>
 			<tr>
-				<th><input type="checkbox" class="select-all checkbox"
-					name="select-all" /></th>
+				<th><input type="checkbox" class="select-all checkbox" name="select-all" /></span>
+				</th>
 				<th width="*">글번호</th>
 				<th width="50%">제목</th>
 				<th width="12%"><i class="fas fa-pen"></i>작성자</th>
