@@ -1,6 +1,7 @@
 package support.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -74,9 +75,9 @@ public class SupportSearchServlet extends HttpServlet {
 				
 				view.forward(request, response);
 			}else{
-				view = request.getRequestDispatcher("views/member/customerError.jsp");
-				request.setAttribute("message", "게시글이 없습니다");
-				view.forward(request, response);
+				PrintWriter out = response.getWriter();          
+	            out.println("<script>alert('검색결과가 없습니다'); location.href='/mimi/supportlist';</script>");	             
+	            out.flush();
 			}
 			
 		}catch (Exception e) {

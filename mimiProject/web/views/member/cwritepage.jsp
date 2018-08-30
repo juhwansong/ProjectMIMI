@@ -8,7 +8,7 @@
 <div class="container" style="width:1150px;">
 	<h3>고객센터</h3>
 	
-	<form action="/mimi/supportinsert" method="post" >
+	<form action="/mimi/supportinsert" method="post" onsubmit="return cancelResult();" >
 	<div class="form-group">
 		<table class="table" id="table-css2">
 		<tr>
@@ -23,13 +23,13 @@
 		
 			<tr>
 				<th width="15%">제목</th>
-				<td><input type="text" name="title" class="form-control" placeholder="제목을 입력해 주세요"></td>
+				<td><input type="text" name="title" id="title" class="form-control" placeholder="제목을 입력해 주세요"></td>
 				<th width="15%">작성자</th>
 				<td width="20%"><%= userId %></td>
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td colspan="3"><textarea class="form-control" name="contents" rows="15" placeholder="내용을 입력해주세요"></textarea></td>
+				<td colspan="3"><textarea class="form-control" name="contents" id="contents" rows="15" placeholder="내용을 입력해주세요"></textarea></td>
 			</tr>
 	
 		</table>
@@ -41,6 +41,19 @@
 		</div>
 	</form>
 </div>
+
+<script>
+	function cancelResult(){
+		if($("#title").val().trim() === ""){
+			alert("제목을 입력해주세요.");
+			return false;
+		}
+		if($("#contents").val().trim() === ""){
+			alert("내용을 입력해주세요.");
+			return false;
+		}
+	}
+</script>
 
 <%@include file="../../footer.jsp" %> 	
 <%@include file="../../end.jsp" %> 

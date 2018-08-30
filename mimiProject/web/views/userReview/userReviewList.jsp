@@ -36,10 +36,9 @@
 					+ "<td style=\"width: 90px\"><a href=\"/mimi/userboarddetailview?bnum="+json.list[i].boardNo+"&page="+ json.currentPage +"\"><img class=\"img-thumb img-mover\""
 					+ " src=\"";
 			if(json.list[i].thumbnail != null){
-				console.log(json.list[i].thumbnail);
 				values += "/mimi" + "/resources/files/userboard/"+ json.list[i].thumbnail + "\"></a></td>"; 
 			}else{
-				values += "/mimi/resources/images/logo/default_logo.png\"></a></td>";
+				values += "/mimi/resources/images/main/img3.jpg\"></a></td>";
 			}
 			values += "<td class=\"tbl-td-title\" style=\"vertical-align: middle;\"><a href=\"/mimi/userboarddetailview?bnum="
 				+ json.list[i].boardNo + "&page="+ json.currentPage+"\">"+ json.list[i].title + "&nbsp;&nbsp;"
@@ -257,7 +256,7 @@ table {
 				<tr>
 					<td><%= rb.getBoardNo() %></td>
 					<td style="width: 90px"><a href="/mimi/userboarddetailview?bnum=<%= rb.getBoardNo() %>&page=<%= currentPage %>"><img class="img-thumb img-mover"
-							src="<%if(rb.getThumbnailName() != null){%><%=request.getContextPath()%>/resources/files/userboard/<%=rb.getThumbnailName()%><%}else{%>/mimi/resources/images/logo/default_logo.png<%}%>"></a></td>
+							src="<%if(rb.getThumbnailName() != null){%><%=request.getContextPath()%>/resources/files/userboard/<%=rb.getThumbnailName()%><%}else{%>/mimi/resources/images/main/img3.jpg<%}%>"></a></td>
 					<td class="tbl-td-title" style="vertical-align: middle;"><a href="/mimi/userboarddetailview?bnum=<%= rb.getBoardNo() %>&page=<%= currentPage %>"><%= rb.getTitle() %>&nbsp;&nbsp;
 					<span class="span-c"><i class="fas fa-comments"></i>&nbsp;<%= rb.getCommentNum() %></span></a></td>
 					<td><%= rb.getNickName() %></td>

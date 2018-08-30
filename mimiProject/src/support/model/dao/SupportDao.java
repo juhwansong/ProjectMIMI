@@ -147,8 +147,7 @@ public class SupportDao {
 				+ "user_id = ?, "
 				+ "title = ?, "
 				+ "contents = ?, "
-				+ "category = ?, "
-				+ "state = ? "
+				+ "category = ? "
 				+ "where board_no = ? ";
 		
 		try {
@@ -157,8 +156,7 @@ public class SupportDao {
 			pstmt.setString(2, support.getTitle());
 			pstmt.setString(3, support.getContents());
 			pstmt.setInt(4, support.getCategory());
-			pstmt.setString(5, support.getState());
-			pstmt.setString(6, support.getBoardNo());
+			pstmt.setString(5, support.getBoardNo());
 			
 			result = pstmt.executeUpdate();		
 			

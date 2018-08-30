@@ -497,9 +497,15 @@
 	    } else {
 	        itemStr += '    <span>' +  places.address_name  + '</span>'; 
 	    }
-	                 
-	      itemStr += '  <span class="tel">' + places.phone  + '</span>' +
-	                '</div>';           
+	    
+	    if(places.phone){
+	    	itemStr += '  <span class="tel">' + places.phone  + '</span>' +
+            '</div>';  
+	    }  
+	    else{
+	    	itemStr += '</div>';
+	    }
+	               
 
 	    el.innerHTML = itemStr;
 	    el.className = 'item';
@@ -626,7 +632,7 @@
 	/*<div class="title"><div class="body"><div class="desc"></div></div></div>*/
 	function displayInfowindow(marker, title, boardNo, thumbnail_name, titleContent, contents, index) {   //윈도우인포(커스텀 오버레이) 꾸미기
 		if(thumbnail_name === "undefined"){  //해당 게시물에 썸네일이 없을때
-			thumbnail_name = '/mimi/resources/images/logo/default_logo.png';
+			thumbnail_name = '/mimi/resources/images/main/img3.jpg';
 		}
 		else{
 			thumbnail_name = '<%=request.getContextPath()%>/resources/files/userboard/' + thumbnail_name;

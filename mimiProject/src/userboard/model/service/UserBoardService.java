@@ -66,13 +66,6 @@ public class UserBoardService {	//유저 리뷰 게시판 기능
 		return list;
 	}
 	
-	public ArrayList<Board> selectUserBoardList2() throws UserBoardException{//전체 게시물 조회
-		Connection con = getConnection();
-		ArrayList<Board> list = new UserBoardDao().selectList2(con);
-		close(con);
-		return list;
-	}
-	
 	public int updateUserBoard(Board board) throws UserBoardException{ //게시물 수정
 		Connection con = getConnection();
 		int result = new UserBoardDao().updateBoard(con, board);

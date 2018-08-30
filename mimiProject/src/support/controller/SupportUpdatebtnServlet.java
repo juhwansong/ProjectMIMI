@@ -43,7 +43,6 @@ public class SupportUpdatebtnServlet extends HttpServlet {
 		support.setUserId((String)request.getSession().getAttribute("userId"));
 		
 		
-		
 		try {
 			if (new SupportService().updateSupport(support) > 0) {
 				response.sendRedirect("/mimi/supportlist");

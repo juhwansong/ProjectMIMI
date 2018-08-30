@@ -74,13 +74,12 @@ public class mailsendAjax extends HttpServlet {
 					+ "<label style='margin-bottom:20px;'>인증번호&nbsp;:&nbsp;</label><label style='color:#5cb85c;'>" + code + "</label>"
 					+ "<p>MIMI를 이용해 주셔서 감사합니다!<br>더욱 편리한 서비스를 위해 노력하겠습니다!</p></div>"
 					+ "<nav style='display:inline-block;margin-top:10px;padding-top:10px;padding-right:5px;'>"
-					+ "<p>본 메일은 발신전용 입니다. MIMI 서비스관련 궁금하신 사항은 <a style='color:#555;' href='http://localhost:9987/mimi/views/member/customer.jsp'>고객센터</a>에서 확인해주세요!</p>"
+					+ "<p>본 메일은 발신전용 입니다.</p>"
 					+ "<p style='padding-bottom:20pt;'>Copyright MIMI Corp.All Rights Reserved.</p></nav></article><body><html>";
 			
 			// 이메일 헤더
 			msg.setHeader("content-Type", "text/html");
 			msg.setContent(contentHtml, "text/html; charset=utf-8");
-			
 			// 메일보내기
 			javax.mail.Transport.send(msg);
 			
