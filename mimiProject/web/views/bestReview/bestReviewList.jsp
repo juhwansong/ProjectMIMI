@@ -17,6 +17,11 @@
 <!-- Best Review -->
 <script type="text/javascript">
 	$(function(){		
+		var mon = new Date().getMonth(); //지난달
+		var month = ("0" + mon);
+		
+		$("#category-month").val(month).prop("selected", true); //지난달 자동 선택
+		
 		//select box 변경 시 ajax 실행
 		$("#select-category").change(function(){
 			year = $("#category-year option:selected").val();
@@ -92,7 +97,7 @@
 				<option value="05">05</option>
 				<option value="06">06</option>
 				<option value="07">07</option>
-				<option value="08" selected>08</option>
+				<option value="08">08</option>
 				<option value="09">09</option>
 				<option value="10">10</option>
 				<option value="11">11</option>
