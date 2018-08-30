@@ -100,7 +100,6 @@
 	
 		
 	<!-------------              API               ------------->	
-	<h3 align="center">MAP</h3>
 		<div class="map_wrap">
 	    	<div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
 	    	<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
