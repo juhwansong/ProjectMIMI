@@ -17,6 +17,8 @@
 <script type="text/javascript">
 	function callback(data){ //목록, 페이지네이션 처리
 		//console.log("콜백함수 실행중...");
+
+		var categoryValue = $("#select-category option:selected").val();
 		var searchText = $("#search-text").val();
 		var jsonStr = JSON.stringify(data);			
 		var json = JSON.parse(jsonStr);
@@ -90,9 +92,34 @@
 		}//callback function		
 		
 		function paging(p){
+			var sort = ($("#r-sort, #h-sort, #d-sort").children().attr('class') === 'fas fa-sort-down') ? 'down' : 'up';
+			
+			if($("#r-sort").children().attr('class') === 'fas fa-sort-down'){//down 내림차순
+				var sort = 'down';
+			}else if($("#h-sort").children().attr('class') === 'fas fa-sort-down'){
+				var sort = 'down';
+			}else if($("#d-sort").children().attr('class') === 'fas fa-sort-down'){
+				var sort = 'down';
+			}else if($("#r-sort").children().attr('class') === 'fas fa-sort-up'){//up 오름차순
+				var sort = 'up';
+			}else if($("#h-sort").children().attr('class') === 'fas fa-sort-up'){
+				var sort = 'up';
+			}else if($("#d-sort").children().attr('class') === 'fas fa-sort-up'){
+				var sort = 'up';
+			}
+						
+			
+			if($("#r-sort").children().attr('class') != 'fas fa-sort'){
+				var order = $("#r-sort").children().attr('id');
+			}else if($("#h-sort").children().attr('class') != 'fas fa-sort'){
+				var order = $("#h-sort").children().attr('id');
+			}else if($("#d-sort").children().attr('class') != 'fas fa-sort'){
+				var order = $("#d-sort").children().attr('id');
+			}
+			console.log("sort : " + sort + ", order : " + order);
 			$.ajax({		
 				url : "adminboardsearch",
-				data : {category : categoryValue, keyword : searchText, page : p},
+				data : {category : categoryValue, keyword : searchText, order : order, sort : sort, page : p},
 				type : "post",
 				dataType : "json",
 				success : function(data){	
