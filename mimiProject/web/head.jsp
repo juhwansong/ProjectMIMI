@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
 
 <!-- 다음맵 인증키 (직접 발급받아야됨) -->
-<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=45af433a6af9ac0a5a32c2bb45c73262&libraries=services,clusterer,drawing"></script> 
+<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=795b33c97453a44f73949c94f447f347&libraries=services,clusterer,drawing"></script>
 
 	
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
@@ -45,6 +45,7 @@
 	String userId = (String)session.getAttribute("userId");
 	String authority = (String)session.getAttribute("authority");
 	String nickName = (String)session.getAttribute("nickName");
+	String gradeName = (String)session.getAttribute("gradeName");
 	
 	if(userId == null){
 %>		

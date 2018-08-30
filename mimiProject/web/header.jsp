@@ -195,10 +195,10 @@
 				
 				<form role="form" >
             		<div class="form-group" align="center">
-              			<input type="text" class="form-control" id="menu-userid" name="menu-userid" style="width:150pt;" maxlength="20" placeholder="아이디 입력">
+              			<input type="text" class="form-control" id="menu-userid" name="menu-userid" style="width:150pt;" maxlength="20" placeholder="아이디 입력" onkeyup="enterKey();">
               		</div>
               		<div class="form-group" align="center">	
-              			<input type="password" class="form-control" id="menu-userpassword" name="menu-userpassword" style="width:150pt;" maxlength="20" placeholder="비밀번호 입력">
+              			<input type="password" class="form-control" id="menu-userpassword" name="menu-userpassword" style="width:150pt;" maxlength="20" placeholder="비밀번호 입력" onkeyup="enterKey();">
               		</div>	
               		<div class="form-group">
               			<p class="help-block" align="right" style="color:#d9534f; font-size:12px;"><a href="/mimi/views/member/idFindView.jsp">아이디</a>&nbsp;/&nbsp;<a href="/mimi/views/member/passwordFindView.jsp">비밀번호 찾기</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
@@ -250,16 +250,21 @@
 	  	          	success : function(data){
 	  	      
 	  	          		if(data === "success"){  //아이디,비번 입력 성공시
-	  	          			window.location = "/mimi/index.jsp";//현재 페이지 새로고침
+	  	          			location.reload();
+	  	          			//window.location = "/mimi/index.jsp";//현재 페이지 새로고침
 	  	          		}
 	  	          		else{
 	  	          			alert(data);  //에러 메세지 화면에 보여주기
 	  	          		}
 	  	        	}                     
 	  	  		});
-			});
-			
-			
+			});		
 		});
+		function enterKey() {
+	        if (window.event.keyCode == 13) { 
+	             // 엔터키가 눌렸을 때 실행할 내용
+	        	$("#login-btn").trigger("click");
+	        }
+		}
 	</script>	
 	

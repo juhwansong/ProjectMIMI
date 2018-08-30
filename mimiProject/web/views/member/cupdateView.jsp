@@ -3,7 +3,8 @@
 <%@ page import="support.model.vo.Support,  java.util.*" %>
 
 <%
-	ArrayList<Support> slist =(ArrayList<Support>) request.getAttribute("slist");
+	Support support = (Support)request.getAttribute("support");
+	int currentPage = ((Integer)request.getAttribute("page")).intValue();
 %>
 
 <%@include file="../../head.jsp" %>
@@ -16,8 +17,11 @@
 	
 	
 	<form action="/mimi/supdate" method="post" >
+		<input type="hidden" name="bno" value="<%= support.getBoardNo() %>">
+		<input type="hidden" name="writer" value="<%= support.getUserId() %>">
+		<input type="hidden" name="page" value="<%= currentPage %>">
 		<div class="form-group">
-		<% for(Support s : slist) { %>
+
 		<table class="table" id="table-css2">
 		<tr>
 				<th width="15%">카테고리</th>
@@ -31,17 +35,16 @@
 		
 			<tr>
 				<th width="15%">제목</th>
-				<td><input type="text" name="title" class="form-control" value="<%= s.getTitle() %>"></td>
+				<td><input type="text" name="title" class="form-control" value="<%= support.getTitle() %>"></td>
 				<th width="15%">작성자</th>
-				<td width="20%"><%= s.getUserId() %></td>
+				<td width="20%"><%= support.getUserId() %></td>
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td colspan="3"><textarea class="form-control" name="contents" rows="15" ><%= s.getContents() %></textarea></td>
+				<td colspan="3"><textarea class="form-control" name="contents" rows="15"><%= support.getContents() %></textarea></td>
 			</tr>
 	
 		</table>
-		<% } %>
 		
 </div>
 <hr class="margin2">

@@ -39,6 +39,7 @@ public class MemberLogoutServlet extends HttpServlet {
 			session.removeAttribute("userId");
 			session.removeAttribute("authority");
 			session.removeAttribute("nickName");
+			session.removeAttribute("gradeName");
 			
 
 			//파일 업로드 시 바로 로그아웃 할 경우

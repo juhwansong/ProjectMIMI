@@ -36,7 +36,8 @@
 					+ "<td style=\"width: 90px\"><a href=\"/mimi/userboarddetailview?bnum="+json.list[i].boardNo+"&page="+ json.currentPage +"\"><img class=\"img-thumb img-mover\""
 					+ " src=\"";
 			if(json.list[i].thumbnail != null){
-				values += "<%=request.getContextPath()%>" + "/resources/files/userboard/"+ json.list[i].getThumbnailName();
+				console.log(json.list[i].thumbnail);
+				values += "/mimi" + "/resources/files/userboard/"+ json.list[i].thumbnail + "\"></a></td>"; 
 			}else{
 				values += "/mimi/resources/images/logo/default_logo.png\"></a></td>";
 			}

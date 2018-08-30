@@ -103,6 +103,11 @@
 	<h3 align="center">MAP</h3>
 		<div class="map_wrap">
 	    	<div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+	    	<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
+    		<div class="custom_zoomcontrol radius_border" style="top:30px;right:30px;opacity:0.8;"> 
+       			<span onclick="zoomIn()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
+        		<span onclick="zoomOut()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
+    		</div>
 	    	<div id="menu_wrap" class="bg_white">
 	        	<div class="option">
 	        	</div>
@@ -116,7 +121,7 @@
 
 <script>
 	
-
+	var page;
 	var lat = 37.566826;
 	var lon = 126.9786567;
 	var geocoder = new daum.maps.services.Geocoder(); //주소-좌표 변환 객체 생성
@@ -182,7 +187,6 @@
 	        	},
 	        	success : function(data){	      		
 	          	if(data.list !== undefined){ //결과들을 마커로 생성하기
-	          		console.log(data.list);
 	          		for(var i=0; i<data.list.length; i++){
 	          			data.list[i].place_name = decodeURIComponent(data.list[i].place_name);	          				          			
 	          			data.list[i].address_name = decodeURIComponent(data.list[i].address_name);	          				          				          			
@@ -190,20 +194,20 @@
 	          			data.list[i].contents = decodeURIComponent(data.list[i].contents);
 	          			data.list[i].thumbnail_name = decodeURIComponent(data.list[i].thumbnail_name);
 	          		}
-	   				        		 
+	          		
+	          		var currentPage = Number(data.list[0].currentPage);
+	          		var maxPage = Number(data.list[0].maxPage);
+	          		var startPage = Number(data.list[0].startPage);
+	          		var endPage = Number(data.list[0].endPage);
+	          		var totalCount = Number(data.list[0].totalCount);
+	          		          		
 	          		//페이지 번호를 표출합니다
-	          		page = new pagination(data.list, data.list.length);
-	          		var min = 0;
-	          		var max = 9;
-	          		if(data.list.length < max){
-	          			max = data.list.length;
-	          		}
-	          		displayPlaces(data.list.slice(min, max+1)); //처음에 보여줄땐 바로 1페이지 목록 보이게
+	          		page = new pagination(data.list, currentPage, maxPage, startPage, endPage, totalCount);
+	          		displayPlaces(data.list); //처음에 보여줄땐 바로 1페이지 목록 보이게
 	          		
 	          		//검색시  자동으로 1번 마커를 표시
 	                daum.maps.event.trigger(markers[0], "click"); //강제로 클릭 발생
-	                displayInfowindow(markers[0], data.list[0].place_name, data.list[0].boardNo, data.list[0].thumbnail_name, data.list[0].title, data.list[0].contents, 0);   //처음엔 인포창 생성해야 함 (mouseover 이벤트로 발생되는게 아니기 때문에)
-	          		
+	                displayInfowindow(markers[0], data.list[0].place_name, data.list[0].boardNo, data.list[0].thumbnail_name, data.list[0].title, data.list[0].contents, 0);   //처음엔 인포창 생성해야 함 (mouseover 이벤트로 발생되는게 아니기 때문에)          		
 	          		displayPagination(page);
 	          	
 	          	}
@@ -214,51 +218,164 @@
 		});
 	}
 	class pagination{  //디비에 있는 정보를 뽑아서 보여주기위해 직접 페이지네이션 객체 선언
-		constructor(data, length){
-			this.list = data;
-			this.current = 1;
-			this.last = parseInt(length / 10);
-			if(length % 10 > 0){
-				this.last += 1;
-			}
+		constructor(list, current, max, start, end, total){
+			this.list = list;
+			this.current = current;
+			this.start = start;
+			this.end = end;
+			this.total = total;
+			this.max = max;
+			
 		}
 		gotoPage(i){
-			
 			if(this.current !== i){
-				
-				for(var infoCount=0; infoCount<infowindow.length; infoCount++){//페이지 이동 전에 열려있는 infowindow창 전부 닫기
-					if(infowindow[infoCount] !== undefined){
-						infowindow[infoCount].setMap(null);	
-					}
-				}
-				
-				var min = (i-1) * 10;
-				var max = min + 9;
-				if(this.list.length < max){
-          			max = this.list.length;
-          		}
+								
 				placelistclicked = -1; //페이지 전환 시 클릭한 인덱스 값 초기화 
-				displayPlaces(this.list.slice(min, max+1));
 				
-				//검색시  자동으로 1번 마커를 표시
-                daum.maps.event.trigger(markers[0], "click"); //강제로 클릭 발생
-                displayInfowindow(markers[0], this.list[min].place_name, this.list[min].boardNo, this.list[min].thumbnail_name, this.list[min].title, this.list[min].contents, 0);   //처음엔 인포창 생성해야 함 (mouseover 이벤트로 발생되는게 아니기 때문에)
-			}
-			
-			this.current = i;
-			
-			for(var j = 1; j<=this.last;j++){
-				if(j === this.current){
-					$("#pagination a").eq(j-1).addClass("on");
-					
-				}
-				else{
-					$("#pagination a").eq(j-1).removeClass("on");
-				}
-			}
-			
+				$.ajax({
+		     		url : "/mimi/nearshoplist",
+		     		type : "post",
+		        	data : 
+		        	{
+		        		"latitude" : lat,
+		        		"longitude" : lon,
+		        		"page" : i
+		        	},
+		        	success : function(data){
+		
+		        		//화면에 뿌리기전에  인포윈도우를 지워서 초기화
+		    	    	for(var i=0; i<infowindow.length; i++){
+		    	    		if(infowindow[i] !== undefined){
+		    	    			infowindow[i].setMap(null);	
+		    	    			infowindow[i]= null; 
+		    	    		}
+		    	    	}
+		    	    	infowindow = new Array();
+		        		
+			          	if(data.list !== undefined){ //결과들을 마커로 생성하기
+			          		for(var i=0; i<data.list.length; i++){
+			          			data.list[i].place_name = decodeURIComponent(data.list[i].place_name);	          				          			
+			          			data.list[i].address_name = decodeURIComponent(data.list[i].address_name);	          				          				          			
+			          			data.list[i].title = decodeURIComponent(data.list[i].title);	          			          
+			          			data.list[i].contents = decodeURIComponent(data.list[i].contents);
+			          			data.list[i].thumbnail_name = decodeURIComponent(data.list[i].thumbnail_name);
+			          		}
+			          		  		
+			          		page.current = Number(data.list[0].currentPage);
+			          		page.max = Number(data.list[0].maxPage);
+			          		page.start = Number(data.list[0].startPage);
+			          		page.end = Number(data.list[0].endPage);
+			          		page.total = Number(data.list[0].totalCount);          		    		
+			          		displayPlaces(data.list); 
+			          		//검색시  자동으로 1번 마커 클릭 표시
+			                daum.maps.event.trigger(markers[0], "click"); //강제로 클릭 발생
+			                displayInfowindow(markers[0], data.list[0].place_name, data.list[0].boardNo, data.list[0].thumbnail_name, data.list[0].title, data.list[0].contents, 0);   //처음엔 인포창 생성해야 함 (mouseover 이벤트로 발생되는게 아니기 때문에)          		
+			          		displayPagination(page);
+			                    	
+			          	}
+			          	else{ //해당 반경의 거리에 값이 없을때    
+			          		alert("10km 반경으로 맛집이 존재하지 않습니다.")
+			          	}
+			       		
+			          		
+		      		}                     
+				});	
+			}		
 		}	
 	}
+	
+	//페이지 클릭 이벤트
+	$(document).on("click","#pagination a", function(){
+		console.log($(this));
+	    if($(this).hasClass("tofirstpage")){				    
+	    	page.gotoPage(Number(1));
+	    	return false;
+	    }
+	    if($(this).hasClass("tolastpage")){
+	    	page.gotoPage(Number(page.max));
+	    	return false;
+	    }
+	    if($(this).hasClass("toprevpage")){
+	    	page.gotoPage(Number(page.start-5));
+	    	return false;
+	    }
+	    if($(this).hasClass("tonextpage")){
+	    	page.gotoPage(Number(page.start+5));
+	    	return false;
+	    }
+	  
+		page.gotoPage(Number($(this).html()));
+	 	
+	});
+	
+	
+	// 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
+	function displayPagination(pagination) {
+	    var paginationEl = document.getElementById('pagination'),
+	        fragment = document.createDocumentFragment(),
+	        i; 
+		
+	    // 기존에 추가된 페이지번호를 삭제합니다
+	    while (paginationEl.hasChildNodes()) {
+	        paginationEl.removeChild (paginationEl.lastChild);
+	    }
+	    
+	    var el = document.createElement('a');
+	    el.href="#";
+	    el.innerHTML = "&laquo;";
+	    $(el).addClass("tofirstpage");
+	    if(pagination.current <= 1){
+	    	$(el).addClass("on");
+	    	$(el).css("pointer-events", "none");
+	    }	    	    
+	    fragment.appendChild(el);
+	    	    
+	    var el = document.createElement('a');
+	    el.href="#";
+	    el.innerHTML = "&lt;";
+	    $(el).addClass("toprevpage");
+	    if(!((pagination.current-5)<pagination.start && (pagination.current-5)>=1)){
+	    	$(el).addClass("on");	    	
+	    	$(el).css("pointer-events", "none");
+	    }	    	    
+	    fragment.appendChild(el);
+	    
+	    for (i=pagination.start; i<=pagination.end; i++) {
+	    	
+	        var el = document.createElement('a');
+	        el.href = "#";
+	        el.innerHTML = i;
+	       	if(pagination.current === i){
+	       		$(el).addClass("on");
+	       		$(el).css("pointer-events", "none");
+	       	}	     
+	        fragment.appendChild(el);
+	    }
+	    
+	    var el = document.createElement('a');
+	    el.href="#";
+	    el.innerHTML = "&gt;";
+	    $(el).addClass("tonextpage");
+	    if(!((pagination.current+5)>pagination.end && (pagination.start + 5)<=pagination.max)){
+	    	$(el).addClass("on");	    	
+	    	$(el).css("pointer-events", "none");   	
+	    }
+	    fragment.appendChild(el);    
+	    
+	    var el = document.createElement('a');
+	    el.href="#";
+	    el.innerHTML = "&raquo;";
+	    $(el).addClass("tolastpage");
+	    if(pagination.current >= pagination.max){
+	    	$(el).addClass("on");	    	
+	    	$(el).css("pointer-events", "none");
+	    }	    	    
+	    fragment.appendChild(el);
+	    paginationEl.appendChild(fragment);
+	  
+	    
+	}
+	
 	// 검색 결과 목록과 마커를 표출하는 함수입니다
 	function displayPlaces(places) {
 		
@@ -304,7 +421,9 @@
 	            			//telDiv.value = $(this).find(" .tel").text();
 							
 	            			if(placelistclicked !== -1 && placelistclicked != i){ //초기값일땐 클릭을 안했으니
-								infowindow[placelistclicked].setMap(null);
+	            				if(infowindow[placelistclicked] !== undefined){
+	            					infowindow[placelistclicked].setMap(null);
+	            				}							
 							}
 	            			
 							placelistclicked = i;  //클릭했을때 인덱스 저장
@@ -497,44 +616,15 @@
 	function removeMarker() {
 	    for ( var i = 0; i < markers.length; i++ ) {
 	        markers[i].setMap(null);
+	        markers[i] = null;
 	    }   
 	    markers = [];
 	}
 
-	// 검색결과 목록 하단에 페이지번호를 표시는 함수입니다
-	function displayPagination(pagination) {
-	    var paginationEl = document.getElementById('pagination'),
-	        fragment = document.createDocumentFragment(),
-	        i; 
-		
-	    // 기존에 추가된 페이지번호를 삭제합니다
-	    while (paginationEl.hasChildNodes()) {
-	        paginationEl.removeChild (paginationEl.lastChild);
-	    }
-
-	    for (i=1; i<=pagination.last; i++) {
-	        var el = document.createElement('a');
-	        el.href = "#";
-	        el.innerHTML = i;
-
-	       	if(pagination.current === i){
-	        	el.className = 'on';
-	       	}
-	        el.onclick = (function(i) {
-	        	return function() {
-	            	pagination.gotoPage(i);
-	           	}
-	        })(i);
-	      
-
-	        fragment.appendChild(el);
-	    }
-	    paginationEl.appendChild(fragment);
-	}
+	
 	
 	/*<div class="title"><div class="body"><div class="desc"></div></div></div>*/
 	function displayInfowindow(marker, title, boardNo, thumbnail_name, titleContent, contents, index) {   //윈도우인포(커스텀 오버레이) 꾸미기
-		console.log(thumbnail_name);
 		if(thumbnail_name === "undefined"){  //해당 게시물에 썸네일이 없을때
 			thumbnail_name = '/mimi/resources/images/logo/default_logo.png';
 		}
@@ -598,6 +688,16 @@
 	        }
 	    }    
 	} 
+	
+	//지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+	function zoomIn() {
+	    map.setLevel(map.getLevel() - 1);
+	}
+
+	// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+	function zoomOut() {
+	    map.setLevel(map.getLevel() + 1);
+	}
 	
 </script>
 

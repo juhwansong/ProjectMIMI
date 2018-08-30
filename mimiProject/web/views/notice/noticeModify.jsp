@@ -61,6 +61,8 @@
 			}
 		$(this).siblings('.upload-name').val(filename); 
 		}); 
+		
+		
 	}); 
 
 </script>
@@ -97,8 +99,8 @@
 		</table>
 		<hr class="my-hr">
 		<div align="center" style="margin:5px;">
-		<button type="submit" class="btn btn-default" name="btn" style="outline:none">수정</button>
-		<button type="button" class="btn btn-default" name="btn" onclick="location.href='/mimi/noticelist?page=<%= currentPage %>'" style="outline:none">취소</button>
+		<button type="submit" class="btn btn-default" style="outline:none">수정</button>
+		<button type="button" class="btn btn-default" onclick="location.href='/mimi/noticelist?page=<%= currentPage %>'" style="outline:none">취소</button>
 		</div>
 		</form>
 	</div>
