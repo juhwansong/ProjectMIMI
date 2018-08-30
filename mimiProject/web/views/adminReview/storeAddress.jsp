@@ -279,7 +279,7 @@ function displayPlaces(places) {
         // 마커와 검색결과 항목에 mouseover 했을때
         // 해당 장소에 인포윈도우에 장소명을 표시합니다
         // mouseout 했을 때는 인포윈도우를 닫습니다
-        (function(marker, title) {
+        (function(marker, title, id) {
                
             daum.maps.event.addListener(marker, 'click', function(){
             	///////////////여기에 주소입력창에 자동으로 주소 삽입 추가
@@ -292,7 +292,7 @@ function displayPlaces(places) {
        
             	
             	for(var i=0; i<places.length; i++){  //places배열에서 클릭한 마크의 title과 같은 정보의 주소와 전화번호를 뽑아내기 위해
-            		if(places[i].place_name === title){
+            		if(places[i].id === id){
             			addressDiv.value = places[i].address_name;
             			telDiv.value = places[i].phone;
             			$("#latitude").val(places[i].y); //위도 저장
@@ -320,7 +320,7 @@ function displayPlaces(places) {
             daum.maps.event.addListener(marker, 'mouseover', function(){
             	
             	for(var i=0; i<places.length; i++){
-	            	if(places[i].place_name === title && placelistclicked !== i){
+	            	if(places[i].id === id && placelistclicked !== i){
 	        			$("#placesList > .item").eq(i).css("background","#FBE2E2");//list목록	
 	        			displayInfowindow(marker,title, i);
 	        		}	
@@ -330,7 +330,7 @@ function displayPlaces(places) {
             daum.maps.event.addListener(marker, 'mouseout', function() {
             	
                 for(var i=0; i<places.length; i++){
-	                if(places[i].place_name === title && placelistclicked !== i){
+	                if(places[i].id === id && placelistclicked !== i){
 	        			$("#placesList > .item").eq(i).css("background","none");//list목록
 	        			infowindow[i].setMap(null);
 	 		
@@ -350,7 +350,7 @@ function displayPlaces(places) {
             	daum.maps.event.trigger(marker, "mouseout");  //강제로 마우스 아웃 발생    
             };
             
-        })(marker, places[i].place_name);
+        })(marker, places[i].place_name, places[i].id);
 
         fragment.appendChild(itemEl);
     }

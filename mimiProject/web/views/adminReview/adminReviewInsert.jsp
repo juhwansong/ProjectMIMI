@@ -86,7 +86,7 @@ function cateSelect(btnVal){
 						</div>
 					</div>
 				</td>
-				<td style="width: 300px" rowspan="5" colspan="2">
+				<td width="336px" rowspan="4" colspan="2">
 				<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="" >
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="">
 				
@@ -102,7 +102,7 @@ function cateSelect(btnVal){
 			</tr>
 			<tr>
 				<th><label for="text_store" class="control-label">매장명</label></th>
-				<td><input type="text" class="form-control"
+				<td><input style="min-width:600px;" type="text" class="form-control"
 					placeholder="내용을 입력하세요" id="store_name" readonly
 					onClick="openAddress()" name="shopName"></td>
 			</tr>
@@ -120,7 +120,7 @@ function cateSelect(btnVal){
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td colspan="3">
+				<td style="max-width:952px;" colspan="3">
 				<!-- <input type="hidden" readonly="readonly" name="thumbnailName" id="thumbnailName" value="썸네일">
 				<textarea class="form-control" rows="20"
 						id="texta_content" name="content_tag"></textarea> -->
@@ -360,15 +360,14 @@ onbeforeunload = function() {
 		
 }
 $(window).on("unload",function(){ //페이 종료,이동 시 뜨는 confirm 확인 버튼 클릭 시
-	if(checkUnload != false){
-		openWin.close(); //창을 닫거나 다른 페이지로 이동시 지도팝업창을 닫는다.
+		
 		$.ajax({
 			url : "/mimi/waitimagedelete",	// 이미지 삭제 필터로 직접 전송
 			cache : "false", //캐시사용금지
 			method : "POST",			
 			async : false //동기화설정(동기화사용함)	
 		});	
-	}
+		openWin.close(); //창을 닫거나 다른 페이지로 이동시 지도팝업창을 닫는다.
 	 
 });
 </script>
