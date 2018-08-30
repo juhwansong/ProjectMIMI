@@ -9,6 +9,8 @@ import common.jdbc.JDBCTemplate;
 import common.model.vo.Board;
 import myboard.exception.MyBoardException;
 import myboard.model.dao.MyBoardDao;
+import mycomment.exception.MyCommentException;
+import mycomment.model.dao.MyCommentDao;
 
 public class MyBoardService {	//회원 기능 중 본인이 작성한 게시물
 	public MyBoardService(){}
@@ -44,5 +46,12 @@ public class MyBoardService {	//회원 기능 중 본인이 작성한 게시물
 		jdbcTemplate.close(con);
 		return list;
 
+	}
+	public int getReplyCount(HashMap<String, String> keword) throws MyBoardException{//검색한 게시물 총 갯수(페이지네이션 관리 시 필요)
+		JDBCTemplate jdbcTemplate = new JDBCTemplate();
+		Connection con = jdbcTemplate.getConnection();
+		int replyCount = new MyBoardDao().getReplyCount(con, keword);
+		jdbcTemplate.close(con);
+		return replyCount;
 	}
 }

@@ -71,6 +71,14 @@ public class AllBoardSearchServlet extends HttpServlet {
 				list = service.selectAllBoardList();
 			}
 			
+			ArrayList<Integer> replyCountList = new ArrayList<Integer>(); 
+			HashMap<String, String> boardNoMap = new HashMap<String, String>();
+			for(Board board : list) {
+				boardNoMap.put("BOARD_NO", board.getBoardNo());
+				replyCountList.add(service.getReplyCount(boardNoMap));
+				boardNoMap.clear();
+			}
+			
 			int maxPage = (int)((double)searchListCount / limit + 0.9);
 			int startPage = (((int)((double)currentPage / pageLimit + 0.9)) - 1) * pageLimit + 1;
 			int endPage = startPage + pageLimit - 1;
@@ -91,9 +99,12 @@ public class AllBoardSearchServlet extends HttpServlet {
 			}
 
 			ArrayList<Board> currentList = new ArrayList<Board>();
+			ArrayList<Integer> currentReplyCountList = new ArrayList<Integer>();
 			if(list.size() > 0) {
-				for(int i = startRow; i <= endRow; i++)
+				for(int i = startRow; i <= endRow; i++) {
 					currentList.add(list.get(i - 1));
+					currentReplyCountList.add(replyCountList.get(i - 1));
+				}
 			}
 			
 			view = request.getRequestDispatcher("views/admin/contentManage.jsp");
@@ -105,6 +116,7 @@ public class AllBoardSearchServlet extends HttpServlet {
 			request.setAttribute("listCount", searchListCount);
 			request.setAttribute("category", category);
 			request.setAttribute("searchText", searchText);
+			request.setAttribute("replyCountList", currentReplyCountList);
 			view.forward(request, response);
 		} catch (AllBoardException e) {
 			view = request.getRequestDispatcher("views/admin/adminPageError.jsp");

@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import common.model.vo.Board;
 import myboard.exception.MyBoardException;
 import myboard.model.service.MyBoardService;
+import mycomment.exception.MyCommentException;
+import mycomment.model.service.MyCommentService;
 
 /**
  * Servlet implementation class MyBoardListServlet
@@ -65,6 +67,14 @@ public class MyBoardListServlet extends HttpServlet {
 			int searchListCount = service.getSearchListCount(searchMap);
 			ArrayList<Board> list = service.searchMyBoard(searchMap);
 			
+			ArrayList<Integer> replyCountList = new ArrayList<Integer>(); 
+			HashMap<String, String> boardNoMap = new HashMap<String, String>();
+			for(Board board : list) {
+				boardNoMap.put("BOARD_NO", board.getBoardNo());
+				replyCountList.add(service.getReplyCount(boardNoMap));
+				boardNoMap.clear();
+			}
+						
 			int maxPage = (int)((double)searchListCount / limit + 0.9);
 			int startPage = (((int)((double)currentPage / pageLimit + 0.9)) - 1) * pageLimit + 1;
 			int endPage = startPage + pageLimit - 1;
@@ -85,9 +95,12 @@ public class MyBoardListServlet extends HttpServlet {
 			}
 
 			ArrayList<Board> currentList = new ArrayList<Board>();
+			ArrayList<Integer> currentReplyCountList = new ArrayList<Integer>();
 			if(list.size() > 0) {
-				for(int i = startRow; i <= endRow; i++)
+				for(int i = startRow; i <= endRow; i++) {
 					currentList.add(list.get(i - 1));
+					currentReplyCountList.add(replyCountList.get(i - 1));
+				}
 			}
 			
 			view = request.getRequestDispatcher("views/board/myContent.jsp");
@@ -101,12 +114,13 @@ public class MyBoardListServlet extends HttpServlet {
 			request.setAttribute("searchText", searchText);
 			request.setAttribute("attr", attr);
 			request.setAttribute("nickName", nickName);
+			request.setAttribute("replyCountList", currentReplyCountList);
 			view.forward(request, response);
 		} catch (MyBoardException e) {
 			view = request.getRequestDispatcher("views/board/boardError.jsp");
 			request.setAttribute("message", e.getMessage());
 			view.forward(request, response);
-		}
+		} 
 
 	}
 

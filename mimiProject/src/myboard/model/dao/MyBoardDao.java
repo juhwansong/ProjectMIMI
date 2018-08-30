@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import common.jdbc.JDBCTemplate;
 import common.model.vo.Board;
 import myboard.exception.MyBoardException;
+import mycomment.exception.MyCommentException;
 
 public class MyBoardDao {
 
@@ -113,6 +114,36 @@ public class MyBoardDao {
 		}
 		
 		return list;
+	}
+
+	public int getReplyCount(Connection con, HashMap<String, String> keword) throws MyBoardException {
+		JDBCTemplate jdbcTemplate = new JDBCTemplate();
+		int ReplyCount = 0;
+		Statement stmt = null;
+		ResultSet rset = null;
+		
+		StringBuffer query = new StringBuffer("select count(*) from V_ALL_COMMENT where ");
+		for(Entry<String, String> entry : keword.entrySet())
+			query.append(entry.getKey() + " LIKE '%" + entry.getValue() + "%' AND ");
+		query.delete(query.length() - 4, query.length());
+		
+		try {
+			stmt = con.createStatement();
+			rset = stmt.executeQuery(query.toString());
+			
+			if(rset.next()) {
+				ReplyCount = rset.getInt(1);
+			} else {
+				throw new MyBoardException("목록 검색 실패");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new MyBoardException(e.getMessage());
+		} finally {
+			jdbcTemplate.close(rset);
+			jdbcTemplate.close(stmt);
+		}
+		return ReplyCount;
 	}
 
 
