@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import allboard.exception.AllBoardException;
+import allcomment.exception.AllCommentException;
 import common.jdbc.JDBCTemplate;
 import common.model.vo.Board;
 
@@ -179,6 +180,35 @@ public class AllBoardDao {
 		}
 		
 		return list;
+	}
+
+	public int getReplyCount(Connection con, HashMap<String, String> keword) throws AllBoardException {
+		JDBCTemplate jdbcTemplate = new JDBCTemplate();
+		int replyCount = 0;
+		Statement stmt = null;
+		ResultSet rset = null;
+		
+		String query = "";
+		for(Entry<String, String> entry : keword.entrySet())
+			query = "select count(*) from V_ALL_COMMENT where " + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
+		
+		try {
+			stmt = con.createStatement();
+			rset = stmt.executeQuery(query);
+			
+			if(rset.next()) {
+				replyCount = rset.getInt(1);
+			} else {
+				throw new AllBoardException("목록 검색 실패");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AllBoardException(e.getMessage());
+		} finally {
+			jdbcTemplate.close(rset);
+			jdbcTemplate.close(stmt);
+		}
+		return replyCount;
 	}
 
 }

@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 import allboard.exception.AllBoardException;
 import allboard.model.dao.AllBoardDao;
+import allcomment.exception.AllCommentException;
+import allcomment.model.dao.AllCommentDao;
 import common.jdbc.JDBCTemplate;
 import common.model.vo.Board;
 
@@ -52,5 +54,11 @@ public class AllBoardService {	//관리자 기능 중 전체 게시물 조회 �
 		return list;
 
 	}
-
+	public int getReplyCount(HashMap<String, String> keword) throws AllBoardException{//검색한 게시물 총 갯수(페이지네이션 관리 시 필요)
+		JDBCTemplate jdbcTemplate = new JDBCTemplate();
+		Connection con = jdbcTemplate.getConnection();
+		int replyCount = new AllBoardDao().getReplyCount(con, keword);
+		jdbcTemplate.close(con);
+		return replyCount;
+	}
 }

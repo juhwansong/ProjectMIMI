@@ -12,6 +12,7 @@
 	String category = (String)request.getAttribute("category");
 	String searchText = (String)request.getAttribute("searchText");
 	String attr = (String)request.getAttribute("attr");
+	ArrayList<Integer> replyCountList = (ArrayList<Integer>)request.getAttribute("replyCountList");
 %>
 
 <%@include file="../../head.jsp" %>
@@ -373,12 +374,23 @@
 		</thead>
 		<tbody>
 			<% if(list.size() != 0) { %>
+				<% int index = 0; %>
 				<% for(Board b : list) { %>
 					<tr id="list">
 					<td><input type="checkbox" class="select-item checkbox"
 						name="select-item" id="select-item" value="<%= b.getBoardNo() %>" /></td>
 					<td><%= b.getBoardNo().substring(2).replaceAll("^0*", "") %></td>
-					<td class="tbl-td-title" id="title"><%= b.getTitle() %></td>
+					<% if(b.getNickName().contains("관리자")) { %>
+						<td class="tbl-td-title">
+							<a href="/mimi/adminboarddetailview?bnum=<%=b.getBoardNo()%>"><%= b.getTitle() %></a>
+							<span class="span-c"><i class="fas fa-comments"></i>&nbsp;<%=replyCountList.get(index++)%></span>
+						</td>
+					<% } else { %>
+						<td class="tbl-td-title">
+							<a href="/mimi/userboarddetailview?bnum=<%=b.getBoardNo()%>"><%= b.getTitle() %></a>
+							<span class="span-c"><i class="fas fa-comments"></i>&nbsp;<%=replyCountList.get(index++)%></span>
+						</td>
+					<% } %>
 					<td><%= b.getNickName() %></td>
 					<td><%= b.getBoardDate() %></td>
 					<td><%= b.getHits() %></td>
