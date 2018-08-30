@@ -92,8 +92,6 @@
 		}//callback function		
 		
 		function paging(p){
-			var sort = ($("#r-sort, #h-sort, #d-sort").children().attr('class') === 'fas fa-sort-down') ? 'down' : 'up';
-			
 			if($("#r-sort").children().attr('class') === 'fas fa-sort-down'){//down 내림차순
 				var sort = 'down';
 			}else if($("#h-sort").children().attr('class') === 'fas fa-sort-down'){
