@@ -25,12 +25,24 @@
 		
 		for(var i in json.list){
 			var num = json.list[i].boardNo.substring(2).replace(/(^0+)/,"");//글번호만 추출
-			var gb = json.list[i].boardGb === "AR" ? "MIMI리뷰" : "유저리뷰";
-
+			//var gb = json.list[i].boardGb === "AR" ? "MIMI리뷰" : "유저리뷰";
+			var gb = null;
+			var imgsrc = null;
+			var rink = null;
+			if(json.list[i].boardGb === "AR"){
+				gb = "MIMI리뷰";
+				imgsrc = "/mimi/resources/files/adminboard/";
+				rink = "/mimi/adminboarddetailview";
+			}else{
+				gb = "유저리뷰";
+				imgsrc = "/mimi/resources/files/userboard/";
+				rink = "/mimi/userboarddetailview";
+			}
+			
 			values += '<tr><td><input type="checkbox" name="checkOne" id="checkOne" value="' + json.list[i].boardNo + '"></td>'
-					+ '<td>' + gb + '</td><td>' + num + '</td><td class="tbl-td-title"><a href="' + json.list[i].boardLink + '">'
-					+ '<img class="img-thumb img-mover"  src="' + json.list[i].thumbnail + '" onerror="this.onerror=null;this.src=\'/mimi/resources/images/main/img3.jpg\'"></a>'
-					+ '&nbsp;&nbsp;<a href="' + json.list[i].boardLink + '">' + json.list[i].title
+					+ '<td>' + gb + '</td><td>' + num + '</td><td class="tbl-td-title"><a href="' + rink + '?bnum=' + json.list[i].boardNo + '&page=1">'
+					+ '<img class="img-thumb img-mover"  src="' + imgsrc + json.list[i].thumbnail + '" onerror="this.onerror=null;this.src=\'/mimi/resources/images/main/img3.jpg\'"></a>'
+					+ '&nbsp;&nbsp;<a href="' + rink + '?bnum=' + json.list[i].boardNo + '&page=1">' + json.list[i].title
 					+ '&nbsp;&nbsp;<span class="span-c"><i class="fas fa-comments"></i>&nbsp;' + json.list[i].commentNum + '</span></a></td>'
 					+ '<td>' + json.list[i].nickname + '</td><td>' + json.list[i].boardDate + '</td></tr>'
 					
