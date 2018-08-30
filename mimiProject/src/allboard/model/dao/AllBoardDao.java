@@ -181,4 +181,30 @@ public class AllBoardDao {
 		return list;
 	}
 
+	public int deleteAllRecommend(Connection con, ArrayList<String> boardNoList) {
+		JDBCTemplate jdbcTemplate = new JDBCTemplate();
+		int result = 0;
+		Statement stmt = null;
+		
+		StringBuffer noStrList = new StringBuffer("(");
+		for(String bNo : boardNoList)
+			noStrList.append("'" + bNo + "'"+ ", ");
+		noStrList.append(")").delete(noStrList.length() - 3, noStrList.length() - 2);
+		
+		String query = "delete from tb_recommend where board_no in " + noStrList;
+		
+		try {
+			stmt = con.createStatement();
+			result = stmt.executeUpdate(query);
+			
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			jdbcTemplate.close(stmt);
+		}
+		
+		return result;
+	}
+
 }

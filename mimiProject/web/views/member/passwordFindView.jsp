@@ -24,7 +24,7 @@
 	    </div>
 	    <div class="col-md-6 col-md-offset-3" style="margin-top:70px; margin-bottom: 50px;">
 	    	
-	    	<form role="form">
+	    	<form role="form" name="inputform-box">
 		    	<div class="form-group" >
 		    	  <p class="help-block text-left" style="color:#5cb85c; margin-bottom: 40px;">-비밀번호를 찾기 위해 이메일 인증이 필요합니다.</p>	
 	              <label for="userid">아이디</label>
@@ -62,7 +62,6 @@
 		var booleanotpnumber = false;
 		
 		$(function(){
-			
 			$(document).on("click", "#emailcert_btn", function(){ //인증하기 클릭 시 해당 이메일로 인증번호 전송  
       			
 				$.ajax({

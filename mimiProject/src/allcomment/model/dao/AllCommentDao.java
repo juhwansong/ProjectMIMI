@@ -20,7 +20,7 @@ public class AllCommentDao {
 		Statement stmt = null;
 		ResultSet rset = null;
 		
-		String query = "select count(*) from V_ALL_COMMENT";
+		String query = "select count(*) from V_ALL_COMMENT ";
 		
 		try {
 			stmt = con.createStatement();
@@ -50,7 +50,7 @@ public class AllCommentDao {
 		
 		String query = "";
 		for(Entry<String, String> entry : keword.entrySet())
-			query = "select count(*) from V_ALL_COMMENT where " + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
+			query = "select count(*) from V_ALL_COMMENT where  " + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
 		
 		try {
 			stmt = con.createStatement();
@@ -106,7 +106,7 @@ public class AllCommentDao {
 		ResultSet rset = null;
 		
 		String query = "select board_no, nickname, comment_contents, comment_date, title, "
-				+ "board_link, comment_state, user_id, rowid from V_ALL_COMMENT order by 1 desc";
+				+ "board_link, comment_state, user_id, rowid from V_ALL_COMMENT  order by 1 desc";
 		
 		try {
 			stmt = con.createStatement();
@@ -149,7 +149,7 @@ public class AllCommentDao {
 		String query = "";
 		for(Entry<String, String> entry : keword.entrySet()) {
 			query = "select board_no, nickname, comment_contents, comment_date, title, "
-				+ "board_link, comment_state, user_id, rowid from V_ALL_COMMENT where "
+				+ "board_link, comment_state, user_id, rowid from V_ALL_COMMENT where   "
 				+ entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
 		}
 		query += " order by 1 desc";

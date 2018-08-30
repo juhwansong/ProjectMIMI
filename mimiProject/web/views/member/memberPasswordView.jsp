@@ -108,7 +108,8 @@
 	      	  	  	          	success : function(data){
 	      	  	  	      
 	      	  	  	          		if(data === "success"){  //아이디,비번 입력 성공시
-	      	  	  	          			window.location = "/mimi/index.jsp";//현재 페이지 새로고침
+	      	  	  	          			window.location.replace("/mimi/index.jsp");//뒤로가기 할때 현재 페이지로 오는거 방지(history에 쌓이는거 방지)
+	      	  	  	          			//window.location = "/mimi/index.jsp";
 	      	  	  	          		}
 	      	  	  	          		else{
 	      	  	  	          			alert(data);  //에러 메세지 화면에 보여주기

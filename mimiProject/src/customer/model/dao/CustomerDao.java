@@ -224,5 +224,25 @@ public class CustomerDao {
 		return listCount;
 	}
 
+	public int deleteCustomerRecommend(Connection conn, ArrayList<String> userId) {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		//System.out.println("삭제될 회원 수 : " + userId.size()); //확인용
+		String query = "DELETE FROM TB_RECOMMEND WHERE USER_ID = ?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			for(String id : userId){
+				pstmt.setString(1, id);
+				result = pstmt.executeUpdate();
+			}			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		return result;
+	}
+
 
 }

@@ -20,7 +20,7 @@ $(function cateread(){	//카테고리 받아오기
 function openAddress()
 {
     // window.open("open할 window", "자식창 이름", "팝업창 옵션");
-    openWin = window.open('/mimi/views/userReview/storeAddress.jsp','_blank'
+    openWin = window.open('/mimi/views/userReview/storeAddress.jsp','지도표시창'
 			, 'toolbar=no, location=no, status=no, menubar=no, scrollbars=auto, resizable=yes,directories=no, width=1100, height=850, top=70, left=100');
 }
 

@@ -72,4 +72,13 @@ public class CustomerService {	//관리자 기능 중 전체 회원 관리 기�
 
 	}
 
+	public void deleteCustomerRecommend(ArrayList<String> userId) {
+		Connection conn = getConnection();
+		int result = new CustomerDao().deleteCustomerRecommend(conn,userId);
+		if(result > 0)
+			commit(conn);
+		else
+			rollback(conn);		
+	}
+
 }

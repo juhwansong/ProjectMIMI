@@ -699,7 +699,7 @@ var geocoder = new daum.maps.services.Geocoder(); //주소-좌표 변환 객체 
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = {
         center: new daum.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
-        level: 6 // 지도의 확대 레벨
+        level: 1 // 지도의 확대 레벨
     };  
 
 // 지도를 생성합니다    
@@ -814,7 +814,35 @@ $(function(){
 	});	
 });
 
+
 </script>
 
 <%@include file="../../footer.jsp"%>
 <%@include file="../../end.jsp"%>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

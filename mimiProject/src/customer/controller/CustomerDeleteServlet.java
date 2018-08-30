@@ -57,7 +57,7 @@ public class CustomerDeleteServlet extends HttpServlet {
 			
 			RequestDispatcher view = null;
 			try {			
-				
+				new CustomerService().deleteCustomerRecommend(userId);
 				if(new CustomerService().deleteCustomerList(userId) > 0){
 					response.sendRedirect("/mimi/customerlist"); //성공시 새로고침해서 다시 들어감....
 	

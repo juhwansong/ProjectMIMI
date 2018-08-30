@@ -42,6 +42,7 @@ public class AllBoardDeleteServlet extends HttpServlet {
 		AllBoardService service = new AllBoardService();
 		RequestDispatcher view = null;
 		try {
+			service.deleteAllRecommend(boardNoList);
 			int result = service.deleteAllBoard(boardNoList);
 			
 			if(result <= 0) {
