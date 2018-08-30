@@ -621,7 +621,7 @@ function cmtinsert(){
 			<input type="button" class="btn btn-default"
 				onClick="location.href='/mimi/adminboardlist'" value="목록">
 		</div>
-		<% if(board.getUserId().equals(ssuserId)){ %>
+		<% if(board.getUserId().equals(ssuserId) || authority.equals("A")){ %>
 		<div class="col-xs-6 text-right">
 			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/adminboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>'">
 			<input type="submit" id="user-delete-btn" class="btn btn-default" value="삭제" style="outline: none;">
