@@ -36,7 +36,7 @@ public class CustomerSearchServlet extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");		
 		int currentPage = 1; //맨 첫화면은 1페이지
-		int countList = 10;	//한 화면에 출력될 리스트 개수
+		int countList = 15;	//한 화면에 출력될 리스트 개수
 		int countPage = 10; //한 화면에 출력될 페이지 개수
 		
 		String column = request.getParameter("select-category");

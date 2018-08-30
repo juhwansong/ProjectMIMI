@@ -177,7 +177,7 @@ public class CustomerDao {
 				list.add(m);
 			}//while close
 			
-			System.out.println("dao size : " + list.size());
+//			System.out.println("dao size : " + list.size());
 //			if(list.size() == 0)
 //				throw new CustomerException("회원이 존재하지 않습니다.");
 			
@@ -201,7 +201,7 @@ public class CustomerDao {
 				+ "GRADE_POINT, GRADE_NAME, AUTHORITY, STATE, DEL_DATE"
 				+ " FROM (SELECT * FROM TB_USER WHERE " + column
 				+ " LIKE ? ORDER BY GRADE_POINT DESC, STATE, AUTHORITY, USER_ID))";
-		System.out.println(query);
+//		System.out.println(query);
 		try {
 			pstmt = conn.prepareStatement(query);
 			//pstmt.setString(1, column); // 인식 못 함
@@ -213,7 +213,7 @@ public class CustomerDao {
 			}else{
 //				throw new CustomerException("회원이 존재하지 않습니다.");
 			}
-			System.out.println("작동확인... : " + listCount);
+//			System.out.println("작동확인... : " + listCount);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new CustomerException(e.getMessage());
