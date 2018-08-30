@@ -81,4 +81,33 @@ public class CustomerService {	//관리자 기능 중 전체 회원 관리 기�
 			rollback(conn);		
 	}
 
+	public void deleteCustomerBoardRecommend(ArrayList<String> userId) {
+		Connection conn = getConnection();
+		int result = new CustomerDao().deleteCustomerBoardRecommend(conn,userId);
+		if(result > 0)
+			commit(conn);
+		else
+			rollback(conn);	
+		
+	}
+
+	public void deleteCustomerComment(ArrayList<String> userId) {
+		Connection conn = getConnection();
+		int result = new CustomerDao().deleteCustomerComment(conn,userId);
+		if(result > 0)
+			commit(conn);
+		else
+			rollback(conn);		
+	}
+
+	public void deleteCustomerBoardComment(ArrayList<String> userId) {
+		Connection conn = getConnection();
+		int result = new CustomerDao().deleteCustomerBoardComment(conn,userId);
+		if(result > 0)
+			commit(conn);
+		else
+			rollback(conn);	
+		
+	}
+
 }

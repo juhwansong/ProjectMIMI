@@ -177,7 +177,6 @@ public class CustomerDao {
 				list.add(m);
 			}//while close
 			
-			System.out.println("dao size : " + list.size());
 //			if(list.size() == 0)
 //				throw new CustomerException("회원이 존재하지 않습니다.");
 			
@@ -201,7 +200,6 @@ public class CustomerDao {
 				+ "GRADE_POINT, GRADE_NAME, AUTHORITY, STATE, DEL_DATE"
 				+ " FROM (SELECT * FROM TB_USER WHERE " + column
 				+ " LIKE ? ORDER BY GRADE_POINT DESC, STATE, AUTHORITY, USER_ID))";
-		System.out.println(query);
 		try {
 			pstmt = conn.prepareStatement(query);
 			//pstmt.setString(1, column); // 인식 못 함
@@ -213,7 +211,6 @@ public class CustomerDao {
 			}else{
 //				throw new CustomerException("회원이 존재하지 않습니다.");
 			}
-			System.out.println("작동확인... : " + listCount);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new CustomerException(e.getMessage());
@@ -227,8 +224,64 @@ public class CustomerDao {
 	public int deleteCustomerRecommend(Connection conn, ArrayList<String> userId) {
 		int result = 0;
 		PreparedStatement pstmt = null;
-		//System.out.println("삭제될 회원 수 : " + userId.size()); //확인용
 		String query = "DELETE FROM TB_RECOMMEND WHERE USER_ID = ?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			for(String id : userId){
+				pstmt.setString(1, id);
+				result = pstmt.executeUpdate();
+			}			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		return result;
+	}
+
+	public int deleteCustomerBoardRecommend(Connection conn, ArrayList<String> userId) {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		String query = "DELETE FROM TB_RECOMMEND WHERE BOARD_NO IN (SELECT BOARD_NO FROM TB_BOARD_REVIEW WHERE USER_ID = ? )";
+		try {
+			pstmt = conn.prepareStatement(query);
+			for(String id : userId){
+				pstmt.setString(1, id);
+				result = pstmt.executeUpdate();
+			}			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		return result;
+	}
+
+	public int deleteCustomerComment(Connection conn, ArrayList<String> userId) {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		String query = "DELETE FROM TB_COMMENT_REVIEW WHERE USER_ID = ?";
+		try {
+			pstmt = conn.prepareStatement(query);
+			for(String id : userId){
+				pstmt.setString(1, id);
+				result = pstmt.executeUpdate();
+			}			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		return result;
+	}
+
+	public int deleteCustomerBoardComment(Connection conn, ArrayList<String> userId) {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		String query = "DELETE FROM TB_COMMENT_REVIEW WHERE BOARD_NO IN (SELECT BOARD_NO FROM TB_BOARD_REVIEW WHERE USER_ID = ? )";
 		try {
 			pstmt = conn.prepareStatement(query);
 			for(String id : userId){

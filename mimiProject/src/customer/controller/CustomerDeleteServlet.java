@@ -56,8 +56,13 @@ public class CustomerDeleteServlet extends HttpServlet {
 			System.out.println("userId.size() : " + userId.size());
 			
 			RequestDispatcher view = null;
-			try {			
+			try {	
+				//좋은 코드는 절대 아님....(이부분 수정)
 				new CustomerService().deleteCustomerRecommend(userId);
+				new CustomerService().deleteCustomerBoardRecommend(userId);	
+				new CustomerService().deleteCustomerComment(userId);
+				new CustomerService().deleteCustomerBoardComment(userId);
+				
 				if(new CustomerService().deleteCustomerList(userId) > 0){
 					response.sendRedirect("/mimi/customerlist"); //성공시 새로고침해서 다시 들어감....
 	
