@@ -97,7 +97,7 @@ public class CustomerDao {
 		
 		try {
 			for(Entry<String, String> entry : map.entrySet()){
-				String query = "UPDATE TB_USER SET";
+				String query = "UPDATE TB_USER SET DEL_DATE = SYSDATE, ";
 				query += entry.getValue() + "WHERE USER_ID = '" + entry.getKey() + "'";
 				pstmt = conn.prepareStatement(query);
 
