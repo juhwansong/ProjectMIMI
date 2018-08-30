@@ -53,17 +53,4 @@ public class AllBoardService {	//관리자 기능 중 전체 게시물 조회 �
 
 	}
 
-	public void deleteAllRecommend(ArrayList<String> boardNoList) {
-		JDBCTemplate jdbcTemplate = new JDBCTemplate();
-		Connection con = jdbcTemplate.getConnection();
-		int result = new AllBoardDao().deleteAllRecommend(con, boardNoList);
-		if(result > 0)
-			jdbcTemplate.commit(con);
-		else
-			jdbcTemplate.rollback(con);
-		
-		jdbcTemplate.close(con);
-		
-	}
-
 }

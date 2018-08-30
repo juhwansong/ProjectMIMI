@@ -20,7 +20,7 @@ public class AllBoardDao {
 		Statement stmt = null;
 		ResultSet rset = null;
 		
-		String query = "select count(*) from V_ALL_BOARD";
+		String query = "select count(*) from V_ALL_BOARD ";
 		
 		try {
 			stmt = con.createStatement();
@@ -50,7 +50,7 @@ public class AllBoardDao {
 		
 		String query = "";
 		for(Entry<String, String> entry : keword.entrySet())
-			query = "select count(*) from V_ALL_BOARD where " + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
+			query = "select count(*) from V_ALL_BOARD  " + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
 		
 		try {
 			stmt = con.createStatement();
@@ -81,7 +81,7 @@ public class AllBoardDao {
 			noStrList.append("'" + bNo + "'"+ ", ");
 		noStrList.append(")").delete(noStrList.length() - 3, noStrList.length() - 2);
 		
-		String query = "delete from V_ALL_BOARD where board_no in " + noStrList;
+		String query = "UPDATE V_ALL_BOARD SET STATE = 'SD' WHERE  board_no in " + noStrList;
 		
 		try {
 			stmt = con.createStatement();
@@ -179,32 +179,6 @@ public class AllBoardDao {
 		}
 		
 		return list;
-	}
-
-	public int deleteAllRecommend(Connection con, ArrayList<String> boardNoList) {
-		JDBCTemplate jdbcTemplate = new JDBCTemplate();
-		int result = 0;
-		Statement stmt = null;
-		
-		StringBuffer noStrList = new StringBuffer("(");
-		for(String bNo : boardNoList)
-			noStrList.append("'" + bNo + "'"+ ", ");
-		noStrList.append(")").delete(noStrList.length() - 3, noStrList.length() - 2);
-		
-		String query = "delete from tb_recommend where board_no in " + noStrList;
-		
-		try {
-			stmt = con.createStatement();
-			result = stmt.executeUpdate(query);
-			
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			jdbcTemplate.close(stmt);
-		}
-		
-		return result;
 	}
 
 }

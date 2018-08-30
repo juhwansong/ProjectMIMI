@@ -54,7 +54,7 @@ public class MyBoardDao {
 			noStrList.append("'" + bNo + "'"+ ", ");
 		noStrList.append(")").delete(noStrList.length() - 3, noStrList.length() - 2);
 		
-		String query = "delete from V_ALL_BOARD where board_no in " + noStrList;
+		String query = "update V_ALL_BOARD where state = 'SD' where board_no in " + noStrList;
 		
 		try {
 			stmt = con.createStatement();

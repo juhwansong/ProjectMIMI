@@ -55,7 +55,7 @@ public class MyCommentDao {
 			noStrList.append("'" + cNo + "'"+ ", ");
 		noStrList.append(")").delete(noStrList.length() - 3, noStrList.length() - 2);
 		
-		String query = "delete from V_ALL_COMMENT where rowid in " + noStrList;
+		String query = "update V_ALL_COMMENT set comment_state ='SD' where rowid in " + noStrList;
 		
 		try {
 			stmt = con.createStatement();
