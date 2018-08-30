@@ -52,7 +52,6 @@ public class UserBoardInsertServlet extends HttpServlet {
 		// 전송온 값 꺼내서 변수/객체에 저장하기
 		Board board = new Board();
 		board.setCategoryNo(request.getParameter("categoryNo"));	//카테고리 연결필요
-		
 		board.setUserId((String)session.getAttribute("userId"));
 		board.setTitle(request.getParameter("title"));
 		board.setContents(request.getParameter("content"));
@@ -84,7 +83,6 @@ public class UserBoardInsertServlet extends HttpServlet {
 		}
 		
 		ArrayList<String> uploadImgList = (ArrayList<String>)request.getSession().getAttribute("imgList");
-		System.out.println("섹션 리스트 : " + uploadImgList);
 		//세션에 저장된 upload된 이미지와 실질적으로 게시글에 올라간 이미지와 비교해서
 		//일치하는 파일은 임시폴더에서 저장 폴더로 옮긴다
 		if(uploadImgList != null){

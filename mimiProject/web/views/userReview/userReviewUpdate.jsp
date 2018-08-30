@@ -39,12 +39,13 @@ function cateSelect(btnVal){
 }
 #mapcheck-btn{
 	position: absolute;
-	top:2%;
-	left:66%;
+	top:80%;
+	right:5%;
 	z-index: 6;
 	height: 40px;
 	width: 110px;
 	opacity: 0.8;
+	width: 130px;
 	
 }
 </style>
@@ -96,18 +97,22 @@ function cateSelect(btnVal){
 						</div>
 					</div>
 				</td>
-				<td style="width: 300px" rowspan="5" colspan="2">
+				<td width="336px" rowspan="4" colspan="2">
 				<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="<%=board.getLatitude()%>">
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="<%=board.getLongitude()%>">		
-				<div class="map_wrap" >
-	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;"></div>
-	    			<button type="button" id="mapcheck-btn" class="btn btn-info" onclick="openAddress();">지도에 위치 표시</button>
-	    		</div></td> 
+	    		<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;">
+	    				<div class="custom_zoomcontrol radius_border" style="z-index:5; opacity:0.8;top:20px; right:20px;"> 
+       						<span onclick="zoomIn()" ><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
+        					<span onclick="zoomOut()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
+    					</div>
+	    			<button  type="button" id="mapcheck-btn" class="btn btn-info" onclick="openAddress();">지도에 위치 표시</button>
+	    		</div>
+	    		</td> 
 	    		
 			</tr>
 			<tr>
 				<th><label for="text_store" class="control-label">매장명</label></th>
-				<td><input type="text" class="form-control"
+				<td><input style="min-width:600px;" type="text" class="form-control"
 					placeholder="내용을 입력하세요" id="store_name" readonly
 					onClick="openAddress()" name="shopName" value="<%= board.getShopName() %>"></td>
 			</tr>
@@ -125,7 +130,7 @@ function cateSelect(btnVal){
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td colspan="3">
+				<td style="max-width:952px;" colspan="3">
 				<input type="hidden" readonly="readonly" name="thumbnailName" id="thumbnailName" value="썸네일">
 				<textarea  id="texta_content" name="content_tag" ></textarea>
 				<input type="hidden" name="smallcontent" id="smallcontent" value="">
@@ -300,39 +305,63 @@ function sendFile(file, el){
 	});
 }
 
+//지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomIn() {
+    map.setLevel(map.getLevel() - 1);
+}
+
+// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomOut() {
+    map.setLevel(map.getLevel() + 1);
+}
+
 $(document).on("click", "#result-btn", function(){
-	checkUnload = false;	//게시글 작성 완료 시 false로 값 변경하여 페이지 이동 시 발생하는 onbeforeunload 이벤트를 걸리지 않게 한다.
-	$("#smallcontent").val($($("#texta_content").summernote("code")).text());
-	
-	//자바스크립트에서 post 방식으로 보내기
-	var form = document.createElement("form");
-	var input = new Array();
-	var parm = new Array(); //input 태그안의 name,value값 설정
-	//파라미터 추가
-	parm.push(["categoryNo", $("#categoryNo").val()]);
-	parm.push(["title", $("#user_title").val()]);
-	parm.push(["shopName", $("#store_name").val()]);
-	parm.push(["shopAddress", $("#store_address").val()]);
-	parm.push(["shopCall", $("#store_phone").val()]);
-	parm.push(["latitude", $("#latitude").val()]);
-	parm.push(["longitude", $("#longitude").val()]);
-	parm.push(["content_tag", $("#texta_content").summernote("code")]);
-	parm.push(["oldcontent_tag", $("#oldcontent_tag").val()]);
-	parm.push(["content", $("#smallcontent").val()]);
-	for(var i=0; i<parm.length; i++){
-		input[i]=document.createElement("input");
-		input[i].setAttribute("type", "hidden");
-		input[i].setAttribute("name", parm[i][0]);
-		input[i].setAttribute("value", parm[i][1]);
-		form.appendChild(input[i]);
+	if($("#user_title").val() == ""){
+		alert("제목을 입력해 주세요.");
+	} else if( $("#store_name").val() == ""){
+		alert("매장명을 입력해 주세요.");
+	} else if($("#store_address").val() == ""){
+		alert("매장주소를 입력해 주세요.");
+	} else if($("#latitude").val() == ""){
+		alert("지도에 위치를 표시해 주세요.");
+	} else if($("#longitude").val() == ""){
+		alert("지도에 위치를 표시해 주세요.");
+	} else if($("#texta_content").val() == ""){
+		alert("내용을 입력해 주세요");
+	} else {
+		checkUnload = false;	//게시글 작성 완료 시 false로 값 변경하여 페이지 이동 시 발생하는 onbeforeunload 이벤트를 걸리지 않게 한다.
+		$("#smallcontent").val($($("#texta_content").summernote("code")).text());
+		
+		//자바스크립트에서 post 방식으로 보내기
+		var form = document.createElement("form");
+		var input = new Array();
+		var parm = new Array(); //input 태그안의 name,value값 설정
+		//파라미터 추가
+		parm.push(["categoryNo", $("#categoryNo").val()]);
+		parm.push(["title", $("#user_title").val()]);
+		parm.push(["shopName", $("#store_name").val()]);
+		parm.push(["shopAddress", $("#store_address").val()]);
+		parm.push(["shopCall", $("#store_phone").val()]);
+		parm.push(["latitude", $("#latitude").val()]);
+		parm.push(["longitude", $("#longitude").val()]);
+		parm.push(["content_tag", $("#texta_content").summernote("code")]);
+		parm.push(["oldcontent_tag", $("#oldcontent_tag").val()]);
+		parm.push(["content", $("#smallcontent").val()]);
+		for(var i=0; i<parm.length; i++){
+			input[i]=document.createElement("input");
+			input[i].setAttribute("type", "hidden");
+			input[i].setAttribute("name", parm[i][0]);
+			input[i].setAttribute("value", parm[i][1]);
+			form.appendChild(input[i]);
+		}
+		
+		form.method = "post";
+		form.action = "/mimi/userboardupdateorigin?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>";
+		
+		document.body.appendChild(form);
+		form.submit();
+		//location.href = "/file/upcontent?smallcontent=" + smallcontent + "&content=" + content;
 	}
-	
-	form.method = "post";
-	form.action = "/mimi/userboardupdateorigin?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>";
-	
-	document.body.appendChild(form);
-	form.submit();
-	//location.href = "/file/upcontent?smallcontent=" + smallcontent + "&content=" + content;
 });
 
 onbeforeunload = function() {
@@ -344,14 +373,13 @@ onbeforeunload = function() {
 		
 }
 $(window).on("unload",function(){ //페이 종료,이동 시 뜨는 confirm 확인 버튼 클릭 시
-	if(checkUnload != false){
 		$.ajax({
 			url : "/mimi/waitimagedelete",	// 이미지 삭제 필터로 직접 전송
 			cache : "false", //캐시사용금지
 			method : "POST",			
 			async : false //동기화설정(동기화사용안함)	
 		});	
-	}
+		openWin.close(); //창을 닫거나 다른 페이지로 이동시 지도팝업창을 닫는다.
 	 
 });
 </script>

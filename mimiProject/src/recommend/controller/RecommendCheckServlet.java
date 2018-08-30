@@ -45,6 +45,7 @@ public class RecommendCheckServlet extends HttpServlet {
 		try {
 			result = new RecommendService().checkRecommend(userId, boardNo);
 			recommendCount = new RecommendService().countRecommend(boardNo);
+			//System.out.println("recommendCount 서블릿: "+ recommendCount);
 			JSONObject json = new JSONObject();
 			json.put("result", result);
 			json.put("recommendCount", recommendCount);

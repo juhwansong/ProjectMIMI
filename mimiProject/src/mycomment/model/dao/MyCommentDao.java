@@ -84,6 +84,7 @@ public class MyCommentDao {
 		for(Entry<String, String> entry : keword.entrySet())
 			query.append(entry.getKey() + " LIKE '%" + entry.getValue() + "%' AND ");
 		query.delete(query.length() - 4, query.length());
+		query.append(" order by 1 desc");
 				
 		try {
 			stmt = con.createStatement();

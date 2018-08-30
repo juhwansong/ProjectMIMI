@@ -70,7 +70,7 @@ public class MemberDao {
 		PreparedStatement pstmt =null;
 		ResultSet rset = null;
 		String query = "select * from tb_user where user_id = ? ";
-		
+		System.out.println(userId);
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, userId);
@@ -126,7 +126,7 @@ public class MemberDao {
 				member = new Member();
 				member.setNickName(rset.getString("nickname"));
 				member.setAuthority(rset.getString("authority"));
-				member.setGradeName(rset.getString("GRADE_NAME"));
+				member.setGradeName(rset.getString("grade_name"));
 			}
 			else{
 				throw new MemberException("아이디나 암호가 일치하지 않습니다.!");

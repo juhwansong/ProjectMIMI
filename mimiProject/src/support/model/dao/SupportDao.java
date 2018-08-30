@@ -116,16 +116,14 @@ public class SupportDao {
 		int result = 0;
 		PreparedStatement pstmt = null;
 		
-		String query = "insert into tb_board_service values ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user01', ?, ?, sysdate, ?, ?)";
+		String query = "insert into tb_board_service values ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), ?, ?, ?, sysdate, ?, 'SN')";
 		
 		try {
 			pstmt = con.prepareStatement(query);
-			//pstmt.setString(1, support.getUserId());
-			pstmt.setString(1, support.getTitle());
-			pstmt.setString(2, support.getContents());
-			pstmt.setInt(3, support.getCategory());			
-			pstmt.setString(4, support.getState());
-			
+			pstmt.setString(1, support.getUserId());
+			pstmt.setString(2, support.getTitle());
+			pstmt.setString(3, support.getContents());
+			pstmt.setInt(4, support.getCategory());			
 			result = pstmt.executeUpdate();
 			
 			if (result <= 0)
@@ -146,15 +144,21 @@ public class SupportDao {
 		PreparedStatement pstmt = null;
 		
 		String query = "update tb_board_service set "
+				+ "user_id = ?, "
 				+ "title = ?, "
-				+ "contents = ? "
+				+ "contents = ?, "
+				+ "category = ?, "
+				+ "state = ? "
 				+ "where board_no = ? ";
 		
 		try {
 			pstmt=con.prepareStatement(query);
-			pstmt.setString(1, support.getTitle());
-			pstmt.setString(2, support.getContents());
-			pstmt.setString(3, support.getBoardNo());
+			pstmt.setString(1, support.getUserId());
+			pstmt.setString(2, support.getTitle());
+			pstmt.setString(3, support.getContents());
+			pstmt.setInt(4, support.getCategory());
+			pstmt.setString(5, support.getState());
+			pstmt.setString(6, support.getBoardNo());
 			
 			result = pstmt.executeUpdate();		
 			
@@ -363,5 +367,28 @@ public class SupportDao {
 		
 		return slist;
 
+	}
+	
+	public int changeState(Connection con, String boardNo, String state) throws SupportException {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		String query = "update tb_board_service set state = ? where board_no = ?";
+		
+		try {
+			pstmt = con.prepareStatement(query);
+			
+			pstmt.setString(1, state);
+			pstmt.setString(2, boardNo);
+			
+			result = pstmt.executeUpdate();		
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SupportException(e.getMessage());
+		}finally {
+			close(pstmt);
+		}
+		
+		return result;
 	}
 }

@@ -136,11 +136,10 @@
 					<% if(authority != null && authority.equals("A")){ %>
 					<td><input type="checkbox" name="checkOne" id="checkOne" value="<%= b.getBoardNo()%>"></td>
 					<% } %>
-					<td><%= b.getGradeName() %></td><!-- 날짜 -->
-					<td><%= b.getLongitude() %></td><!-- 랭크 -->
+					<td><%= b.getGradeName().replace("/", ".") %></td><!-- 날짜 -->
+					<td><%= (int)b.getLongitude() %></td><!-- 랭크 -->
 					<td style="width: 160px"><a href="/mimi/userboarddetailview?bnum=<%= b.getBoardNo() %>&page=<%= currentPage %>">
-					<img class="img-thumb2 img-mover" src="/mimi/resources/images/main/img3.jpg"></a></td>
-					<%-- <img class="img-thumb2 img-mover" src="<%= b.getThumbnailName()%>"></a></td> --%> <!-- 이미지 주소나오면 이걸로 변경 -->
+					<img class="img-thumb2 img-mover" src="<%= b.getThumbnailName()%>" onerror="this.onerror=null;this.src='/mimi/resources/images/main/img3.jpg'"></a></td> <!-- 이미지 주소나오면 이걸로 변경 -->
 					<td>
 						<table>
 							<tr><!-- 제목/댓글 -->

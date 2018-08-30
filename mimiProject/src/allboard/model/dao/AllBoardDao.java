@@ -105,7 +105,7 @@ public class AllBoardDao {
 		Statement stmt = null;
 		ResultSet rset = null;
 		
-		String query = "select * from V_ALL_BOARD";
+		String query = "select * from V_ALL_BOARD order by 1 desc";
 		
 		try {
 			stmt = con.createStatement();
@@ -148,6 +148,7 @@ public class AllBoardDao {
 		for(Entry<String, String> entry : keword.entrySet()) {
 			query = "select * from V_ALL_BOARD where " + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
 		}
+		query += " order by 1 desc";
 				
 		try {
 			stmt = con.createStatement();

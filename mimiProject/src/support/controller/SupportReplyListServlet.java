@@ -49,7 +49,7 @@ public class SupportReplyListServlet extends HttpServlet {
 				
 				for(Support s : supportReplyList){
 					JSONObject job = new JSONObject();
-					job.put("comment", URLEncoder.encode(s.getContents(), "UTF-8"));
+					job.put("comment", URLEncoder.encode(s.getContents(), "UTF-8").replaceAll("\\+", "%20"));
 					job.put("cwriter", s.getUserId());
 					job.put("cdate", s.getCommentDate().toString());
 					job.put("cno", s.getCommentNo());

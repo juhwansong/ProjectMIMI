@@ -106,7 +106,7 @@ public class AllCommentDao {
 		ResultSet rset = null;
 		
 		String query = "select board_no, nickname, comment_contents, comment_date, title, "
-				+ "board_link, comment_state, user_id, rowid from V_ALL_COMMENT";
+				+ "board_link, comment_state, user_id, rowid from V_ALL_COMMENT order by 1 desc";
 		
 		try {
 			stmt = con.createStatement();
@@ -152,6 +152,7 @@ public class AllCommentDao {
 				+ "board_link, comment_state, user_id, rowid from V_ALL_COMMENT where "
 				+ entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
 		}
+		query += " order by 1 desc";
 				
 		try {
 			stmt = con.createStatement();

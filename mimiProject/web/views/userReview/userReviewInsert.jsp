@@ -6,6 +6,7 @@
 var openWin;
 //var cateVal = "카페";
 
+
 function openAddress()
 {
     // window.open("open할 window", "자식창 이름", "팝업창 옵션");  (자식창 이름을 설정해줘야 중복 팝업이 안된다.)
@@ -29,12 +30,13 @@ function cateSelect(btnVal){
 }
 #mapcheck-btn{
 	position: absolute;
-	top:2%;
-	left:66%;
+	top:80%;
+	right:5%;
 	z-index: 6;
 	height: 40px;
 	width: 110px;
 	opacity: 0.8;
+	width: 130px;
 	
 }
 </style>
@@ -86,21 +88,29 @@ function cateSelect(btnVal){
 						</div>
 					</div>
 				</td>
-				<td style="width: 300px" rowspan="5" colspan="2">
+				<td width="336px" rowspan="4" colspan="2">
 				<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="" >
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="">
 				
-				<div class="map_wrap" >
-	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;"></div>
-	    			<button type="button" id="mapcheck-btn" class="btn btn-info" onclick="openAddress();">지도에 위치 표시</button>
-	    		</div></td> 
+			
+	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;">
+	    				<div class="custom_zoomcontrol radius_border" style="z-index:5; opacity:0.8;top:20px; right:20px;"> 
+       						<span onclick="zoomIn()" ><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
+        					<span onclick="zoomOut()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
+    					</div>
+	    				<button  type="button" id="mapcheck-btn" class="btn btn-info" onclick="openAddress();">지도에 위치 표시</button>
+	    			</div>
+	    			<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
+    				
+	    			
+	    		</td> 
 				 <!-- <img
 					src="/mimi/resources/images/userReview/map.jpg" width=300
 					height=300></td>  -->
 			</tr>
 			<tr>
 				<th><label for="text_store" class="control-label">매장명</label></th>
-				<td><input type="text" class="form-control"
+				<td><input style="min-width:600px;" type="text" class="form-control"
 					placeholder="내용을 입력하세요" id="store_name" readonly
 					onClick="openAddress()" name="shopName"></td>
 			</tr>
@@ -118,7 +128,7 @@ function cateSelect(btnVal){
 			</tr>
 			<tr>
 				<th>내용</th>
-				<td colspan="3">
+				<td style="max-width:952px;" colspan="3">
 				<!-- <input type="hidden" readonly="readonly" name="thumbnailName" id="thumbnailName" value="썸네일">
 				<textarea class="form-control" rows="20"
 						id="texta_content" name="content_tag"></textarea> -->
@@ -290,7 +300,15 @@ function sendFile(file, el){
 	});
 }
 
+//지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomIn() {
+    map.setLevel(map.getLevel() - 1);
+}
 
+// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomOut() {
+    map.setLevel(map.getLevel() + 1);
+}
 
 $(document).on("click", "#result-btn", function(){
 	if($("#user_title").val() == ""){
@@ -349,15 +367,14 @@ onbeforeunload = function() {
 		
 }
 $(window).on("unload",function(){ //페이 종료,이동 시 뜨는 confirm 확인 버튼 클릭 시
-	if(checkUnload != false){
-		openWin.close(); //창을 닫거나 다른 페이지로 이동시 지도팝업창을 닫는다.
+		
 		$.ajax({
 			url : "/mimi/waitimagedelete",	// 이미지 삭제 필터로 직접 전송
 			cache : "false", //캐시사용금지
 			method : "POST",			
 			async : false //동기화설정(동기화사용함)	
 		});	
-	}
+		openWin.close(); //창을 닫거나 다른 페이지로 이동시 지도팝업창을 닫는다.
 	 
 });
 </script>

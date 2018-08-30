@@ -29,6 +29,11 @@
 <link rel="stylesheet" type = "text/css" href = "/mimi/resources/css/mapPage.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
 <script type="text/javascript" src="/mimi/resources/js/kakao.min.js"></script>
+<style type="text/css">
+	#recommendbtn:hover{
+		cursor:pointer;
+	}
+</style>
 </head>
 <body onload="commentList(1);recommendCheck();bookmarkCheck();menuDisplay();">
 <!-- 바디 태그 시작 -->
@@ -57,7 +62,6 @@
 
 <!-- ---------------------- -->
 <script src="//code.jquery.com/jquery.min.js"></script>
-
 
 <script type="text/javascript">
 //로그인에 따라 메뉴 비활성화 처리
@@ -138,7 +142,7 @@ function cmtdelete(cmtNo){
 	//var endPage = json.endPage;
 	var maxPage = "";
 	var currentPage = "";
-	function commentList(page){	
+	function commentList(page){
 	var cmtgradeicon = document.getElementById("cmtgradeicon");
 	$.ajax({
 		url : "/mimi/userboardreplylist",
@@ -150,7 +154,7 @@ function cmtdelete(cmtNo){
 			var json = JSON.parse(jsonStr);
 			var values = "";
 			var pageValues = "";
-
+			
 			var level0 = "/mimi/resources/images/icon/icon_human.ico";
 			var level1 = "/mimi/resources/images/icon/icon_level1.png";
 			var level2 = "/mimi/resources/images/icon/icon_level2.png";
@@ -168,8 +172,8 @@ function cmtdelete(cmtNo){
 			else if("<%= gradeName %>"=="주방장")
 				cmtgradeicon.src=level3;
 			else
-				cmtgradeicon.src=level4;		
-			
+				cmtgradeicon.src=level4;
+				
 			for(var i in json.list){
 				values += "<tr>"
 					+ "<td><table id='comment' style='width:100%'>"
@@ -267,7 +271,7 @@ function recommendCheck(){
 		type : "get",
 		dataType : "json",
 		data : {bnum : "<%= board.getBoardNo() %>"},
-		success : function(data){
+		success : function(data){					
 			var jsonStr = JSON.stringify(data);
 			var json = JSON.parse(jsonStr);
 			if(json.result==1){
@@ -460,7 +464,7 @@ function cmtinsert(){
             urlValue = "bookmarkdelete";
          }
          //console.log("url값 : " + urlValue);
-		$.ajax({
+         $.ajax({
 			url : "/mimi/user",
 			type : "post",
 			data : {userid : "ssuserId", bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
@@ -539,7 +543,7 @@ function cmtinsert(){
 	<div id="inner">
 		<table class="table table-borderless" id="table-css2">
 			<tr>
-				<th width="12%">No.<%= board.getBoardNo() %></th>
+				<th width="12%">No.<%= board.getBoardNo().substring(2).replaceAll("^0*","") %></th>
 				<th width="*" style="text-align:left;"><%= board.getTitle() %></th>
 				<th width="28%">
 				<i class="fas fa-pen"></i><%= board.getNickName() %>&nbsp;<%= board.getGradeName() %>
@@ -559,9 +563,13 @@ function cmtinsert(){
 				<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="<%=board.getLatitude()%>" >
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="<%=board.getLongitude()%>">	
 				
-				<div class="map_wrap" >
-	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;"></div>
-	    		</div></td>
+	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;">
+	    				<div class="custom_zoomcontrol radius_border" style="z-index:5; opacity:0.8;top:20px; right:20px;"> 
+       						<span onclick="zoomIn()" ><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
+        					<span onclick="zoomOut()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
+    					</div>
+	    			</div>
+	    		</td>
 			</tr>
 			<tr>
 				<th>매장명</th>
@@ -625,7 +633,7 @@ function cmtinsert(){
 		<!--<form>-->
 		<div id="cmtArea">
 		<input type="hidden" id="bnum" name="bnum" value="<%= board.getBoardNo() %>">
-		<input type="hidden" id="userid" name="userid" value="user02">
+		<input type="hidden" id="userid" name="userid" value="<%= ssuserId %>">
 		<table style="width:100%;">
 			<tr>
 				<td width="15%"><img src="/mimi/resources/images/icon/icon_human.ico" width=40
@@ -636,7 +644,7 @@ function cmtinsert(){
 		</table>
 		</div>
 		<!--</form>->
-		<!-- /댓글 작성부분 -->
+		<!-- 댓글 작성부분 -->
 	</div>
 	<hr>
 	<div class="row">
@@ -644,9 +652,9 @@ function cmtinsert(){
 			<input type="button" class="btn btn-default"
 				onClick="location.href='/mimi/userboardlist'" value="목록">
 		</div>
-		<% if(board.getUserId().equals(ssuserId)){ %>
+		<% if(board.getUserId().equals(ssuserId) || authority.equals("A")) {%>
 		<div class="col-xs-6 text-right">
-			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/userboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>'">
+			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/userboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>&buserId=<%= board.getUserId() %>'">
 			<input type="submit" id="user-delete-btn" class="btn btn-default" value="삭제" style="outline: none;">
 		</div>
 		<% } %>
@@ -768,6 +776,16 @@ function addMarker(position, i) {
     return marker;
 }
 
+//지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomIn() {
+    map.setLevel(map.getLevel() - 1);
+}
+
+// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+function zoomOut() {
+    map.setLevel(map.getLevel() + 1);
+}
+
 $(function(){
 	$(document).on("click", "#user-delete-btn", function(){
 		//자바스크립트에서 post 방식으로 보내기
@@ -776,6 +794,7 @@ $(function(){
 		var parm = new Array(); //input 태그안의 name,value값 설정
 		//파라미터 추가
 		parm.push(["bnum", "<%=board.getBoardNo()%>"]);
+		parm.push(["buserId", "<%=board.getUserId()%>"]);
 		parm.push(["content_tag", '<%=board.getContentsTag()%>']);
 		
 		for(var i=0; i<parm.length; i++){

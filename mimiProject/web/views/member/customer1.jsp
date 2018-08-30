@@ -20,10 +20,14 @@
 
 
 <script type="text/javascript">
-	 function FaqToggleDetail ( id ){
-		var latestToggleObj = null;
+	 function FaqToggleDetail ( id,user){
+	 
+		 if($(this.event.target).is("#admin-option-td *")){
+			return false;	 
+		 }
+		 
+		 var latestToggleObj = null;
 		var oObj = document.getElementById( id );	
-
 		if( this.latestToggleObj != null ){
 			this.latestToggleObj.className = (this.latestToggleObj.className + " none");
 		}
@@ -48,17 +52,6 @@
 	 function gourl(url){
 		  location.href=url;
 		 }
-		 
-		/*  function searchCheck(){
-		  var form = document.searchForm;
-		  if (form.word.value == '' || form.word.value == null){
-		   alert('검색어를 입력하세요.');
-		   form.word.focus();
-		   return false;
-		  } else {
-		   form.submit;
-		  }
-		 } */
 	 
 </script>
 
@@ -98,8 +91,8 @@
 			<td style="text-align: right; vertical-align: bottom; color: #777">
 				<!-- 카테고리 -->
 				<form class="form-inline" name="select-category" id="select-category" method="post" action="/mimi/supportsearch">
-					<div class="form-group" style="float: right; margin: 3px;">
-						<SELECT class="form-control" id="col" name="col"> <!-- 검색 컬럼 -->
+					<div  class="form-group" style="float: right; margin: 3px;">
+						<SELECT  class="form-control" id="col" name="col"> <!-- 검색 컬럼 -->
 							<OPTION value="title">제목</OPTION>
 							<OPTION value="contents">내용</OPTION>	
 							<OPTION value="user_id">작성자</OPTION>	
@@ -128,34 +121,68 @@
 			<th width="12%">작성자</th>
 			<th width="12%">작성일</th>
 		</tr>
-		<% for(Support s : slist) { %>
+		<%-- 	<% for(Support s : slist) { %>
 		<tr align="center" onclick="FaqToggleDetail( 'row_<%= s.getBoardNo() %>' )">
 		<% } %>
-
+ --%>
 		</thead>
 		
 		<tbody>
-		<% for(Support s : slist) { %>
-			<tr onclick="FaqToggleDetail( 'row_<%= s.getBoardNo() %>' )">
-				<td><%= s.getBoardNo() %></td>
-				<td><%= s.getCategory() %></td>
-				<td><%= s.getState() %></td>
+		<% for(Support s : slist) { 
+			String num = s.getBoardNo().substring(2).replaceAll("^0*","");
+				%>
+		
+			<tr onclick="FaqToggleDetail( 'row_<%= s.getBoardNo() %>' ,'<%= s.getUserId() %>')">
+				<td><%= num %></td>
+				
+				<% if(s.getCategory() == 0){ %>
+				<td>문의</td>
+				<% }if(s.getCategory() == 1){ %>
+				<td>신고</td>
+				<% }if(s.getCategory() == 2){ %>
+				<td>기타</td>
+				<%} %>
+				
+				
+					<% if(userId != null && authority.equals("A")) { %>
+						<td id="admin-option-td"><SELECT style="width:105px;"  class="form-control" id="statecol_<%= s.getBoardNo() %>" onchange="changeState('<%= s.getBoardNo() %>')" name="statecol"> 
+								<% if(s.getState().equals("SD")){ %>
+								<OPTION value="SD">확인완료</OPTION>	
+								<OPTION value="SN">확인중</OPTION>						
+								<% }else{ %>
+								<OPTION value="SN">확인중</OPTION>
+								<OPTION value="SD">확인완료</OPTION>	
+								<% } %>
+								</SELECT></td>
+					<% }else{ %>	
+						<%if(s.getState() != null && s.getState().equals("SN")){ %>						
+						<td>확인중</td>
+						<%} else {%>
+						<td>확인완료</td>
+						<%} %>
+					<% } %>
+				
 				<td id="td-title"><span id="td_row_1"><%= s.getTitle() %></span></td>
 				<td><%= s.getUserId() %></td>
 				<td><%= s.getWriteDate() %></td>
 			</tr>
+			
 			<tr class="none detailview-box" id="row_<%= s.getBoardNo() %>">
 	<td colspan="6"><!-- 내용 불러오기 -->
+			<%if(userId == null || !userId.equals(s.getUserId()) && authority.equals("U")){%> <!-- 비회원이거나 작성자가 아닐때 -->
+					<br><div class="pointer"  style="padding:10px 50px 10px 50px; border:0px; min-height:auoto; width:100%; text-align:center;" >작성자만 열람 가능한 글 입니다</div><br>	
+			<%}else {%>
 				<br><div class="pointer"  style="padding:10px 50px 10px 50px; border:0px; min-height:auoto; width:100%; text-align:left;" ><%= s.getContents() %></div>	<br><br>
-				<button type="button" class="btn btn-default pull-right"  onClick="location.href='/mimi/sdelete?sno=<%= s.getBoardNo() %>'" name="btnDelete" style="outline:none; padding: 7px; margin:2px;">삭제</button>
-				<button type="button" class="btn btn-default pull-right" onClick="location.href='/mimi/supdate?sno=<%= s.getBoardNo() %>&page=<%= currentPage %>'" name="btnModify" style="outline:none; padding: 7px; margin:2px;">수정</button>
+				<button type="button" class="btn btn-default pull-right"  onClick="supportDelete('<%= s.getBoardNo() %>')" name="btnDelete" style="outline:none; padding: 7px; margin:2px;">삭제</button>
+				<button type="button" class="btn btn-default pull-right" onClick="location.href='/mimi/supdate?sno=<%= s.getBoardNo() %>&page=<%= currentPage %>'" name="btnModify" style="outline:none; padding: 7px; margin:2px;">수정</button><br>
+			
 	<br><br>
 				<!-- 댓글 불러오기 -->
 				<div class="comment<%=s.getBoardNo()%>"></div>
 				<!-- 내용 입력창 -->	
-				<div><textarea id="<%=s.getBoardNo()%>" class="form-control" name="contents" rows="5" style="width:90%; float:left" placeholder="내용을 입력해주세요"></textarea>
-						<input type="button" class="btn btn-default"  onclick="commentInsert('<%=s.getBoardNo()%>');"   value="댓글작성" style="outline:none"></div>
-											
+				<div><textarea id="<%=s.getBoardNo()%>" class="form-control" name="contents" rows="5" style="width:90%; float:left" placeholder="내용을 입력해주세요"></textarea>&nbsp;&nbsp;
+						<input type="button" class="btn btn-default"  onclick="commentInsert('<%=s.getBoardNo()%>');"   value="댓글작성" style="outline:none; height:110px; width:90px;"></div>
+			<%}%>				
 	</td>
 		
 <!--  <tr><td colspan="5"><textarea class="form-control" name="contents" rows="5" placeholder="내용을 입력해주세요"></textarea></td>
@@ -217,15 +244,7 @@
 																													
 															
 															
-															/* $.each(data, function(key, value){                 
-																a += '<div style="padding:10px 50px 10px 50px; border:0px; min-height:auoto; width:100%;">';               
-																a += '<div class="commentInfo'+value.cno+'">'+'댓글번호 : '+value.cno+' / 작성자 : '+value.cwriter;                
-																a += '<a onclick="commentUpdate('+value.cno+',\''+value.comment+'\');"> 수정 </a>';                
-																a += '<a onclick="commentDelete('+value.cno+');"> 삭제 </a> </div>';                
-																a += '<div class="commentContent'+value.cno+'"> <p> 내용 : '+value.comment +'</p>';                
-																a += '</div></div>';     
-															});     
-															 */
+											
 															$(".comment" + insertData).html(a);     
 														}
 														else{ 
@@ -234,58 +253,35 @@
 													}
 													});
 												}
-											/* 	$(function({
+												function changeState(bnum){
+													//staetcol_
+													$.ajax({        
+														url : '/mimi/supportstatechange',        
+														type : 'post',        
+														data : 
+														{
+															"bnum" : bnum,
+															"state" : $("#statecol_" + bnum).children(":selected").val()
+														},        
+														success : function(data){     
+															console.log(data);
+															if(data === "1") {                
+																alert("상태를 변경했습니다");
+																
+																
+															}     
+														}   
+													});
 													
-													
-													 
-														
-														var bno = ""; //게시글 번호 
-														var insertData = $('#comment').val(); //comment의 내용을 가져옴    
-														commentInsert(insertData); //Insert 함수호출(아래)});   //댓글 목록 
-														
-														
-														//댓글 등록
-														
-												}); */
+												}
+												function supportDelete(bnum){
+													if(confirm("삭제 하시겠습니까?")){
+														location.href="/mimi/sdelete?sno="+bnum;
+													}
+												}
 									
 										
-										/* //댓글 수정 - 댓글 내용 출력을 input 폼으로 변경 
-														function commentUpdate(cno, content){   
-														var a ='';       
-														
-														a += '<div class="input-group">';    
-														a += '<input type="text" class="form-control" name="content_'+cno+'" value="'+content+'"/>';    
-														a += '<span class="input-group-btn"><button class="btn btn-default" type="button" onclick="commentUpdateProc('+cno+');">수정</button> </span>';    
-														a += '</div>';        
-														$('.commentContent'+cno).html(a);    }
 										
-										
-														function commentUpdateProc(cno){    
-															var updateContent = $('[name=content_'+cno+']').val();        
-															$.ajax({        url : '/comment/update',        
-																type : 'post',        
-																data : {'content' : updateContent, 'cno' : cno},        
-																success : function(data){           
-																	if(data == 1)
-																		commentList(bno); //댓글 수정후 목록 출력  
-																	} 
-																});
-															} 
-														
-														//댓글 삭제 
-														function commentDelete(cno){   
-															$.ajax({        
-																url : '/comment/delete/'+cno,       
-																type : 'post',       
-																success : function(data){         
-																	if(data == 1) commentList(bno); //댓글 삭제후 목록 출력      
-																	}  
-															});
-															}    */
-															
-														/* $(document).ready(function(){    
-															commentList(); //페이지 로딩시 댓글 목록 출력
-														});   */
 														
 														</script>
 
@@ -365,11 +361,19 @@
       </ul>   
 	</td> 
 		<!-- 글쓰기버튼 -->
+		<%if(userId == null){%> 
+		<td width="10%" style="vertical-align:top;">
+				<input type="button" class="btn btn-default pull-right"
+			onClick="alert('로그인 후 이용해 주세요')";
+			value="글쓰기" style="outline: none;">
+		</td>
+		<% }else{ %>
 		<td width="10%" style="vertical-align:top;">
 				<input type="button" class="btn btn-default pull-right"
 			onClick="location.href='/mimi/views/member/cwritepage.jsp'"
 			value="글쓰기" style="outline: none;">
 		</td>
+		<%} %>
 	</tr>
 </table>
 </div>

@@ -176,9 +176,6 @@
                     <li>
                         <a  href="/mimi/views/intro/information.jsp">사이트소개</a>
                     </li>
-                     <li>
-                        <a href="/mimi/testlist">테스트페이지</a>
-                    </li>
                 </ul>
             </div>
             <!-- /.navbar-collapse -->

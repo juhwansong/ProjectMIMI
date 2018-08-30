@@ -259,8 +259,8 @@
 	      			json.gradeName = decodeURI(json.gradeName);  			
 	      			$("#menu-gradename").html(json.gradeName);
 	      			$("#menu-nickname").html(decodeURI(json.nickName));
-	      			if(json.gradeName === "손님"){
-	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level1.png");
+	      			if(json.gradeName === "손님"){ 				
+	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_human.ico");
 	      			}
 	      			else if(json.gradeName === "종업원"){
 	      				$("#menu-gradeimg").attr("src", "/mimi/resources/images/icon/icon_level1.png");
@@ -304,6 +304,7 @@
 			});	
 			
 		});
+		
 	</script>	
 
 </html>

@@ -97,14 +97,13 @@ public class RecommendDao {
 		int listCount = 0;
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
-		String query = "select RECOMMEND from V_USER_REVIEW_LIST "
-						+ "where BOARD_NO = '" + boardNo + "'";
-						//+ "where BOARD_NO = ? ";
+		String query = "select RECOMMEND from TB_BOARD_REVIEW "
+						+ "where BOARD_NO = ?";
 		
 		try {
 			pstmt = con.prepareStatement(query);
-			//pstmt.setString(1, boardNo);
-			rset = pstmt.executeQuery(query);
+			pstmt.setString(1, boardNo);
+			rset = pstmt.executeQuery();
 			
 			if(rset.next()){
 				listCount = rset.getInt("RECOMMEND");

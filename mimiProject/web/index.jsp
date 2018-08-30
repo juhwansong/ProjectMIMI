@@ -31,14 +31,14 @@
 				<select class="form-control" name="category" style="border-radius: 5px 0 0 5px; padding: 3px; height: 35px;">
 				<option value="C0" selected disabled hidden>Category</option>
 				<option value="C0">전체</option>
-				<option value="C1">1</option>
-				<option value="C2">2</option>
-				<option value="C3">3</option>
-				<option value="C4">4</option>
-				<option value="C5">5</option>
-				<option value="C6">6</option>
-				<option value="C7">7</option>
-				<option value="C8">8</option>
+				<option value="C1">커피/디저트</option>
+				<option value="C2">패스트푸드</option>
+				<option value="C3">한식</option>
+				<option value="C4">양식</option>
+				<option value="C5">일식</option>
+				<option value="C6">중식</option>
+				<option value="C7">분식</option>
+				<option value="C8">기타</option>
 				</select>
 			</div>
 			<div class="form-group">

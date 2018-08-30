@@ -44,6 +44,7 @@ public class SupportInsertServlet extends HttpServlet {
 			support.setTitle(request.getParameter("title"));
 			support.setContents(request.getParameter("contents"));
 			support.setState(request.getParameter("state"));
+			support.setCategory(Integer.parseInt(request.getParameter("ctype")));
 			try {
 				if(new SupportService().insertSupport(support) > 0){
 					response.sendRedirect("/mimi/supportlist");
