@@ -27,6 +27,7 @@
 	<div class="form-inline">
 		<form name="select-category" id="select-category" method="post" action="/mimi/userboardsearch"
 		 style="display: flex; justify-content: center;">
+		 <input type="hidden" name="index" value="index">
 			<div class="form-group">
 				<select class="form-control" name="category" style="border-radius: 5px 0 0 5px; padding: 3px; height: 35px;">
 				<option value="C0" selected disabled hidden>Category</option>

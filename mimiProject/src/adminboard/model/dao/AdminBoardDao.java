@@ -129,13 +129,13 @@ public class AdminBoardDao {
 		ResultSet rset = null;	
 		int startRow = (currentPage - 1) * countList + 1;
 		int endRow = startRow + countList - 1;
-		
+		//System.out.println("startRow : " + startRow + ", endRow : " + endRow);
 		String query = "SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NO, TITLE, CONTENTS, BOARD_DATE, CATEGORY_NO, "
 					+ "CATEGORY_FOOD, COMMENT_NUM, RECOMMEND, THUMBNAIL_NAME "
 					+ "FROM (SELECT * FROM V_ADMIN_REVIEW_LIST " + qr
 					+ " )) WHERE RNUM >= ? AND RNUM <= ?";
 
-//		System.out.println("쿼리 확인...2 : " + query);
+		//System.out.println("쿼리 확인...2 : " + query);
 		try {
 			pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, startRow);

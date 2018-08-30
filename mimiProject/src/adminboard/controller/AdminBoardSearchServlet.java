@@ -78,6 +78,7 @@ public class AdminBoardSearchServlet extends HttpServlet {
 		if(request.getParameter("page") != null) {
 			currentPage = Integer.parseInt(request.getParameter("page"));
 		}
+		//System.out.println("currentPage : " + currentPage );
 		
 		RequestDispatcher view = null;
 		try {
@@ -132,7 +133,7 @@ public class AdminBoardSearchServlet extends HttpServlet {
 			json.put("totalCount", totalCount);
 			
 				
-			//System.out.println("adminsearch에서 보낸 값 : \n" + json.toJSONString()); //확인용
+			System.out.println("adminsearch에서 보낸 값 : \n" + json.toJSONString()); //확인용
 				
 			PrintWriter out = response.getWriter();
 			out.print(json.toJSONString());

@@ -24,7 +24,7 @@
 <script type="text/javascript" src="/mimi/resources/js/jquery-3.3.1.min.js"></script>
 <link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
 <!-- 다음맵 인증키 (직접 발급받아야됨) -->
-<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=795b33c97453a44f73949c94f447f347&libraries=services,clusterer,drawing"></script>
+<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=86bba96268a8b3515e937b123d69953a&libraries=services,clusterer,drawing"></script>
  
 <link rel="stylesheet" type = "text/css" href = "/mimi/resources/css/mapPage.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
@@ -493,38 +493,6 @@ function cmtinsert(){
 }
 </script>
 <script type="text/javascript">
-/*
-   $(function(){
-      //버튼 클릭시 즐겨찾기 작동
-      $("#bookmarkBtn").on('click', function(){   
-         var icon = ($(this).children().attr('class') === 'fas fa-star') ? 'far fa-star' : 'fas fa-star';
-         $(this).children().prop('class', icon); //아이콘 변경
-
-          var urlValue = "";         
-         if($(this).children().attr('class') === 'fas fa-star'){ //추가
-            urlValue = "bookmarkinsert";
-         }else{//삭제
-            urlValue = "bookmarkdelete";
-         }
-         //console.log("url값 : " + urlValue);
-		$.ajax({
-			url : "/mimi/user",
-			type : "post",
-			data : {userid : "ssuserId", bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
-			success : function(data){		
-				commentList(maxPage); 
-			},
-			error : function(jqXHR, textstatus, errorThrown){
-				console.log("error : " + jqXHR + ", " + 
-						textstatus + ", " + errorThrown);
-			}
-		});  //ajax close
-      
-   })//document*/
-</script>
-
-
-<script type="text/javascript">
 	//$(function(){
 		
 		new Clipboard('.copyBtn', {text: function() {
@@ -595,8 +563,8 @@ function cmtinsert(){
 	</div>
 	<hr>
 	<div style="text-align: right;">
-	<button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="페이스북에 공유하기" onclick="window.open('http://www.facebook.com/sharer.php?u=hjl822.cafe24.com')"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_facebook.png"></button>
-	<button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="트위터에 공유하기" onclick="window.open('https://twitter.com/intent/tweet?text=리뷰제목&url=리뷰주소')"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_twitter.png"></button>
+	<button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="페이스북에 공유하기" onclick="window.open('http://www.facebook.com/sharer.php?u=http://localhost:8888/mimi/adminboarddetailview?bnum=<%= board.getBoardNo() %>&page=1')"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_facebook.png"></button>
+	<button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="트위터에 공유하기" onclick="window.open('https://twitter.com/intent/tweet?text=<%= board.getTitle() %>&url=http://localhost:8888/mimi/adminboarddetailview?bnum=<%= board.getBoardNo() %>&page=1')"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_twitter.png"></button>
 	<button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="라인에 공유하기" onclick="window.open('http://line.naver.jp/R/msg/text/')"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_line.png"></button>
 	<!-- <button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="카카오톡에 공유하기"><img width=40px src="/mimi/resources/images/icon/icon_kakao.png"></button> -->
 	<a id="kakaoLink-btn" href="javascript:;"><img src="/mimi/resources/images/icon/icon_kakao.png" width=40px title="카카오톡에 공유하기"></a>

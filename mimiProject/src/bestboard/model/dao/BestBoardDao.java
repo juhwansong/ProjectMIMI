@@ -46,7 +46,7 @@ public class BestBoardDao {
 		ResultSet rset = null;
 		
 		String query = "SELECT * FROM V_BEST_REVIEW"
-				+ " WHERE SELECTED_MONTH = TO_CHAR(SYSDATE, 'RR/MM') AND STATE = 'SN'"
+				+ " WHERE SELECTED_MONTH = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'RR/MM') AND STATE = 'SN' AND STATE2 = 'SN' "
 				+ " ORDER BY RANK ASC";
 		
 		try {
@@ -91,7 +91,7 @@ public class BestBoardDao {
 		ResultSet rset = null;
 		String query = "SELECT COUNT(*) FROM V_BEST_REVIEW"
 				+ " WHERE (TITLE LIKE ? OR CONTENTS LIKE ? OR NICKNAME LIKE ?)"
-				+ " AND STATE = 'SN' ORDER BY SELECTED_MONTH DESC, RANK ASC";
+				+ " AND STATE = 'SN' AND STATE2 = 'SN' ORDER BY SELECTED_MONTH DESC, RANK ASC";
 		
 		try {
 			pstmt = conn.prepareStatement(query);
@@ -121,9 +121,9 @@ public class BestBoardDao {
 		ResultSet rset = null;
 		
 		String query = "SELECT * FROM (SELECT ROWNUM RNUM, BOARD_NO, TITLE, CONTENTS, USER_ID, SELECTED_MONTH,"
-				+ " NICKNAME, HITS, RECOMMEND, THUMBNAIL_NAME, BOARD_LINK, COMMENT_NUM, RANK, STATE"
+				+ " NICKNAME, HITS, RECOMMEND, THUMBNAIL_NAME, BOARD_LINK, COMMENT_NUM, RANK, STATE, STATE2"
 				+ " FROM (SELECT * FROM V_BEST_REVIEW WHERE (TITLE LIKE ? OR CONTENTS LIKE ? OR NICKNAME LIKE ?)"
-				+ " AND STATE = 'SN' ORDER BY SELECTED_MONTH DESC, RANK ASC)) WHERE RNUM >= ? AND RNUM <= ?";
+				+ " AND STATE = 'SN' AND STATE2 = 'SN' ORDER BY SELECTED_MONTH DESC, RANK ASC)) WHERE RNUM >= ? AND RNUM <= ?";
 		
 		int startRow = (currentPage - 1) * countList + 1;
 		int endRow = startRow + countList - 1;
@@ -172,7 +172,7 @@ public class BestBoardDao {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
-		String query = "SELECT * FROM V_BEST_REVIEW WHERE SELECTED_MONTH = ? AND STATE = 'SN' ORDER BY RANK ASC";
+		String query = "SELECT * FROM V_BEST_REVIEW WHERE SELECTED_MONTH = ? AND STATE = 'SN' AND STATE2 = 'SN' ORDER BY RANK ASC";
 		
 		try {
 			pstmt = conn.prepareStatement(query);

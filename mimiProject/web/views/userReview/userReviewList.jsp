@@ -101,19 +101,40 @@
 		$("#userPagination").html(pageValues);//페이지네이션
 		$('html, body').scrollTop(0); //상단으로 이동
 	}//callback function		
+	function paging(p){
+		if($("#r-sort").children().attr('class') === 'fas fa-sort-down'){//down 내림차순
+			var sort = 'down';
+		}else if($("#h-sort").children().attr('class') === 'fas fa-sort-down'){
+			var sort = 'down';
+		}else if($("#d-sort").children().attr('class') === 'fas fa-sort-down'){
+			var sort = 'down';
+		}else if($("#r-sort").children().attr('class') === 'fas fa-sort-up'){//up 오름차순
+			var sort = 'up';
+		}else if($("#h-sort").children().attr('class') === 'fas fa-sort-up'){
+			var sort = 'up';
+		}else if($("#d-sort").children().attr('class') === 'fas fa-sort-up'){
+			var sort = 'up';
+		}
+					
 		
-		function paging(p){
-			console
-			$.ajax({		
-				url : "/mimi/userboardsearch",
-				data : {category : categoryValue, keyword : searchText, page : p},
-				type : "post",
-				dataType : "json",
-				success : function(data){	
-					callback(data);
-				}//success
-			})//ajax
-		}//paging
+		if($("#r-sort").children().attr('class') != 'fas fa-sort'){
+			var order = $("#r-sort").children().attr('id');
+		}else if($("#h-sort").children().attr('class') != 'fas fa-sort'){
+			var order = $("#h-sort").children().attr('id');
+		}else if($("#d-sort").children().attr('class') != 'fas fa-sort'){
+			var order = $("#d-sort").children().attr('id');
+		}
+		console.log("sort : " + sort + ", order : " + order);
+		$.ajax({		
+			url : "userboardsearch",
+			data : {category : categoryValue, keyword : searchText, order : order, sort : sort, page : p},
+			type : "post",
+			dataType : "json",
+			success : function(data){	
+				callback(data);
+			}//success
+		})//ajax
+	}//paging
 </script>
 <!-------------같이 두면 인식 못해서 분리----------------------------------------------------------------------->
 <script type="text/javascript">

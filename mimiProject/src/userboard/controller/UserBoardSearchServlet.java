@@ -109,11 +109,18 @@ public class UserBoardSearchServlet extends HttpServlet {
 			System.out.println("검색한 전체 개수 : " + totalCount);
 			//System.out.println("start page : " + startPage + "\nendPage : " + endPage + "\ncurrentPage : " + currentPage + "\nmaxPage : " + maxPage);
 			
+			
+			
+			if(request.getParameter("index") == null){
+				
+				
 			JSONObject json = new JSONObject();
 			JSONArray jarr = new JSONArray();
 			
 			SimpleDateFormat sdf = new SimpleDateFormat("MM.dd");
 			System.out.println("boardList.size() : " + boardList.size());
+			
+			
 			for(Board board : boardList){
 				JSONObject job = new JSONObject();
 				String date = sdf.format(board.getBoardDate());
@@ -149,22 +156,23 @@ public class UserBoardSearchServlet extends HttpServlet {
 			out.flush();
 			out.close();
 				
-				
+			}else{
 			//System.out.println(boardList.size());
 //			if(boardList.size() > 0){
-//				view = request.getRequestDispatcher("views/board/adminReview.jsp");
-//				request.setAttribute("boardList", boardList);
-//				request.setAttribute("currentPage", currentPage);
-//				request.setAttribute("maxPage", maxPage);
-//				request.setAttribute("startPage", startPage);
-//				request.setAttribute("endPage", endPage);
-//				request.setAttribute("totalCount", totalCount);
-//				view.forward(request, response);
+				view = request.getRequestDispatcher("views/userReview/userReviewList.jsp");
+				request.setAttribute("list", boardList);
+				request.setAttribute("currentPage", currentPage);
+				request.setAttribute("maxPage", maxPage);
+				request.setAttribute("startPage", startPage);
+				request.setAttribute("endPage", endPage);
+				request.setAttribute("listCount", totalCount);
+				view.forward(request, response);
 //			}else{
 //				view = request.getRequestDispatcher("views/board/boardError.jsp");
 //				request.setAttribute("message", "게시글이 없습니다...!");
 //				view.forward(request, response);
 //			}
+			}
 			
 		/*
 		try {
