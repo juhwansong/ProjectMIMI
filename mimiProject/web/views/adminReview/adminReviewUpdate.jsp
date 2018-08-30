@@ -315,6 +315,19 @@ function zoomOut() {
 }
 
 $(document).on("click", "#result-btn", function(){
+	if($("#admin_title").val() == ""){
+		alert("제목을 입력해 주세요.");
+	} else if( $("#store_name").val() == ""){
+		alert("매장명을 입력해 주세요.");
+	} else if($("#store_address").val() == ""){
+		alert("매장주소를 입력해 주세요.");
+	} else if($("#latitude").val() == ""){
+		alert("지도에 위치를 표시해 주세요.");
+	} else if($("#longitude").val() == ""){
+		alert("지도에 위치를 표시해 주세요.");
+	} else if($("#texta_content").val() == ""){
+		alert("내용을 입력해 주세요");
+	} else {	
 	checkUnload = false;	//게시글 작성 완료 시 false로 값 변경하여 페이지 이동 시 발생하는 onbeforeunload 이벤트를 걸리지 않게 한다.
 	$("#smallcontent").val($($("#texta_content").summernote("code")).text());
 	
@@ -341,12 +354,13 @@ $(document).on("click", "#result-btn", function(){
 		form.appendChild(input[i]);
 	}
 	
-	form.method = "post";
-	form.action = "/mimi/adminboardoriginupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>";
+		form.method = "post";
+		form.action = "/mimi/adminboardoriginupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>";
 	
-	document.body.appendChild(form);
-	form.submit();
-	//location.href = "/file/upcontent?smallcontent=" + smallcontent + "&content=" + content;
+		document.body.appendChild(form);
+		form.submit();
+		//location.href = "/file/upcontent?smallcontent=" + smallcontent + "&content=" + content;
+	}	
 });
 
 onbeforeunload = function() {

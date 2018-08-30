@@ -543,7 +543,7 @@ function cmtinsert(){
 	<div id="inner">
 		<table class="table table-borderless" id="table-css2">
 			<tr>
-				<th width="12%">No.<%= board.getBoardNo() %></th>
+				<th width="12%">No.<%= board.getBoardNo().substring(2).replaceAll("^0*","") %></th>
 				<th width="*" style="text-align:left;"><%= board.getTitle() %></th>
 				<th width="28%">
 				<i class="fas fa-pen"></i><%= board.getNickName() %>&nbsp;<%= board.getGradeName() %>
@@ -652,9 +652,9 @@ function cmtinsert(){
 			<input type="button" class="btn btn-default"
 				onClick="location.href='/mimi/userboardlist'" value="목록">
 		</div>
-		<% if(board.getUserId().equals(ssuserId)){ %>
+		<% if(board.getUserId().equals(ssuserId) || authority.equals("A")) {%>
 		<div class="col-xs-6 text-right">
-			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/userboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>'">
+			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/userboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>&buserId=<%= board.getUserId() %>'">
 			<input type="submit" id="user-delete-btn" class="btn btn-default" value="삭제" style="outline: none;">
 		</div>
 		<% } %>
@@ -794,6 +794,7 @@ $(function(){
 		var parm = new Array(); //input 태그안의 name,value값 설정
 		//파라미터 추가
 		parm.push(["bnum", "<%=board.getBoardNo()%>"]);
+		parm.push(["buserId", "<%=board.getUserId()%>"]);
 		parm.push(["content_tag", '<%=board.getContentsTag()%>']);
 		
 		for(var i=0; i<parm.length; i++){

@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import common.model.vo.Board;
 import userboard.exception.UserBoardException;
@@ -36,23 +37,38 @@ public class UserBoardUpdateServlet extends HttpServlet {
 		
 		String boardNum = request.getParameter("bnum");
 		int currentPage = Integer.parseInt(request.getParameter("page"));
+		String buserId = request.getParameter("buserId");
+
+		HttpSession session = request.getSession();	
+		String authority = (String)session.getAttribute("authority");
+		String userId = (String)session.getAttribute("userId");		
 		
 		RequestDispatcher view = null;
 		try {
-			Board board = new UserBoardService().selectUserBoard(boardNum);
-			
-			if(board != null){
-				view = request.getRequestDispatcher(
-						"views/userReview/userReviewUpdate.jsp");
-				request.setAttribute("board", board);
-				request.setAttribute("currentPage", currentPage);
-				view.forward(request, response);
-			}else{
-				view = request.getRequestDispatcher(
-						"views/userReview/userReviewError.jsp");
-				request.setAttribute("message", "수정페이지로 이동 실패!");				
+				if((authority != null && authority.equals("A")) || (userId != null && userId.equals(buserId))){
+					Board board = new UserBoardService().selectUserBoard(boardNum);
+					
+					if(board != null){
+						view = request.getRequestDispatcher(
+								"views/userReview/userReviewUpdate.jsp");
+						if(board.getShopCall()==null)
+							board.setShopCall("");
+						
+						request.setAttribute("board", board);
+						request.setAttribute("currentPage", currentPage);
+						view.forward(request, response);
+					}else{
+					view = request.getRequestDispatcher(
+							"views/userReview/userReviewError.jsp");
+					request.setAttribute("message", "수정페이지로 이동 실패!");				
+					view.forward(request, response);
+				}
+			}else{ //관리자가 아닐때
+				view = request.getRequestDispatcher("views/userReview/userReviewError.jsp");
+				request.setAttribute("message", "로그인이 필요합니다.");
 				view.forward(request, response);
 			}
+
 		} catch (UserBoardException e) {
 			view = request.getRequestDispatcher(
 					"views/userReview/userReviewError.jsp");

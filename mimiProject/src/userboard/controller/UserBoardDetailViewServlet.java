@@ -48,10 +48,12 @@ public class UserBoardDetailViewServlet extends HttpServlet {
 			ubservice.addReadCount(boardNum);
 			//해당 게시글 조회해 옴
 			Board board = ubservice.selectUserBoard(boardNum);
-			System.out.println(board.getContentsTag());
+			//System.out.println(board.getContentsTag());
+			System.out.println("연락처 : " + board.getShopCall());
 			if(board != null){
-				
 				view = request.getRequestDispatcher("views/userReview/userReviewView.jsp");
+				if(board.getShopCall()==null)
+					board.setShopCall("");
 				request.setAttribute("board", board);
 				request.setAttribute("currentPage", currentPage);
 				view.forward(request, response);
