@@ -133,7 +133,7 @@
 
 			$.ajax({
 				url : "bookmarksearch",
-				data : {category : categoryValue, page : page},
+				data : {category : categoryValue, keyword : searchText, page : page},
 				type : "post",
 				dataType : "json",
 				success : function(data){					
@@ -148,7 +148,7 @@
 		//검색버튼 클릭 시 ajax 실행
 		$("#submitBtn").on('click', function(){
 			categoryValue = $("#selectReview option:selected").val();
-			searchText = $("#search-text").val();
+			searchText = $("#textSearch").val();
 			//console.log("버튼 실행 확인...");
 			$.ajax({
 				
