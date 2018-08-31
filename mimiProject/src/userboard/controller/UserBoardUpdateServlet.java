@@ -44,6 +44,8 @@ public class UserBoardUpdateServlet extends HttpServlet {
 			if(board != null){
 				view = request.getRequestDispatcher(
 						"views/userReview/userReviewUpdate.jsp");
+				if(board.getShopCall()==null)
+					board.setShopCall("");
 				request.setAttribute("board", board);
 				request.setAttribute("currentPage", currentPage);
 				view.forward(request, response);

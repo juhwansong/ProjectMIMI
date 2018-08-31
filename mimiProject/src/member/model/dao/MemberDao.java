@@ -70,7 +70,7 @@ public class MemberDao {
 		PreparedStatement pstmt =null;
 		ResultSet rset = null;
 		String query = "select * from tb_user where user_id = ? ";
-		
+		System.out.println(userId);
 		try {
 			pstmt = con.prepareStatement(query);
 			pstmt.setString(1, userId);

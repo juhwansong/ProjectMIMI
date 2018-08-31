@@ -24,7 +24,7 @@
 <script type="text/javascript" src="/mimi/resources/js/jquery-3.3.1.min.js"></script>
 <link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
 <!-- 다음맵 인증키 (직접 발급받아야됨) -->
-<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=795b33c97453a44f73949c94f447f347&libraries=services,clusterer,drawing"></script>
+<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=45af433a6af9ac0a5a32c2bb45c73262&libraries=services,clusterer,drawing"></script>
  
 <link rel="stylesheet" type = "text/css" href = "/mimi/resources/css/mapPage.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
@@ -543,7 +543,7 @@ function cmtinsert(){
 	<div id="inner">
 		<table class="table table-borderless" id="table-css2">
 			<tr>
-				<th width="12%">No.<%= board.getBoardNo() %></th>
+				<th width="12%">No.<%= board.getBoardNo().substring(2).replaceAll("^0*","") %></th>
 				<th width="*" style="text-align:left;"><%= board.getTitle() %></th>
 				<th width="28%">
 				<i class="fas fa-pen"></i><%= board.getNickName() %>&nbsp;<%= board.getGradeName() %>

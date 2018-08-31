@@ -17,10 +17,11 @@
 </script>
 <script type="text/javascript">
 	function callback(data){ //목록, 페이지네이션 처리
-		console.log("콜백함수 실행중...");
+		//console.log("콜백함수 실행중...");
 		var searchText = $("#search-text").val();
 		var jsonStr = JSON.stringify(data);			
 		var json = JSON.parse(jsonStr);
+		var boradNoSub = "";
 		
 		$("#table").empty(); //기존 목록 전부 지우기
 		values = "<thead>"
@@ -32,17 +33,16 @@
 				+ "<th width=\"8%\"><i class=\"far fa-thumbs-up\"></i>추천</th>"
 				+ "</tr></thead><tbody>";
 		for(var i in json.list){
-			values += "<tr><td>"+json.list[i].boardNo+"</td>"
+			values += "<tr><td>No."+json.list[i].boardNo.substring(2).replace(/^0*/gi,"")+"</td>"
 					+ "<td style=\"width: 90px\"><a href=\"/mimi/userboarddetailview?bnum="+json.list[i].boardNo+"&page="+ json.currentPage +"\"><img class=\"img-thumb img-mover\""
 					+ " src=\"";
 			if(json.list[i].thumbnail != null){
-				console.log(json.list[i].thumbnail);
 				values += "/mimi" + "/resources/files/userboard/"+ json.list[i].thumbnail + "\"></a></td>"; 
 			}else{
 				values += "/mimi/resources/images/logo/default_logo.png\"></a></td>";
 			}
 			values += "<td class=\"tbl-td-title\" style=\"vertical-align: middle;\"><a href=\"/mimi/userboarddetailview?bnum="
-				+ json.list[i].boardNo + "&page="+ json.currentPage+"\">"+ json.list[i].title + "&nbsp;&nbsp;"
+				+ json.list[i].boardNo + "&page="+ json.currentPage+"\">"+ json.list[i].title + "&nbsp;&nbsp;&nbsp;"
 				+ "<span class=\"span-c\"><i class=\"fas fa-comments\"></i>&nbsp;"+json.list[i].commentNum+"</span></a></td>"
 				+ "<td>"+ json.list[i].nickname + "</td>"
 				+ "<td>"+ json.list[i].boardDate + "</td>"
@@ -255,7 +255,7 @@ table {
 			<tbody>
 				<% for(Board rb : list){ %>
 				<tr>
-					<td><%= rb.getBoardNo() %></td>
+					<td>No.<%= rb.getBoardNo().substring(2).replaceAll("^0*","") %></td>
 					<td style="width: 90px"><a href="/mimi/userboarddetailview?bnum=<%= rb.getBoardNo() %>&page=<%= currentPage %>"><img class="img-thumb img-mover"
 							src="<%if(rb.getThumbnailName() != null){%><%=request.getContextPath()%>/resources/files/userboard/<%=rb.getThumbnailName()%><%}else{%>/mimi/resources/images/logo/default_logo.png<%}%>"></a></td>
 					<td class="tbl-td-title" style="vertical-align: middle;"><a href="/mimi/userboarddetailview?bnum=<%= rb.getBoardNo() %>&page=<%= currentPage %>"><%= rb.getTitle() %>&nbsp;&nbsp;

@@ -24,7 +24,7 @@
 <script type="text/javascript" src="/mimi/resources/js/jquery-3.3.1.min.js"></script>
 <link rel="stylesheet" href="/mimi/resources/css/admin-review-thema.css">
 <!-- 다음맵 인증키 (직접 발급받아야됨) -->
-<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=795b33c97453a44f73949c94f447f347&libraries=services,clusterer,drawing"></script>
+<script type = "text/javascript" src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=45af433a6af9ac0a5a32c2bb45c73262&libraries=services,clusterer,drawing"></script>
  
 <link rel="stylesheet" type = "text/css" href = "/mimi/resources/css/mapPage.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js"></script>
@@ -492,37 +492,6 @@ function cmtinsert(){
 	});  //ajax close
 }
 </script>
-<script type="text/javascript">
-/*
-   $(function(){
-      //버튼 클릭시 즐겨찾기 작동
-      $("#bookmarkBtn").on('click', function(){   
-         var icon = ($(this).children().attr('class') === 'fas fa-star') ? 'far fa-star' : 'fas fa-star';
-         $(this).children().prop('class', icon); //아이콘 변경
-
-          var urlValue = "";         
-         if($(this).children().attr('class') === 'fas fa-star'){ //추가
-            urlValue = "bookmarkinsert";
-         }else{//삭제
-            urlValue = "bookmarkdelete";
-         }
-         //console.log("url값 : " + urlValue);
-		$.ajax({
-			url : "/mimi/user",
-			type : "post",
-			data : {userid : "ssuserId", bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
-			success : function(data){		
-				commentList(maxPage); 
-			},
-			error : function(jqXHR, textstatus, errorThrown){
-				console.log("error : " + jqXHR + ", " + 
-						textstatus + ", " + errorThrown);
-			}
-		});  //ajax close
-      
-   })//document*/
-</script>
-
 
 <script type="text/javascript">
 	//$(function(){

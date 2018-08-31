@@ -315,38 +315,52 @@ function zoomOut() {
 }
 
 $(document).on("click", "#result-btn", function(){
-	checkUnload = false;	//게시글 작성 완료 시 false로 값 변경하여 페이지 이동 시 발생하는 onbeforeunload 이벤트를 걸리지 않게 한다.
-	$("#smallcontent").val($($("#texta_content").summernote("code")).text());
-	
-	//자바스크립트에서 post 방식으로 보내기
-	var form = document.createElement("form");
-	var input = new Array();
-	var parm = new Array(); //input 태그안의 name,value값 설정
-	//파라미터 추가
-	parm.push(["categoryNo", $("#categoryNo").val()]);
-	parm.push(["title", $("#admin_title").val()]);
-	parm.push(["shopName", $("#store_name").val()]);
-	parm.push(["shopAddress", $("#store_address").val()]);
-	parm.push(["shopCall", $("#store_phone").val()]);
-	parm.push(["latitude", $("#latitude").val()]);
-	parm.push(["longitude", $("#longitude").val()]);
-	parm.push(["content_tag", $("#texta_content").summernote("code")]);
-	parm.push(["oldcontent_tag", $("#oldcontent_tag").val()]);
-	parm.push(["content", $("#smallcontent").val()]);
-	for(var i=0; i<parm.length; i++){
-		input[i]=document.createElement("input");
-		input[i].setAttribute("type", "hidden");
-		input[i].setAttribute("name", parm[i][0]);
-		input[i].setAttribute("value", parm[i][1]);
-		form.appendChild(input[i]);
+	if($("#admin_title").val() == ""){
+		alert("제목을 입력해 주세요.");
+	} else if( $("#store_name").val() == ""){
+		alert("매장명을 입력해 주세요.");
+	} else if($("#store_address").val() == ""){
+		alert("매장주소를 입력해 주세요.");
+	} else if($("#latitude").val() == ""){
+		alert("지도에 위치를 표시해 주세요.");
+	} else if($("#longitude").val() == ""){
+		alert("지도에 위치를 표시해 주세요.");
+	} else if($("#texta_content").val() == ""){
+		alert("내용을 입력해 주세요");
+	} else {	
+		checkUnload = false;	//게시글 작성 완료 시 false로 값 변경하여 페이지 이동 시 발생하는 onbeforeunload 이벤트를 걸리지 않게 한다.
+		$("#smallcontent").val($($("#texta_content").summernote("code")).text());
+		
+		//자바스크립트에서 post 방식으로 보내기
+		var form = document.createElement("form");
+		var input = new Array();
+		var parm = new Array(); //input 태그안의 name,value값 설정
+		//파라미터 추가
+		parm.push(["categoryNo", $("#categoryNo").val()]);
+		parm.push(["title", $("#admin_title").val()]);
+		parm.push(["shopName", $("#store_name").val()]);
+		parm.push(["shopAddress", $("#store_address").val()]);
+		parm.push(["shopCall", $("#store_phone").val()]);
+		parm.push(["latitude", $("#latitude").val()]);
+		parm.push(["longitude", $("#longitude").val()]);
+		parm.push(["content_tag", $("#texta_content").summernote("code")]);
+		parm.push(["oldcontent_tag", $("#oldcontent_tag").val()]);
+		parm.push(["content", $("#smallcontent").val()]);
+		for(var i=0; i<parm.length; i++){
+			input[i]=document.createElement("input");
+			input[i].setAttribute("type", "hidden");
+			input[i].setAttribute("name", parm[i][0]);
+			input[i].setAttribute("value", parm[i][1]);
+			form.appendChild(input[i]);
+		}
+		
+		form.method = "post";
+		form.action = "/mimi/adminboardoriginupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>";
+		
+		document.body.appendChild(form);
+		form.submit();
+		//location.href = "/file/upcontent?smallcontent=" + smallcontent + "&content=" + content;
 	}
-	
-	form.method = "post";
-	form.action = "/mimi/adminboardoriginupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>";
-	
-	document.body.appendChild(form);
-	form.submit();
-	//location.href = "/file/upcontent?smallcontent=" + smallcontent + "&content=" + content;
 });
 
 onbeforeunload = function() {
