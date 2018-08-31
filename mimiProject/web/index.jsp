@@ -43,7 +43,7 @@
 				</select>
 			</div>
 			<div class="form-group">
-		 		<input type="text" class="form-control" name="search-text" id="search-text" size="30" placeholder="검색할 키워드를 입력하세요" style="border-radius: 0 5px 5px 0; padding: 2px; height: 35px;">
+		 		<input type="text" class="form-control" name="keyword" id="keyword" size="30" placeholder="검색할 키워드를 입력하세요" style="border-radius: 0 5px 5px 0; padding: 2px; height: 35px;">
 		​​​​​​​  		<button type="submit" class="btn" name="searchBtn" style="outline: none;">Search&nbsp;<i class="fas fa-search"></i></button>
 			</div>
 		</form>

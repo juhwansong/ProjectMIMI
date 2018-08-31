@@ -51,7 +51,7 @@ public class AllBoardDao {
 		
 		String query = "";
 		for(Entry<String, String> entry : keword.entrySet())
-			query = "select count(*) from V_ALL_BOARD  " + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
+			query = "select count(*) from V_ALL_BOARD WHERE " + entry.getKey() + " LIKE '%" + entry.getValue() + "%'";
 		
 		try {
 			stmt = con.createStatement();

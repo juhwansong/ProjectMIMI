@@ -50,7 +50,7 @@ public class AdminFileUploadServlet extends HttpServlet {
 		String 			encType 		= "UTF-8";
 		String 			saveFolder 		= "/resources/waitimage";
 		ServletContext 	scontext 		= request.getSession().getServletContext(); //서블릿 컨텍스트
-		System.out.println();
+		
 		savePath = scontext.getRealPath( saveFolder ); //절대 경로 + 저장할 폴더 이름
 
 		try {
