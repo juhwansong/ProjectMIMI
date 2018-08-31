@@ -631,6 +631,7 @@ function cmtinsert(){
 </table>
 		<!-- 댓글 작성부분 -->
 		<!--<form>-->
+		
 		<div id="cmtArea">
 		<input type="hidden" id="bnum" name="bnum" value="<%= board.getBoardNo() %>">
 		<input type="hidden" id="userid" name="userid" value="<%= ssuserId %>">
@@ -643,6 +644,7 @@ function cmtinsert(){
 			</tr>
 		</table>
 		</div>
+	
 		<!--</form>->
 		<!-- 댓글 작성부분 -->
 	</div>
@@ -652,7 +654,7 @@ function cmtinsert(){
 			<input type="button" class="btn btn-default"
 				onClick="location.href='/mimi/userboardlist'" value="목록">
 		</div>
-		<% if(board.getUserId().equals(ssuserId) || authority.equals("A")) {%>
+		<% if(ssuserId != null && (board.getUserId().equals(ssuserId) || authority.equals("A"))) {%>
 		<div class="col-xs-6 text-right">
 			<input type="submit" class="btn btn-default" value="수정" style="outline: none;" onClick="location.href='/mimi/userboardupdate?bnum=<%= board.getBoardNo() %>&page=<%= currentPage %>&buserId=<%= board.getUserId() %>'">
 			<input type="submit" id="user-delete-btn" class="btn btn-default" value="삭제" style="outline: none;">
