@@ -35,7 +35,7 @@ public class BestBoardSearchServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("utf-8");
 		
-		String keyword = request.getParameter("keyword");
+		String keyword = request.getParameter("search-text");
 		keyword = (keyword == null) ? "" : keyword.replaceAll("(^\\p{Z}+|\\p{Z}+$)", "");		
 		//System.out.println("keyword 확인 : " + keyword);
 		
