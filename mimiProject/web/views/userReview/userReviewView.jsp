@@ -548,12 +548,10 @@ function bookmarkSub(){
 	</div>
 	<hr>
 	<div style="text-align: right;">
-	<button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="페이스북에 공유하기" onclick="window.open('http://www.facebook.com/sharer.php?u=hjl822.cafe24.com')"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_facebook.png"></button>
-	<button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="트위터에 공유하기" onclick="window.open('https://twitter.com/intent/tweet?text=리뷰제목&url=리뷰주소')"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_twitter.png"></button>
-	<button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="라인에 공유하기" onclick="window.open('http://line.naver.jp/R/msg/text/')"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_line.png"></button>
-	<!-- <button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="카카오톡에 공유하기"><img width=40px src="/mimi/resources/images/icon/icon_kakao.png"></button> -->
-	<a id="kakaoLink-btn" href="javascript:;"><img src="/mimi/resources/images/icon/icon_kakao.png" width=40px title="카카오톡에 공유하기"></a>
-	<button class="btn copyBtn" id="kakaoLink-btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="url 복사하기"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_copy.png"></button>
+	<button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="페이스북에 공유하기" onclick="window.open('http://www.facebook.com/sharer.php?u=http://localhost:8888/mimi/userboarddetailview?bnum=<%= board.getBoardNo() %>&page=1')"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_facebook.png"></button>
+  	<button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="트위터에 공유하기" onclick="window.open('https://twitter.com/intent/tweet?text=<%= board.getTitle() %>&url=http://localhost:8888/mimi/userboarddetailview?bnum=<%= board.getBoardNo() %>&page=1')"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_twitter.png"></button>
+  	<button class="btn" id="btn" type="submit" style="background:#fff; padding:1px; outline: none;" title="라인에 공유하기" onclick="window.open('http://line.naver.jp/R/msg/text/')"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_line.png"></button>
+	<button class="btn copyBtn"  type="submit" style="background:#fff; padding:1px; outline: none;" title="url 복사하기"><img class="btn-img" width=40px src="/mimi/resources/images/icon/icon_copy.png"></button>
 	<br>
 	<hr>
 	</div>

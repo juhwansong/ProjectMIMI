@@ -59,31 +59,31 @@ function cateSelect(btnVal){
 				<td id="text_category">
 					<input type="hidden" readonly="readonly" name="categoryNo" id="categoryNo" value="C1">
 					<div class="btn-toolbar" role="toolbar" aria-label="버튼 그룹이 있는 툴바">
-						<div class="btn-group mr-2" role="group" aria-label="커피/디저트">
-							<button type="button" class="btn btn-success" style="width: 110px" id="C1" onclick="cateSelect('C1')">커피/디저트</button>
-						</div>
-						<div class="btn-group mr-2" role="group" aria-label="패스트푸드">
-							<button type="button" class="btn" style="width: 110px" id="C2" onclick="cateSelect('C2')">패스트푸드</button>
-						</div>
-						<div class="btn-group mr-2" role="group" aria-label="한식">
-							<button type="button" class="btn" style="width: 110px" id="C3" onclick="cateSelect('C3')">한식</button>
-						</div>
-						<div class="btn-group mr-2" role="group" aria-label="양식">
-							<button type="button" class="btn" style="width: 110px" id="C4" onclick="cateSelect('C4')">양식</button>
-						</div>
-						<br> <br>
-						<div class="btn-group mr-2" role="group" aria-label="일식">
-							<button type="button" class="btn" style="width: 110px" id="C5" onclick="cateSelect('C5')">일식</button>
-						</div>
-						<div class="btn-group mr-2" role="group" aria-label="중식">
-							<button type="button" class="btn" style="width: 110px" id="C6" onclick="cateSelect('C6')">중식</button>
-						</div>
-						<div class="btn-group mr-2" role="group" aria-label="분식">
-							<button type="button" class="btn" style="width: 110px" id="C7" onclick="cateSelect('C7')">분식</button>
-						</div>
-						<div class="btn-group mr-2" role="group" aria-label="기타">
-							<button type="button" class="btn" style="width: 110px" id="C8" onclick="cateSelect('C8')">기타</button>
-						</div>
+					   <div class="btn-group mr-2" role="group" aria-label="카테고리1">
+                     <button type="button" class="btn btn-success" style="width: 110px" id="C1" onclick="cateSelect('C1')">커피/디저트</button>
+                  </div>
+                  <div class="btn-group mr-2" role="group" aria-label="카테고리2">
+                     <button type="button" class="btn" style="width: 110px" id="C2" onclick="cateSelect('C2')">패스트푸드</button>
+                  </div>
+                  <div class="btn-group mr-2" role="group" aria-label="카테고리3">
+                     <button type="button" class="btn" style="width: 110px" id="C3" onclick="cateSelect('C3')">한식</button>
+                  </div>
+                  <div class="btn-group mr-2" role="group" aria-label="카테고리4">
+                     <button type="button" class="btn" style="width: 110px" id="C4" onclick="cateSelect('C4')">양식</button>
+                  </div>
+                  <br> <br>
+                  <div class="btn-group mr-2" role="group" aria-label="카테고리5">
+                     <button type="button" class="btn" style="width: 110px" id="C5" onclick="cateSelect('C5')">일식</button>
+                  </div>
+                  <div class="btn-group mr-2" role="group" aria-label="카테고리6">
+                     <button type="button" class="btn" style="width: 110px" id="C6" onclick="cateSelect('C6')">중식</button>
+                  </div>
+                  <div class="btn-group mr-2" role="group" aria-label="카테고리7">
+                     <button type="button" class="btn" style="width: 110px" id="C7" onclick="cateSelect('C7')">분식</button>
+                  </div>
+                  <div class="btn-group mr-2" role="group" aria-label="카테고리8">
+                     <button type="button" class="btn" style="width: 110px" id="C8" onclick="cateSelect('C8')">기타</button>
+                  </div>
 					</div>
 				</td>
 				<td width="336px" rowspan="4" colspan="2">
