@@ -559,11 +559,11 @@ function cmtinsert(){
 				<td id="text_category">
 				<span class="badge badge-primary"><%= board.getCategoryName() %></span>
 				</td>			
-				<td style="width: 300px; align:center;" rowspan="5" colspan="2">
+				<td style="width: 300px; align:center;" rowspan="4" colspan="2">
 				<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="<%=board.getLatitude()%>" >
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="<%=board.getLongitude()%>">	
 				
-	    			<div id="map" style="width:350px;height:230px;position:relative;overflow:hidden;">
+	    			<div id="map" style="min-width:350px;height:230px;position:relative;overflow:hidden;">
 	    				<div class="custom_zoomcontrol radius_border" style="z-index:5; opacity:0.8;top:20px; right:20px;"> 
        						<span onclick="zoomIn()" ><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>  
         					<span onclick="zoomOut()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
