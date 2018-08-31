@@ -171,7 +171,7 @@
 <div class="container" style="width:1150px;">
 	<h3>즐겨찾기</h3>
 	<hr class="margin1" style="margin: auto auto 5px auto;">
-	<form class="form-inline" name="select-category" id="select-category" method="post" action="/mimi/bookmarksearch">
+	<form class="form-inline" name="select-category" id="select-category" > <!--method="post" action="/mimi/bookmarksearch" -->
 		<!-- 왼쪽 -->
 		<div class="form-group">
 			<select class="form-control" name="selectReview" id="selectReview">
