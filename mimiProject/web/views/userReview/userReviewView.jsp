@@ -347,8 +347,9 @@ function cmtinsert(){
 		url : "/mimi/userboardreplyinsert",
 		type : "post",
 		data : {userid : "ssuserId", bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
-		success : function(data){		
-			commentList(maxPage); 
+		success : function(data){
+			$("#cmtContent").val("");
+			commentList(maxPage);
 		},
 		error : function(jqXHR, textstatus, errorThrown){
 			console.log("error : " + jqXHR + ", " + 
@@ -431,54 +432,6 @@ function bookmarkSub(){
 
 </script>
 
-<script type="text/javascript">
-function cmtinsert(){
-    var bnum = $("#bnum").val();
-    var cmtContent = $("#cmtContent").val();
-	$.ajax({
-		url : "/mimi/userboardreplyinsert",
-		type : "post",
-		data : {userid : "ssuserId", bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
-		success : function(data){		
-			commentList(maxPage); 
-		},
-		error : function(jqXHR, textstatus, errorThrown){
-			console.log("error : " + jqXHR + ", " + 
-					textstatus + ", " + errorThrown);
-		}
-	});  //ajax close
-}
-</script>
-<script type="text/javascript">
-/*
-   $(function(){
-      //버튼 클릭시 즐겨찾기 작동
-      $("#bookmarkBtn").on('click', function(){   
-         var icon = ($(this).children().attr('class') === 'fas fa-star') ? 'far fa-star' : 'fas fa-star';
-         $(this).children().prop('class', icon); //아이콘 변경
-
-          var urlValue = "";         
-         if($(this).children().attr('class') === 'fas fa-star'){ //추가
-            urlValue = "bookmarkinsert";
-         }else{//삭제
-            urlValue = "bookmarkdelete";
-         }
-         //console.log("url값 : " + urlValue);
-         $.ajax({
-			url : "/mimi/user",
-			type : "post",
-			data : {userid : "ssuserId", bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
-			success : function(data){		
-				commentList(maxPage); 
-			},
-			error : function(jqXHR, textstatus, errorThrown){
-				console.log("error : " + jqXHR + ", " + 
-						textstatus + ", " + errorThrown);
-			}
-		});  //ajax close
-      
-   })//document*/
-</script>
 
 <style type="text/css">
 

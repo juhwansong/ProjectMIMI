@@ -1,0 +1,1477 @@
+﻿PROMPT MIMI PROJECT.....
+------------------------------------------------------------------------------------
+SET FEEDBACK OFF --결과 행수 조회 OFF
+SET DEFINE OFF --특수문자 입력가능
+
+-----------------------------
+/*
+***SQL 목록
+
+-데이터 초기화 (테이블/시퀀스/뷰/트리거/프로시저)
+-테이블 생성
+-시퀀스 생성
+-뷰 생성
+-트리거 생성
+-프로시저 생성
+-데이터 입력
+
+
+
+***명명규칙
+테이블 : TB_XXXX
+뷰 : V_XXXX
+시퀀스 : XXXXX_SEQ
+
+
+***용어설명
+--권한 AUTHORITY--
+회원 - U
+관리자 - A
+
+--상태 STATE--
+삭제대기 - SD
+일반   - SN
+
+--게시판 구분 BOARD_GB--
+관리자리뷰 AR
+사용자리뷰 UR
+
+--서비스 게시판 카테고리 CATEGORY--
+문의 : 0
+신고 : 1
+기타 : 2
+
+
+--시퀀스 규칙
+BN0000 - 공지사항 글번호
+BR0000 - 리뷰 글번호
+BS0000 - 서비스 글번호
+CR0000 - 리뷰 코멘트 번호
+CS0000 - 서비스 코멘트 번호
+
+
+*/
+
+
+
+------------------------------------------------------------------------------------
+--데이터 초기화
+PROMPT  DATA Initializing....
+------------------------------------------------------------------------------------
+--테이블 초기화
+
+--DROP TABLE TB_FAVORITE CASCADE CONSTRAINTS; --테이블명 변경 > TB_BOOKMARK  --63 행 오류
+
+
+DROP TABLE TB_BOARD_NOTICE CASCADE CONSTRAINTS;
+DROP TABLE TB_BOARD_REVIEW CASCADE CONSTRAINTS;
+DROP TABLE TB_COMMENT_REVIEW CASCADE CONSTRAINTS;
+DROP TABLE TB_RECOMMEND CASCADE CONSTRAINTS;
+DROP TABLE TB_BOOKMARK CASCADE CONSTRAINTS;
+DROP TABLE TB_CATEGORY CASCADE CONSTRAINTS;
+DROP TABLE TB_USER CASCADE CONSTRAINTS;
+DROP TABLE TB_GRADE CASCADE CONSTRAINTS;
+DROP TABLE TB_BOARD_BEST CASCADE CONSTRAINTS;
+DROP TABLE TB_BOARD_SERVICE CASCADE CONSTRAINTS;
+DROP TABLE TB_COMMENT_SERVICE CASCADE CONSTRAINTS;
+
+
+------------------------------------------------------------------------------------
+--시퀀스 초기화
+DROP SEQUENCE BOARD_NOTICE_SEQ;
+DROP SEQUENCE BOARD_REVIEW_SEQ;
+DROP SEQUENCE BOARD_SERVICE_SEQ;
+DROP SEQUENCE COMMENT_REVIEW_SEQ;
+DROP SEQUENCE COMMENT_SERVICE_SEQ;
+
+
+
+------------------------------------------------------------------------------------
+--뷰 초기화
+DROP VIEW V_ADMIN_REVIEW_COMMENT;
+DROP VIEW V_ADMIN_REVIEW_LIST;
+DROP VIEW V_ADMIN_REVIEW_VIEW;
+DROP VIEW V_ALL_BOARD;
+DROP VIEW V_ALL_COMMENT;
+DROP VIEW V_BEST_REVIEW;
+DROP VIEW V_BOOKMARK;
+DROP VIEW V_NOTICE_LIST;
+DROP VIEW V_NOTICE_VIEW;
+DROP VIEW V_USER_REVIEW_COMMENT;
+DROP VIEW V_USER_REVIEW_LIST;
+DROP VIEW V_USER_REVIEW_VIEW;
+
+
+
+--트리거 초기화
+
+--베스트리뷰
+--리뷰추천
+--즐겨찾기
+
+
+
+--프로시저 초기화
+
+
+
+
+------------------------------------------------------------------------------------
+--테이블 생성 11개
+PROMPT CREATING TABLE....
+------------------------------------------------------------------------------------
+PROMPT CREATING TB_BOARD_NOTICE
+-- 공지사항게시판
+------------------------------------------------------------------------------------
+CREATE TABLE TB_BOARD_NOTICE (
+    NOTICE_NO          VARCHAR2(20) CONSTRAINT PK_NOTICE_NO PRIMARY KEY, -- 공지사항번호 PK
+    USER_ID            VARCHAR2(20)  NOT NULL, -- 작성자
+    NOTICE_TITLE       VARCHAR2(100)  NOT NULL, -- 공지사항제목
+    NOTICE_CONTENTS    VARCHAR2(300) NOT NULL, -- 공지사항내용
+    NOTICE_DATE        DATE          DEFAULT SYSDATE NOT NULL, -- 공지사항작성일
+    NOTICE_REAL_FILE   VARCHAR2(30)  NULL,     -- 원본파일명
+    NOTICE_RENAME_FILE VARCHAR2(30)  NULL,     -- 바뀐파일명
+    FILE_CNT           NUMBER        NULL      -- 파일개수
+);
+
+
+COMMENT ON TABLE TB_BOARD_NOTICE IS '공지사항게시판';
+COMMENT ON COLUMN TB_BOARD_NOTICE.NOTICE_NO IS '공지사항번호';
+COMMENT ON COLUMN TB_BOARD_NOTICE.USER_ID IS '작성자';
+COMMENT ON COLUMN TB_BOARD_NOTICE.NOTICE_TITLE IS '공지사항제목';
+COMMENT ON COLUMN TB_BOARD_NOTICE.NOTICE_CONTENTS IS '공지사항내용';
+COMMENT ON COLUMN TB_BOARD_NOTICE.NOTICE_DATE IS '공지사항작성일';
+COMMENT ON COLUMN TB_BOARD_NOTICE.NOTICE_REAL_FILE IS '원본파일명';
+COMMENT ON COLUMN TB_BOARD_NOTICE.NOTICE_RENAME_FILE IS '바뀐파일명';
+COMMENT ON COLUMN TB_BOARD_NOTICE.FILE_CNT IS '파일개수';
+
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING TB_CATEGORY
+-- 카테고리
+------------------------------------------------------------------------------------
+CREATE TABLE TB_CATEGORY (
+   CATEGORY_NO   VARCHAR2(20), -- 카테고리번호 PK
+   CATEGORY_FOOD VARCHAR2(20) NOT NULL,  -- 카테고리_음식
+  
+  CONSTRAINT PK_CATEGORY_NO PRIMARY KEY(CATEGORY_NO)
+);
+
+COMMENT ON TABLE TB_CATEGORY IS '카테고리';
+COMMENT ON COLUMN TB_CATEGORY.CATEGORY_NO IS '카테고리번호';
+COMMENT ON COLUMN TB_CATEGORY.CATEGORY_FOOD IS '카테고리_음식';
+
+
+
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING TB_USER
+-- 사용자
+------------------------------------------------------------------------------------
+CREATE TABLE TB_USER (
+   USER_ID     VARCHAR2(20) CONSTRAINT PK_USER_ID PRIMARY KEY, -- 아이디 PK
+   USER_PWD    VARCHAR2(200)NOT NULL, -- 비밀번호
+   USER_NAME   VARCHAR2(20) NOT NULL, -- 이름
+   NICKNAME    VARCHAR2(30) NOT NULL, -- 닉네임
+   EMAIL       VARCHAR2(50) NOT NULL, -- 이메일
+   BIRTH       VARCHAR2(20) NULL,     -- 생년월일
+   PHONE       VARCHAR2(20) NOT NULL, -- 전화번호
+   GRADE_POINT NUMBER       DEFAULT 0 NOT NULL, -- 등급포인트
+   GRADE_NAME  VARCHAR2(20) DEFAULT '손님' NOT NULL, -- 등급명
+   AUTHORITY   VARCHAR2(10) DEFAULT 'U' NOT NULL CONSTRAINT CHK_AT CHECK (AUTHORITY IN ('A', 'U')), -- 권한
+   STATE       VARCHAR2(10) DEFAULT 'SN' CONSTRAINT CHEK_ST_USER CHECK (STATE IN ('SD', 'SN')), -- 상태
+   DEL_DATE    DATE         NULL      -- 삭제일
+);
+
+
+COMMENT ON TABLE TB_USER IS '사용자';
+COMMENT ON COLUMN TB_USER.USER_ID IS '아이디';
+COMMENT ON COLUMN TB_USER.USER_PWD IS '비밀번호';
+COMMENT ON COLUMN TB_USER.USER_NAME IS '이름';
+COMMENT ON COLUMN TB_USER.NICKNAME IS '닉네임';
+COMMENT ON COLUMN TB_USER.EMAIL IS '이메일';
+COMMENT ON COLUMN TB_USER.BIRTH IS '생년월일';
+COMMENT ON COLUMN TB_USER.PHONE IS '전화번호';
+COMMENT ON COLUMN TB_USER.GRADE_POINT IS '등급포인트';
+COMMENT ON COLUMN TB_USER.GRADE_NAME IS '등급명';
+COMMENT ON COLUMN TB_USER.AUTHORITY IS '권한';
+COMMENT ON COLUMN TB_USER.STATE IS '상태';
+COMMENT ON COLUMN TB_USER.DEL_DATE IS '삭제일';
+
+
+
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING TB_GRADE
+-- 사용자등급
+------------------------------------------------------------------------------------
+CREATE TABLE TB_GRADE (
+   GRADE_NAME VARCHAR2(20) CONSTRAINT PK_GRADE_NAME PRIMARY KEY, -- 등급명 PK
+   MIN_POINT  NUMBER       NOT NULL, -- 최소필요포인트
+   MAX_POINT  NUMBER       NOT NULL  -- 최대필요포인트
+);
+
+COMMENT ON TABLE TB_GRADE IS '사용자등급';
+COMMENT ON COLUMN TB_GRADE.GRADE_NAME IS '등급명';
+COMMENT ON COLUMN TB_GRADE.MIN_POINT IS '최소필요포인트';
+COMMENT ON COLUMN TB_GRADE.MAX_POINT IS '최대필요포인트';
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING TB_BOARD_REVIEW
+-- 리뷰게시판
+------------------------------------------------------------------------------------
+CREATE TABLE TB_BOARD_REVIEW (
+   BOARD_NO       VARCHAR2(20) CONSTRAINT PK_BOARD_NO PRIMARY KEY, -- 글번호 PK
+   CATEGORY_NO    VARCHAR2(20)  NOT NULL  CONSTRAINT FK_BR_CATEGORY_NO REFERENCES TB_CATEGORY ON DELETE CASCADE, -- 카테고리번호FK
+   USER_ID        VARCHAR2(20)  NOT NULL CONSTRAINT FK_BR_USER_ID REFERENCES TB_USER ON DELETE CASCADE, -- 작성자FK
+   BOARD_GB       VARCHAR2(20)  CONSTRAINT CHEK_GB CHECK (BOARD_GB IN ('AR', 'UR')), -- 게시판구분
+   TITLE          VARCHAR2(100)  NOT NULL, -- 제목
+   CONTENTS       CLOB          NOT NULL, -- 내용 텍스트
+  CONTENTS_TAG   CLOB          NOT NULL, -- 내용 태그 포함
+   BOARD_DATE     DATE           DEFAULT SYSDATE NOT NULL, -- 작성일
+  COMMENT_NUM    NUMBER        DEFAULT 0 NOT NULL, -- 댓글 수
+   SHOP_NAME      VARCHAR2(50)  NOT NULL, -- 매장이름
+   SHOP_ADDRESS   VARCHAR2(200)  NOT NULL, -- 매장주소
+   SHOP_CALL      VARCHAR2(20)  NULL,     -- 매장연락처
+   LATITUDE       NUMBER        NOT NULL, -- 위도
+   LONGITUDE      NUMBER        NOT NULL, -- 경도
+   HITS           NUMBER        DEFAULT 0 NOT NULL, -- 조회수
+   RECOMMEND      NUMBER        DEFAULT 0 NOT NULL, -- 추천수
+   FILE_CNT       NUMBER        NULL,     -- 파일개수
+   BOARD_LINK     VARCHAR2(20)  NOT NULL, -- 게시물주소
+   STATE          VARCHAR2(10) DEFAULT 'SN' CONSTRAINT CHEK_ST_BR CHECK (STATE IN ('SD', 'SN')), -- 상태
+   THUMBNAIL_NAME VARCHAR2(200)  NULL,     -- 썸네일명
+   DEL_DATE       DATE          NULL      -- 삭제일
+  
+);
+
+
+COMMENT ON TABLE TB_BOARD_REVIEW IS '리뷰게시판';
+COMMENT ON COLUMN TB_BOARD_REVIEW.BOARD_NO IS '글번호';
+COMMENT ON COLUMN TB_BOARD_REVIEW.CATEGORY_NO IS '카테고리번호';
+COMMENT ON COLUMN TB_BOARD_REVIEW.USER_ID IS '작성자';
+COMMENT ON COLUMN TB_BOARD_REVIEW.BOARD_GB IS '게시판구분';
+COMMENT ON COLUMN TB_BOARD_REVIEW.TITLE IS '제목';
+COMMENT ON COLUMN TB_BOARD_REVIEW.CONTENTS IS '내용';
+COMMENT ON COLUMN TB_BOARD_REVIEW.BOARD_DATE IS '작성일';
+COMMENT ON COLUMN TB_BOARD_REVIEW.SHOP_NAME IS '매장이름';
+COMMENT ON COLUMN TB_BOARD_REVIEW.SHOP_ADDRESS IS '매장주소';
+COMMENT ON COLUMN TB_BOARD_REVIEW.SHOP_CALL IS '매장연락처';
+COMMENT ON COLUMN TB_BOARD_REVIEW.LATITUDE IS '위도';
+COMMENT ON COLUMN TB_BOARD_REVIEW.LONGITUDE IS '경도';
+COMMENT ON COLUMN TB_BOARD_REVIEW.HITS IS '조회수';
+COMMENT ON COLUMN TB_BOARD_REVIEW.RECOMMEND IS '추천수';
+COMMENT ON COLUMN TB_BOARD_REVIEW.FILE_CNT IS '파일개수';
+COMMENT ON COLUMN TB_BOARD_REVIEW.BOARD_LINK IS '게시물주소';
+COMMENT ON COLUMN TB_BOARD_REVIEW.STATE IS '상태';
+COMMENT ON COLUMN TB_BOARD_REVIEW.THUMBNAIL_NAME IS '썸네일명';
+COMMENT ON COLUMN TB_BOARD_REVIEW.DEL_DATE IS '삭제일';
+
+
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING TB_COMMENT_REVIEW
+-- 리뷰코멘트
+------------------------------------------------------------------------------------
+CREATE TABLE TB_COMMENT_REVIEW (
+   COMMENT_NO       VARCHAR2(20) CONSTRAINT PK_COMMENT_NO PRIMARY KEY, -- 댓글번호 PK
+   BOARD_NO         VARCHAR2(20)  NOT NULL CONSTRAINT FK_CR_BOARD_NO REFERENCES TB_BOARD_REVIEW  ON DELETE CASCADE, -- 글번호 FK
+   USER_ID          VARCHAR2(20)  NOT NULL CONSTRAINT FK_CR_USER_ID REFERENCES TB_USER  ON DELETE CASCADE, -- 작성자 FK
+   COMMENT_DATE     DATE          DEFAULT SYSDATE NOT NULL, -- 댓글작성일
+   COMMENT_CONTENTS VARCHAR2(300) NOT NULL, -- 댓글내용
+   COMMENT_STATE    VARCHAR2(10) DEFAULT 'SN' CONSTRAINT CHEK_ST_CR CHECK (COMMENT_STATE IN ('SD', 'SN')), -- 상태
+   DEL_DATE         DATE          NULL      -- 삭제일
+  
+);
+
+
+COMMENT ON TABLE TB_COMMENT_REVIEW IS '리뷰코멘트';
+COMMENT ON COLUMN TB_COMMENT_REVIEW.COMMENT_NO IS '댓글번호';
+COMMENT ON COLUMN TB_COMMENT_REVIEW.BOARD_NO IS '글번호';
+COMMENT ON COLUMN TB_COMMENT_REVIEW.USER_ID IS '작성자';
+COMMENT ON COLUMN TB_COMMENT_REVIEW.COMMENT_DATE IS '댓글작성일';
+COMMENT ON COLUMN TB_COMMENT_REVIEW.COMMENT_CONTENTS IS '댓글내용';
+COMMENT ON COLUMN TB_COMMENT_REVIEW.COMMENT_STATE IS '상태';
+COMMENT ON COLUMN TB_COMMENT_REVIEW.DEL_DATE IS '삭제일';
+
+
+
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING TB_RECOMMEND
+-- 리뷰추천
+------------------------------------------------------------------------------------
+CREATE TABLE TB_RECOMMEND (
+   BOARD_NO       VARCHAR2(20), -- 글번호 PFK
+   USER_ID        VARCHAR2(20), -- 아이디 PFK
+   RECOMMEND_DATE DATE         DEFAULT SYSDATE NOT NULL, -- 추천일
+   --RECOMMEND      NUMBER       NOT NULL,  -- 추천수
+  
+  CONSTRAINT FK_RECOMMEND_USER_ID FOREIGN KEY(USER_ID) REFERENCES TB_USER  ON DELETE CASCADE,
+  CONSTRAINT FK_RECOMMEND_BOARD_NO FOREIGN KEY(BOARD_NO) REFERENCES TB_BOARD_REVIEW  ON DELETE CASCADE,
+  CONSTRAINT PFK_TB_RECOMMEND PRIMARY KEY (BOARD_NO, USER_ID) -- 복합키
+);
+
+COMMENT ON TABLE TB_RECOMMEND IS '리뷰추천';
+COMMENT ON COLUMN TB_RECOMMEND.BOARD_NO IS '글번호';
+COMMENT ON COLUMN TB_RECOMMEND.USER_ID IS '아이디';
+COMMENT ON COLUMN TB_RECOMMEND.RECOMMEND_DATE IS '추천일';
+--COMMENT ON COLUMN TB_RECOMMEND.RECOMMEND IS '추천수';
+
+
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING TB_BOOKMARK
+-- 즐겨찾기
+------------------------------------------------------------------------------------
+CREATE TABLE TB_BOOKMARK (
+   BOARD_NO VARCHAR2(20) NOT NULL, -- 글번호 PFK
+   BOOKMARK_USER_ID  VARCHAR2(20) NOT NULL,  -- 아이디 PFK --즐겨찾기한 사용자
+   BOOKMARK_DATE DATE DEFAULT SYSDATE NOT NULL,
+  
+   CONSTRAINT FK_BOOKMARK_USER_ID FOREIGN KEY(BOOKMARK_USER_ID) REFERENCES TB_USER(USER_ID) ON DELETE CASCADE,
+   CONSTRAINT FK_BOOKMARK_BOARD_NO FOREIGN KEY(BOARD_NO) REFERENCES TB_BOARD_REVIEW  ON DELETE CASCADE,
+   CONSTRAINT PFK_TB_BOOKMARK PRIMARY KEY (BOARD_NO, BOOKMARK_USER_ID) -- 복합키
+);
+    
+COMMENT ON TABLE TB_BOOKMARK IS '즐겨찾기';
+COMMENT ON COLUMN TB_BOOKMARK.BOARD_NO IS '글번호';
+COMMENT ON COLUMN TB_BOOKMARK.BOOKMARK_USER_ID IS '아이디';
+
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING TB_BOARD_BEST
+-- 베스트리뷰게시판
+------------------------------------------------------------------------------------
+CREATE TABLE TB_BOARD_BEST (
+   BOARD_NO          VARCHAR2(20), -- 글번호PFK----------------------------------------
+   SELECTED_MONTH    VARCHAR2(20)      NOT NULL, -- 선정월 (연/월..예 : 18/08)
+   BEST_REVIEW_STATE VARCHAR2(10)     DEFAULT 'SN' CONSTRAINT CHEK_ST_BB CHECK (BEST_REVIEW_STATE IN ('SD', 'SN')), -- 상태
+   RANK       NUMBER           CHECK (RANK BETWEEN 1 AND 10), -- 랭크
+  
+  
+  CONSTRAINT PK_TB_BOARD_BEST PRIMARY KEY (BOARD_NO),   --------------------------------------------
+  CONSTRAINT PFK_BOARD_NO FOREIGN KEY(BOARD_NO) REFERENCES TB_BOARD_REVIEW  ON DELETE CASCADE------------------
+);
+
+
+COMMENT ON TABLE TB_BOARD_BEST IS '베스트리뷰게시판';
+COMMENT ON COLUMN TB_BOARD_BEST.BOARD_NO IS '글번호';
+COMMENT ON COLUMN TB_BOARD_BEST.SELECTED_MONTH IS '선정월';
+COMMENT ON COLUMN TB_BOARD_BEST.BEST_REVIEW_STATE IS '상태';
+COMMENT ON COLUMN TB_BOARD_BEST.RANK IS '랭크';
+
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING TB_BOARD_SERVICE
+--서비스게시판
+------------------------------------------------------------------------------------
+CREATE TABLE TB_BOARD_SERVICE (
+   BOARD_NO   VARCHAR2(20)  CONSTRAINT PK_BS_BOARD_NO PRIMARY KEY, -- 글번호 PK
+   USER_ID    VARCHAR2(20)  NOT NULL CONSTRAINT FK_BS_USER_ID REFERENCES TB_USER  ON DELETE CASCADE, -- 작성자 FK
+   TITLE      VARCHAR2(100)  NOT NULL, -- 제목
+   CONTENTS   VARCHAR2(500) NOT NULL, -- 내용
+   WRITE_DATE DATE          DEFAULT SYSDATE NOT NULL, -- 작성일
+   CATEGORY   NUMBER        DEFAULT 2 CONSTRAINT CHEK_CA_BS CHECK (CATEGORY IN (0, 1, 2)), -- 카테고리
+   STATE      VARCHAR2(10) DEFAULT 'SN' CONSTRAINT CHEK_ST_BS CHECK (STATE IN ('SD', 'SN')) -- 상태
+      
+);
+
+
+COMMENT ON TABLE TB_BOARD_SERVICE IS '서비스게시판';
+COMMENT ON COLUMN TB_BOARD_SERVICE.BOARD_NO IS '글번호';
+COMMENT ON COLUMN TB_BOARD_SERVICE.USER_ID IS '작성자';
+COMMENT ON COLUMN TB_BOARD_SERVICE.TITLE IS '제목';
+COMMENT ON COLUMN TB_BOARD_SERVICE.CONTENTS IS '내용';
+COMMENT ON COLUMN TB_BOARD_SERVICE.WRITE_DATE IS '작성일';
+COMMENT ON COLUMN TB_BOARD_SERVICE.CATEGORY IS '카테고리';
+COMMENT ON COLUMN TB_BOARD_SERVICE.STATE IS '처리상태';
+
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING TB_COMMENT_SERVICE
+-- 서비스코멘트
+------------------------------------------------------------------------------------
+CREATE TABLE TB_COMMENT_SERVICE (
+   COMMENT_NO       VARCHAR2(20) CONSTRAINT PK_CS_COMMENT_NO PRIMARY KEY, -- 댓글번호 PK
+   BOARD_NO         VARCHAR2(20)  NOT NULL CONSTRAINT FK_CS_BOARD_NO REFERENCES TB_BOARD_SERVICE  ON DELETE CASCADE, -- 글번호FK
+   USER_ID          VARCHAR2(20)  NOT NULL, -- 작성자
+   COMMENT_DATE     DATE          DEFAULT SYSDATE NOT NULL, -- 댓글작성일
+   COMMENT_CONTENTS VARCHAR2(500) NOT NULL  -- 댓글내용
+  
+);
+
+
+COMMENT ON TABLE TB_COMMENT_SERVICE IS '서비스코멘트';
+COMMENT ON COLUMN TB_COMMENT_SERVICE.COMMENT_NO IS '댓글번호';
+COMMENT ON COLUMN TB_COMMENT_SERVICE.BOARD_NO IS '글번호';
+COMMENT ON COLUMN TB_COMMENT_SERVICE.USER_ID IS '작성자';
+COMMENT ON COLUMN TB_COMMENT_SERVICE.COMMENT_DATE IS '댓글작성일';
+COMMENT ON COLUMN TB_COMMENT_SERVICE.COMMENT_CONTENTS IS '댓글내용';
+
+
+
+------------------------------------------------------------------------------------
+COMMIT;
+------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------
+--시퀀스 생성 5개
+PROMPT CREATING SEQUENCE....
+------------------------------------------------------------------------------------
+CREATE SEQUENCE BOARD_NOTICE_SEQ START WITH 1 INCREMENT BY 1 MAXVALUE 1000000;
+CREATE SEQUENCE BOARD_REVIEW_SEQ START WITH 1 INCREMENT BY 1 MAXVALUE 1000000;
+CREATE SEQUENCE BOARD_SERVICE_SEQ START WITH 1 INCREMENT BY 1 MAXVALUE 1000000;
+
+CREATE SEQUENCE COMMENT_REVIEW_SEQ START WITH 1 INCREMENT BY 1 MAXVALUE 1000000;
+CREATE SEQUENCE COMMENT_SERVICE_SEQ START WITH 1 INCREMENT BY 1 MAXVALUE 1000000;
+
+
+------------------------------------------------------------------------------------
+COMMIT;
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+--뷰 생성 12개
+PROMPT CREATING VIEW....
+------------------------------------------------------------------------------------
+PROMPT CREATING V_NOTICE_LIST 
+--공지사항 목록
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW V_NOTICE_LIST
+AS
+SELECT NOTICE_NO, NOTICE_TITLE, NICKNAME, NOTICE_DATE 
+FROM TB_BOARD_NOTICE NT, TB_USER U
+WHERE NT.USER_ID = U.USER_ID;
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING V_NOTICE_VIEW 
+--공지사항 보기
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW V_NOTICE_VIEW
+AS
+SELECT NOTICE_NO, NOTICE_TITLE, NICKNAME , NOTICE_DATE, NOTICE_CONTENTS,
+       NOTICE_REAL_FILE, NOTICE_RENAME_FILE, FILE_CNT
+FROM TB_BOARD_NOTICE NT, TB_USER U
+WHERE NT.USER_ID = U.USER_ID;
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING V_ADMIN_REVIEW_LIST 
+--관리자리뷰 목록
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW V_ADMIN_REVIEW_LIST
+AS
+SELECT BOARD_NO, TITLE, CONTENTS, BOARD_DATE, CATEGORY_FOOD, CT.CATEGORY_NO CATEGORY_NO,
+       COMMENT_NUM, RECOMMEND, THUMBNAIL_NAME, HITS, BOARD_LINK
+FROM TB_BOARD_REVIEW BR, TB_USER U, TB_CATEGORY CT
+WHERE BR.USER_ID = U.USER_ID
+AND BR.CATEGORY_NO = CT.CATEGORY_NO
+AND BR.STATE = 'SN'
+AND BR.BOARD_GB='AR';
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING V_ADMIN_REVIEW_VIEW 
+--관리자리뷰 보기
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW V_ADMIN_REVIEW_VIEW
+AS
+SELECT BOARD_NO, THUMBNAIL_NAME, TITLE, USER_ID, NICKNAME, GRADE_NAME,
+       BOARD_DATE, HITS, RECOMMEND, CONTENTS_TAG, CATEGORY_NO, CATEGORY_FOOD,
+       SHOP_NAME, SHOP_CALL, SHOP_ADDRESS, LATITUDE, LONGITUDE, TB_BOARD_REVIEW.STATE STATE
+FROM TB_BOARD_REVIEW
+JOIN TB_CATEGORY USING (CATEGORY_NO)
+JOIN TB_USER USING (USER_ID)
+WHERE BOARD_GB = 'AR';
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING V_ADMIN_REVIEW_COMMENT 
+--관리자리뷰 댓글 
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW V_ADMIN_REVIEW_COMMENT
+AS
+SELECT COMMENT_NO, BOARD_NO, USER_ID, NICKNAME, GRADE_NAME, COMMENT_DATE, COMMENT_CONTENTS, COMMENT_STATE
+FROM TB_COMMENT_REVIEW
+JOIN TB_USER USING (USER_ID);
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING V_USER_REVIEW_LIST 
+--유저리뷰 목록 
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW V_USER_REVIEW_LIST
+AS
+SELECT BOARD_NO, TITLE, USER_ID, NICKNAME, BOARD_DATE, HITS, RECOMMEND, BOARD_LINK,
+       CONTENTS, CATEGORY_FOOD, COMMENT_NUM, THUMBNAIL_NAME, CATEGORY_NO
+FROM TB_BOARD_REVIEW
+JOIN TB_CATEGORY USING (CATEGORY_NO)
+JOIN TB_USER USING (USER_ID)
+WHERE BOARD_GB = 'UR'
+AND TB_BOARD_REVIEW.STATE = 'SN'
+ORDER BY BOARD_NO DESC;
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING V_USER_REVIEW_VIEW 
+--유저리뷰 보기 
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW V_USER_REVIEW_VIEW
+AS
+SELECT BOARD_NO, THUMBNAIL_NAME, TITLE, USER_ID, NICKNAME, GRADE_NAME,
+       BOARD_DATE, HITS, RECOMMEND, CONTENTS_TAG, CATEGORY_NO, CATEGORY_FOOD,
+       SHOP_NAME, SHOP_CALL, SHOP_ADDRESS, LATITUDE, LONGITUDE, TB_BOARD_REVIEW.STATE STATE
+FROM TB_BOARD_REVIEW
+JOIN TB_CATEGORY USING (CATEGORY_NO)
+JOIN TB_USER USING (USER_ID)
+WHERE BOARD_GB = 'UR';
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING V_USER_REVIEW_COMMENT 
+--유저리뷰 코멘트
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW V_USER_REVIEW_COMMENT
+AS
+SELECT COMMENT_NO, BOARD_NO, USER_ID, NICKNAME, GRADE_NAME, COMMENT_DATE, COMMENT_CONTENTS, COMMENT_STATE
+FROM TB_COMMENT_REVIEW
+JOIN TB_USER USING (USER_ID);
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING V_BEST_REVIEW 
+--베스트 리뷰
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW  V_BEST_REVIEW
+AS
+SELECT TITLE, CONTENTS, USER_ID, NICKNAME, BOARD_DATE, HITS, RECOMMEND,
+       THUMBNAIL_NAME, BOARD_LINK, BOARD_NO, COMMENT_NUM, RANK,
+       TB_BOARD_BEST.BEST_REVIEW_STATE STATE, TB_BOARD_REVIEW.STATE STATE2, SELECTED_MONTH
+FROM TB_BOARD_REVIEW
+LEFT JOIN TB_USER USING(USER_ID)
+JOIN TB_BOARD_BEST USING(BOARD_NO);
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING V_BOOKMARK 
+--즐겨찾기 목록
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW  V_BOOKMARK
+AS
+SELECT BOOKMARK_USER_ID, BOARD_NO, NICKNAME, BOOKMARK_DATE, COMMENT_NUM, CONTENTS, SHOP_NAME, SHOP_ADDRESS,
+      TITLE, BOARD_DATE, BOARD_GB, BOARD_LINK, THUMBNAIL_NAME
+FROM TB_BOARD_REVIEW
+JOIN TB_USER USING(USER_ID)
+JOIN TB_BOOKMARK USING(BOARD_NO);
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING V_ALL_BOARD 
+--전체 게시물 조회
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW V_ALL_BOARD
+AS 
+SELECT BOARD_NO, BOARD_GB, TITLE, NICKNAME, BOARD_DATE, HITS, RECOMMEND,
+       BOARD_LINK, USER_ID, TB_BOARD_REVIEW.STATE STATE
+FROM TB_BOARD_REVIEW
+JOIN TB_USER USING(USER_ID)
+WHERE TB_BOARD_REVIEW.STATE = 'SN';
+
+
+------------------------------------------------------------------------------------
+PROMPT CREATING V_ALL_COMMENT 
+--전체 댓글 조회
+------------------------------------------------------------------------------------
+CREATE OR REPLACE VIEW V_ALL_COMMENT
+AS
+SELECT BOARD_NO, NICKNAME, COMMENT_CONTENTS, COMMENT_DATE, TITLE, BOARD_LINK,
+       COMMENT_STATE, TB_BOARD_REVIEW.USER_ID USER_ID
+FROM TB_COMMENT_REVIEW
+JOIN TB_USER USING (USER_ID)
+JOIN TB_BOARD_REVIEW USING (BOARD_NO)
+WHERE COMMENT_STATE = 'SN';
+
+
+------------------------------------------------------------------------------------
+COMMIT;
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+--트리거 생성...
+PROMPT CREATING TRIGGER....
+------------------------------------------------------------------------------------
+---------------------------------추천 시 발생하는 트리거-------------------------
+
+CREATE OR REPLACE TRIGGER RECOMMEND_INSERT_TRIGGER
+AFTER INSERT ON TB_RECOMMEND FOR EACH ROW --추천테이블에 데이터가 추가됐을때
+DECLARE 
+  SELECTED_ID VARCHAR2(20);  --추천이 추가된 BOARD_NO의 작성자 ID를 담을 변수 선언
+  SELECTED_GRADE_POINT NUMBER;--해당 작성자의 등급포인트를 담을 변수 선언
+  MAX_GRADE_POINT NUMBER; --IF문을 위해 최고 등급의 MAX_POINT의 값을 담을 변수 선언
+BEGIN
+  SELECT USER_ID INTO SELECTED_ID FROM TB_BOARD_REVIEW WHERE BOARD_NO = :NEW.BOARD_NO; --추천이 추가된 BOARD_NO의 작성자 ID를 담음
+  
+  UPDATE TB_BOARD_REVIEW SET RECOMMEND = RECOMMEND+1 --추천수 1증가
+  WHERE BOARD_NO =:NEW.BOARD_NO;
+  
+  UPDATE TB_USER SET GRADE_POINT = GRADE_POINT + 10   --추천 받은 게시물의 작성자 등급 포인트 10 증가
+  WHERE USER_ID = SELECTED_ID;
+  
+  SELECT GRADE_POINT INTO SELECTED_GRADE_POINT FROM TB_USER 
+  WHERE USER_ID = SELECTED_ID;--작성자의 증가된 등급포인트를 담음 
+  
+  SELECT MAX(MAX_POINT) INTO MAX_GRADE_POINT FROM TB_GRADE;
+  
+  IF MAX_GRADE_POINT >= SELECTED_GRADE_POINT THEN --현재 등급포인트가 가장 높은 등급의 최대치보다 같거나 작을때
+    UPDATE TB_USER    --작성자의 등급 이름을 해당 등급포인트에 맞는 이름으로 바꾼다
+    SET GRADE_NAME = (SELECT GRADE_NAME FROM TB_GRADE WHERE MIN_POINT <= SELECTED_GRADE_POINT and MAX_POINT >= SELECTED_GRADE_POINT)           
+    WHERE USER_ID = SELECTED_ID;  
+  END IF;
+END;
+/
+--------------------------------추천 취소 시 발생하는 트리거---------------------
+CREATE OR REPLACE TRIGGER RECOMMEND_DELETE_TRIGGER
+AFTER DELETE ON TB_RECOMMEND FOR EACH ROW
+DECLARE
+  SELECTED_ID VARCHAR2(20);  --추천이 추가된 BOARD_NO의 작성자 ID를 담을 변수 선언
+  SELECTED_GRADE_POINT NUMBER;--해당 작성자의 등급포인트를 담을 변수 선언
+  MAX_GRADE_POINT NUMBER; --IF문을 위해 최고 등급의 MAX_POINT의 값을 담을 변수 선언
+BEGIN
+  SELECT USER_ID INTO SELECTED_ID FROM TB_BOARD_REVIEW WHERE BOARD_NO = :OLD.BOARD_NO; --추천이 감소된 BOARD_NO의 작성자 ID를 담음
+  
+  UPDATE TB_BOARD_REVIEW SET RECOMMEND = RECOMMEND-1    --추천수 1 감소
+  WHERE BOARD_NO =:OLD.BOARD_NO;
+  
+  UPDATE TB_USER SET GRADE_POINT = GRADE_POINT - 10     --추천 취소된 게시물의 작성자 등급 포인트 10 감소
+  WHERE USER_ID = SELECTED_ID;
+  
+  SELECT GRADE_POINT INTO SELECTED_GRADE_POINT FROM TB_USER 
+  WHERE USER_ID = SELECTED_ID;--작성자의 감소된 등급포인트를 담음 
+  
+  SELECT MAX(MAX_POINT) INTO MAX_GRADE_POINT FROM TB_GRADE;
+  
+  IF MAX_GRADE_POINT >= SELECTED_GRADE_POINT THEN --현재 등급포인트가 가장 높은 등급의 최대치보다 같거나 작을때
+    UPDATE TB_USER      --작성자의 등급 이름을 해당 등급포인트에 맞는 이름으로 바꾼다
+    SET GRADE_NAME = (SELECT GRADE_NAME FROM TB_GRADE WHERE MIN_POINT <= SELECTED_GRADE_POINT and MAX_POINT >= SELECTED_GRADE_POINT)           
+    WHERE USER_ID = SELECTED_ID;
+  END IF;
+END;
+/
+--댓글 작성 시 해당 게시물의 댓글 수가 증가 하는 트리거
+CREATE OR REPLACE TRIGGER COMMENT_INSERT_TRIGGER
+AFTER INSERT ON TB_COMMENT_REVIEW FOR EACH ROW
+BEGIN
+  UPDATE TB_BOARD_REVIEW
+  SET COMMENT_NUM = COMMENT_NUM+1 --댓글 수 1 증가
+  WHERE BOARD_NO =:NEW.BOARD_NO; 
+END;
+/
+--댓글 삭제 시 해당 게시물의 댓글 수가 감소 하는 트리거
+CREATE OR REPLACE TRIGGER COMMENT_DELETE_TRIGGER
+AFTER DELETE OR UPDATE OF COMMENT_STATE ON TB_COMMENT_REVIEW FOR EACH ROW
+BEGIN
+  UPDATE TB_BOARD_REVIEW
+  SET COMMENT_NUM = COMMENT_NUM-1 --댓글 수 1 감소
+  WHERE BOARD_NO =:OLD.BOARD_NO; 
+END;
+/
+------------------------------------------------------------------------------------
+--프로시저 생성...
+PROMPT CREATING PROCEDURE....
+------------------------------------------------------------------------------------
+---------------------------------베스트리뷰 프로시저-----------------------------
+
+-------------------------------삭제부분---------------------------------
+--JOB 먼저 지우고 PROGRAM 지움.
+BEGIN  --JOB 삭제
+  DBMS_SCHEDULER.DROP_JOB(
+    JOB_NAME => 'BEST_BOARD_UPDATE_PROC_JOB',
+    FORCE => FALSE
+  );  
+END;
+/
+
+BEGIN -- PROGRAM 삭제
+  DBMS_SCHEDULER.DROP_PROGRAM(
+    PROGRAM_NAME => 'BEST_BOARD_UPDATE_PROC_PROGRAM',
+    FORCE => FALSE
+  );
+END;
+/
+
+
+BEGIN -- SCHEDULER 삭제
+  DBMS_SCHEDULER.DROP_SCHEDULE(
+    SCHEDULE_NAME => 'SCHEDULE_MONTHLY_1DAYS',
+    FORCE => FALSE
+  );
+END;
+/
+--프로시저 삭제
+DROP PROCEDURE BEST_BOARD_UPDATE_PROC;
+--배열 타입 삭제
+DROP TYPE ARRAY_VARCHAR;
+----------------------------------생성 및 실행--------------------------------
+CREATE OR REPLACE TYPE ARRAY_VARCHAR AS TABLE OF VARCHAR2(20); --VARCHAR2배열 타입선언
+/
+
+CREATE OR REPLACE PROCEDURE BEST_BOARD_UPDATE_PROC (SELETED_MONTH IN VARCHAR2) --프로시저 생성
+IS
+  --변수선언부분
+  BOARD_NO_ARRAY ARRAY_VARCHAR;
+BEGIN 
+  --SQL문장, PL/SQL제어 문장   
+  SELECT BOARD_NO 
+  BULK COLLECT --BULK 처리(루프 없이 BOARD_NO_ARRAY에 SELECT된 값들을 저장한다.)
+  INTO BOARD_NO_ARRAY
+  FROM
+  ( 
+  SELECT BOARD_NO
+  FROM TB_RECOMMEND
+  JOIN TB_BOARD_REVIEW USING(BOARD_NO)
+  WHERE TO_CHAR(RECOMMEND_DATE, 'RR/MM') = SELETED_MONTH AND BOARD_GB = 'UR'
+  GROUP BY BOARD_NO
+  ORDER BY COUNT(BOARD_NO) DESC
+  )
+  WHERE ROWNUM <= 10;
+ 
+  
+  
+  FOR I IN 1 .. BOARD_NO_ARRAY.COUNT LOOP
+    DBMS_OUTPUT.PUT_LINE(BOARD_NO_ARRAY(I));
+    INSERT INTO TB_BOARD_BEST VALUES(BOARD_NO_ARRAY(I), SELETED_MONTH, 'SN', I);
+  END LOOP;
+  
+  COMMIT;
+  
+END;
+/
+------------------ 스케줄러 생성---------------------
+
+BEGIN -- 수행 할 PROGRAM을 PROGRAM으로 등록한다
+  DBMS_SCHEDULER.CREATE_PROGRAM(
+    PROGRAM_NAME => 'BEST_BOARD_UPDATE_PROC_PROGRAM',
+    PROGRAM_TYPE => 'PLSQL_BLOCK',
+    PROGRAM_ACTION => 'BEGIN BEST_BOARD_UPDATE_PROC(TO_CHAR(ADD_MONTHS(SYSDATE, -1), ''RR/MM'')); END;', 
+    ENABLED => TRUE,
+    COMMENTS => 'BEST BOARD UPLOAD PROCEDURE PROGRAM'
+  ); 
+  DBMS_SCHEDULER.ENABLE(NAME => 'BEST_BOARD_UPDATE_PROC_PROGRAM');
+END;
+/
+
+BEGIN --작업에 대한 수행 주기, 반복 등의 정의
+  DBMS_SCHEDULER.CREATE_SCHEDULE(
+    SCHEDULE_NAME => 'SCHEDULE_MONTHLY_1DAYS',
+    START_DATE => SYSTIMESTAMP,
+    END_DATE => NULL,
+    --REPEAT_INTERVAL => 'freq=minutely; interval=1; bysecond=00',--1분마다실행 테스트
+    REPEAT_INTERVAL => 'FREQ=MONTHLY; BYMONTHDAY=1; BYHOUR=0; BYMINUTE=0;', --매달 1일 0시 0분 실행
+    COMMENTS => 'EVERY MONTH 1DAYS'
+  );
+END;  
+/
+
+
+
+BEGIN --JOB 등록, 실제 수행 될 작업으로 스케쥴러와 프로그램을 명시해준다.
+  DBMS_SCHEDULER.CREATE_JOB(
+    JOB_NAME => 'BEST_BOARD_UPDATE_PROC_JOB', 
+    PROGRAM_NAME => 'BEST_BOARD_UPDATE_PROC_PROGRAM',
+    SCHEDULE_NAME => 'SCHEDULE_MONTHLY_1DAYS',
+    COMMENTS => 'BEST BOARD UPLOAD PROCEDURE PROGRAM',
+    --JOB_CLASS => 'SHEDULER_JOB_CLASS',  --잡클래스 따로 생성안함.
+    ENABLED => TRUE
+  );
+END;
+/
+
+
+
+--------------------------------상태 SD인 회원 자동 삭제 프로시저----------------------
+
+
+-------------------------------삭제부분---------------------------------
+--JOB 먼저 지우고 PROGRAM 지움.
+BEGIN  --JOB 삭제
+  DBMS_SCHEDULER.DROP_JOB(
+    JOB_NAME => 'DELETE_SD_USER_PROC_JOB',
+    FORCE => FALSE
+  );  
+END;
+/
+
+BEGIN -- PROGRAM 삭제
+  DBMS_SCHEDULER.DROP_PROGRAM(
+    PROGRAM_NAME => 'DELETE_SD_USER_PROC_PROGRAM',
+    FORCE => FALSE
+  );
+END;
+/
+
+
+BEGIN -- SCHEDULER 삭제
+  DBMS_SCHEDULER.DROP_SCHEDULE(
+    SCHEDULE_NAME => 'SCHEDULE_DAILY_ONCE',
+    FORCE => FALSE
+  );
+END;
+/
+--프로시저 삭제
+DROP PROCEDURE DELETE_SD_USER_PROC;
+
+----------------------------------생성 및 실행--------------------------------
+CREATE OR REPLACE PROCEDURE DELETE_SD_USER_PROC--프로시저 생성
+IS
+--변수선언부분
+  USER_ID_ARRAY ARRAY_VARCHAR;
+BEGIN 
+  --SQL문장, PL/SQL제어 문장     
+  SELECT USER_ID 
+  BULK COLLECT --BULK 처리(루프 없이 BOARD_NO_ARRAY에 SELECT된 값들을 저장한다.)
+  INTO USER_ID_ARRAY
+  FROM TB_USER
+  WHERE STATE='SD' AND SYSDATE >= ADD_MONTHS(DEL_DATE, 3);
+  
+  FOR I IN 1 .. USER_ID_ARRAY.COUNT LOOP
+    DELETE FROM TB_RECOMMEND WHERE USER_ID = USER_ID_ARRAY(I);
+  END LOOP;
+  COMMIT;
+  
+  FOR I IN 1 .. USER_ID_ARRAY.COUNT LOOP
+    DELETE FROM TB_RECOMMEND WHERE BOARD_NO IN (SELECT BOARD_NO FROM TB_BOARD_REVIEW WHERE USER_ID = USER_ID_ARRAY(I));
+  END LOOP;
+  COMMIT;
+  
+  FOR I IN 1 .. USER_ID_ARRAY.COUNT LOOP
+    DELETE FROM TB_COMMENT_REVIEW WHERE USER_ID = USER_ID_ARRAY(I);
+  END LOOP;
+  COMMIT;
+  
+  FOR I IN 1 .. USER_ID_ARRAY.COUNT LOOP
+    DELETE FROM TB_COMMENT_REVIEW WHERE BOARD_NO IN (SELECT BOARD_NO FROM TB_BOARD_REVIEW WHERE USER_ID = USER_ID_ARRAY(I));
+  END LOOP;
+  COMMIT;
+  
+  FOR I IN 1 .. USER_ID_ARRAY.COUNT LOOP
+     DELETE TB_USER WHERE USER_ID = USER_ID_ARRAY(I);
+  END LOOP;
+  COMMIT;
+END;
+/
+------------------ 스케줄러 생성---------------------
+
+BEGIN -- 수행 할 PROGRAM을 PROGRAM으로 등록한다
+  DBMS_SCHEDULER.CREATE_PROGRAM(
+    PROGRAM_NAME => 'DELETE_SD_USER_PROC_PROGRAM',
+    PROGRAM_TYPE => 'PLSQL_BLOCK',
+    PROGRAM_ACTION => 'BEGIN DELETE_SD_USER_PROC; END;', 
+    ENABLED => TRUE,
+    COMMENTS => 'SD USER DELETE PROCEDURE PROGRAM'
+  ); 
+  DBMS_SCHEDULER.ENABLE(NAME => 'DELETE_SD_USER_PROC_PROGRAM');
+END;
+/
+
+BEGIN --작업에 대한 수행 주기, 반복 등의 정의
+  DBMS_SCHEDULER.CREATE_SCHEDULE(
+    SCHEDULE_NAME => 'SCHEDULE_DAILY_ONCE',
+    START_DATE => SYSTIMESTAMP,
+    END_DATE => NULL,
+    --REPEAT_INTERVAL => 'TRUNC(ADD_MONTHS(SYSDATE, 1))+6/24',
+    REPEAT_INTERVAL => 'FREQ=DAILY; BYHOUR=0; BYMINUTE=0;', --매일 0시 0분 실행
+    COMMENTS => 'DAILY ONCE'
+  );
+END;  
+/
+
+
+
+BEGIN --JOB 등록, 실제 수행 될 작업으로 스케쥴러와 프로그램을 명시해준다.
+  DBMS_SCHEDULER.CREATE_JOB(
+    JOB_NAME => 'DELETE_SD_USER_PROC_JOB', 
+    PROGRAM_NAME => 'DELETE_SD_USER_PROC_PROGRAM',
+    SCHEDULE_NAME => 'SCHEDULE_DAILY_ONCE',
+    COMMENTS => 'SD USER DELETE PROCEDURE PROGRAM',
+    --JOB_CLASS => 'SHEDULER_JOB_CLASS',  --잡클래스 따로 생성안함.
+    ENABLED => TRUE
+  );
+END;
+/
+
+------------------------------------------------------------------------------------
+--함수 생성...
+PROMPT CREATING FUNCTION....
+------------------------------------------------------------------------------------
+
+--라디언스 함수 생성
+CREATE OR REPLACE FUNCTION RADIANS(nDegrees IN NUMBER) 
+RETURN NUMBER DETERMINISTIC 
+IS
+BEGIN 
+  RETURN nDegrees / 57.29577951308232087679815481410517033235;
+END RADIANS;
+/
+
+
+--기준이 되는 위도,경도와 비교할 위도,경도 값을 넣어 지정된 distance 거리안만 찾는 함수
+--H_LAT = 기준이 되는 위도, H_LNG = 기준이 되는 경도, T_LAT = 비교할 위도, T_LNG = 비교할 경도
+create or replace function DISTNACE_WGS84( H_LAT in number, H_LNG in number, T_LAT in number, T_LNG in number)
+return number deterministic
+is
+begin
+  return ( 6371.0 * acos(  
+          cos( radians( H_LAT ) )*cos( radians( T_LAT ) )
+          *cos( radians( T_LNG )-radians( H_LNG ) )
+          +
+          sin( radians( H_LAT ) )*sin( radians( T_LAT ) )        
+         ));
+end DISTNACE_WGS84;
+/
+
+
+
+------------------------------------------------------------------------------------
+--데이터 입력
+PROMPT LOADING INSERT DATA....
+------------------------------------------------------------------------------------
+
+--DB샘플데이터
+
+
+--사용자...권한 A: 관리자/ U: 회원
+/*
+컬럼 순서(아이디, 비밀번호, 이름, 닉네임, 이메일, 생년월일(NULL), 전화번호, 등급포인트(DEFAULT 0), 등급명(DEFAULT 손님)
+        ,권한(AUTHORITY IN ('A', 'U')), 상태(STATE IN ('SD', 'SN')), 삭제일(NULL)
+*/
+   
+INSERT INTO TB_USER
+VALUES ('admin', 'x61Ey612Kl2gpFL56FT9weDnpSo4AV8j8+qx2AuTHdRyY036xxzTTrw10Wq3+4qQyB+XURPWx1ONxp3Y3pB37A==', '관리자', '관리자', 'k@k.com', NULL, '010', 10000, '식신', 'A', 'SN', NULL);
+INSERT INTO TB_USER (USER_ID, USER_PWD, USER_NAME, NICKNAME, EMAIL, BIRTH, PHONE, GRADE_POINT, GRADE_NAME, AUTHORITY, STATE, DEL_DATE) 
+VALUES ('abc', 'ma86JaiG3cHOatAiUDA1Cq9tRCCyi51FhxEakU7rxd+7KDcLb6ji1GN/uA7uU/jWJ57tpB5fDoAb2POTvWaOJg==', '관리자0', '관리자0', 'kkk@223', NULL, '1101', 10000, '식신', 'U', 'SN', NULL);
+INSERT INTO TB_USER (USER_ID, USER_PWD, USER_NAME, NICKNAME, EMAIL, BIRTH, PHONE, GRADE_POINT, GRADE_NAME, AUTHORITY, STATE, DEL_DATE) 
+VALUES ('fgh', '2iykorZhbihHmjcnUjd/I6I2Hh34VdiBrJhzQfg34/Jg9tXWjkDwsfti2Y4zCaNZOxIxTW57kReWQkJnCcXW9Q==', '유저2', '유저2', '123@223', NULL, '111', 100, '종업원', 'U', 'SN', NULL);
+INSERT INTO TB_USER (USER_ID, USER_PWD, USER_NAME, NICKNAME, EMAIL, BIRTH, PHONE, GRADE_POINT, GRADE_NAME, AUTHORITY, STATE, DEL_DATE) 
+VALUES ('user01', 'QpXwdL988wP33Z1R9IWThHwkhgysW82pQsG10A1CPgU8j4piJCrpRwVE+UGsidJ13+XTkIC5GgwBP3nQ+C/J7g==', '유저1', '유저1', '345@223', NULL, '111', 100, '종업원', 'U', 'SN', NULL);
+
+INSERT INTO TB_USER
+VALUES ('admin1', 'WLVETPG2JTpDF/4S2v9BGni9oKlSebHVdo6/XKYIKeeNqUToqRYKC21CjLIT6BNSWnJlDaxnuIh5OU/2JNpILw==', '관리자1', '관리자1', 'admin1@email.com', NULL, '010-0000-0000', 10000, '식신', 'A', DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('admin2', 'Zhu0MUAimtTcPnYue91ozBS7kJPBWMOGvZif6oB6zZvX+AXKRza4cLZXFZTQ2Pz8V7mEMRQ9+3cOCD+pvom8cg==', '관리자2', '관리자2', 'admin2@email.com', NULL, '010-0000-0000', 10000, '식신', 'A', DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('admin3', 'RI2MoHSGJXBlrdNwyH5ho8d4xw1Py124nwEa3jFeepQvszUua97WbE+a3vbzMUWIrOgaoSCWER7jBvpe1ClBgg==', '관리자3', '관리자3', 'admin3@email.com', NULL, '010-0000-0000', 10000, '식신', 'A', DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user02', 'oDgjLYZLUYeuo9TfnVX5u1l3vMj78SSDAB+5YQ4PMJu1/f5RkNPYJmaT1ZnlHlwY3XkohhN7m2DN9V2d3I0XUw==', '양은주', '양은주', 'yang_email@email.com', NULL, '010-0000-0000', 100, '종업원', DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user03', 'HMIijGLWAmge8gulIYLctrdaCjpL32jP/qW26BspQGYJIyNiJvZSG+k2T6q2LchocpJhjNk03ownYxZlsyJ+rw==', '김선호', '선호', 'sh02email@email.com', NULL, '010-0000-0000', DEFAULT, DEFAULT, DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user04', '9Du2VRw2a+O15KTtu3OLCsyhPpnVweZa3F0x9TMpxPh82gnMszYpiRFIgVcldByT5pUpdtqgRLJgrSYGM64LFw==', '강민호', '70억', '7070email@email.com', NULL, '010-0000-0000', DEFAULT, DEFAULT, DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user05', '7KGGRh17eicmgXHQbvS0FwulrhBpuyNygqhhIaws5/bkPxXbi5wSmQTPm+VYBaxU2+Me28XNj7y959G0wBDOlQ==', '유승호', '승호', 'hhhhhs@email.com', NULL, '010-0000-0000', 100, '종업원', DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user06', 'aWaaZHJQP9wwAKYHBh5bMbW5g+6dD+a759pL3aTtGFoNVl08dL18dz9YlvA8arjEJHE1rftVBllBtNgTW0T77g==', '유강남', '팔푼이', '8pun@email.com', NULL, '010-0000-0000', DEFAULT, DEFAULT, DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user07', 'weJjZs9GTgXhaWRfcs5PUapWj4lu2lFuTr5ljxuYgUkSQ+e27hfaqU1o1us51kAf+NPeDCWPmFFH7/7FRn6HCg==', '이민기', '양아치', 'mingii@email.com', NULL, '010-0000-0000', 100, '종업원', DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user08', 'aolHCQdK8Y6mOPsmQXWAQU3F9lLOIE/iZCKpHgGj/XP5FHJ4dEg5N1P+oE47uiVzh0+C9BEQWQLxeBNgVDZzSA==', '나성운', '나씨', 'mr_na@email.com', NULL, '010-0000-0000', DEFAULT, DEFAULT, DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user09', 'cOm5JPTOWPFCMdgcqz334cE5aU0IcsTWFRhG8RoWR9/fcZz8jgCfFZm6AC7tVVMP4KdsnyomB7ESm9PGAlCGCQ==', '강유미', '유미', 'you-mi@email.com', NULL, '010-0000-0000', 100, '종업원', DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user10', 'lJPWDMdFa6tHDGFcbHDT6zsx69+83VK/JC+P3dc4D0r4dCtBz/3M2/TVFky4rJ6VV0784Yo0QtS0560Dq4rv8A==', '신보라', '보라', 'sbra@email.com', NULL, '010-0000-0000', 100, '종업원', DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user11', '5TEoatCsogyc0USgOXkJCp1BlVlw82VOIxqaSbzn36tSdTE86gg8xkLp1VGasuRc5f2MxRitkg0UhqSqDF8PTw==', '강백호', '신인왕', 'sbra@email.com', NULL, '010-0000-0000', 100, '종업원', DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user12', '568Manu/LovUeS94bL0xKQ5+W8lWvmGmjHk9gDx2kXdqfKRy5Kz5ngWBCAUooYvqfpSc0a7y33+q/jZPB7kibg==', '박용택', '에드택', 'sbra@email.com', NULL, '010-0000-0000', 100, '종업원', DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user13', 'eie+ciy5gZ/R9kHGoG/agEzFoaVNI8kzX9lfcOhIve6ttyPV9gJGRXHsK/FD9fVE/hDIFKOPRJ4+MQv47/APEQ==', '정찬헌', '인성0', 'insung_dizim@email.com', NULL, '010-0000-0000', 100, '종업원', DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user14', 'MAfPrkQz+2oOu+VJEdtCzCkzNrm2NG82Bffr2Qv1T++exthh0DdP/ciEmoYsJwYjmG3GgZOKricjL7U9pGm/Dw==', '남궁성', '자바', 'java_jungsuk@email.com', NULL, '010-0000-0000', 100, '종업원', DEFAULT, DEFAULT, NULL);
+INSERT INTO TB_USER
+VALUES ('user15', 'iNecf2EWznXjdOVav+rIc8+qfBs7xQXQLKxhfmxGsJcuiknqgD0eyspzySg08+lXjBsneMt7hRbbsnCEG3pRLg==', '오라클', '컴파일러', 'oracle@email.com', NULL, '010-0000-0000', DEFAULT, DEFAULT, DEFAULT, DEFAULT, NULL);
+
+
+
+--공지사항
+--공지사항번호,작성자,공지사항제목,공지사항내용,공지사항작성일(DEFAULT SYSDATE),원본파일명(NULL),바뀐파일명(NULL),파일개수(NULL)
+
+
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin', '테스트1', '테스트1', SYSDATE, NULL, NULL, 0);
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin', '테스트1', '테스트1', SYSDATE, NULL, NULL, 0);
+INSERT INTO TB_BOARD_NOTICE (NOTICE_NO, USER_ID, NOTICE_TITLE, NOTICE_CONTENTS, NOTICE_DATE, NOTICE_REAL_FILE, NOTICE_RENAME_FILE, FILE_CNT) 
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin', '테스트1', '테스트1', TO_DATE('2018/08/11', 'RR/MM/DD'), NULL, NULL, 0.0);
+INSERT INTO TB_BOARD_NOTICE (NOTICE_NO, USER_ID, NOTICE_TITLE, NOTICE_CONTENTS, NOTICE_DATE, NOTICE_REAL_FILE, NOTICE_RENAME_FILE, FILE_CNT) 
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin', '테스트1', '테스트1', TO_DATE('2018/08/10', 'RR/MM/DD'), NULL, NULL, 0.0);
+INSERT INTO TB_BOARD_NOTICE (NOTICE_NO, USER_ID, NOTICE_TITLE, NOTICE_CONTENTS, NOTICE_DATE, NOTICE_REAL_FILE, NOTICE_RENAME_FILE, FILE_CNT) 
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin', '테스트1', '테스트1', TO_DATE('2018/08/11', 'RR/MM/DD'), NULL, NULL, 0.0);
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin1', '공지사항입니다...', '공지사항 내용입니다...............', DEFAULT, '', '', '');
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin2', '공지사항입니다...', '공지사항 내용입니다...............', DEFAULT, '', '', '');
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin3', '공지사항입니다...', '공지사항 내용입니다...............', DEFAULT, '', '', '');
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin1', '공지사항입니다...', '공지사항 내용입니다...............', DEFAULT, '', '', '');
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin1', '공지사항입니다...', '공지사항 내용입니다...............', DEFAULT, '', '', '');
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin2', '공지사항입니다...', '공지사항 내용입니다...............', DEFAULT, '', '', '');
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin2', '공지사항입니다...', '공지사항 내용입니다...............', DEFAULT, '', '', '');
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin3', '공지사항입니다...', '공지사항 내용입니다...............', DEFAULT, '', '', '');
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin3', '공지사항입니다...', '공지사항 내용입니다...............', DEFAULT, '', '', '');
+INSERT INTO TB_BOARD_NOTICE
+VALUES ('BN'||LPAD(BOARD_NOTICE_SEQ.NEXTVAL, 4, '0'), 'admin1', '공지사항입니다...', '공지사항 내용입니다...............', DEFAULT, '', '', '');
+
+
+
+
+--카테고리삽입
+INSERT INTO TB_CATEGORY (CATEGORY_NO, CATEGORY_FOOD) 
+VALUES ('C1', '커피/디저트');
+INSERT INTO TB_CATEGORY (CATEGORY_NO, CATEGORY_FOOD) 
+VALUES ('C2', '패스트푸드');
+INSERT INTO TB_CATEGORY (CATEGORY_NO, CATEGORY_FOOD) 
+VALUES ('C3', '한식');
+INSERT INTO TB_CATEGORY (CATEGORY_NO, CATEGORY_FOOD) 
+VALUES ('C4', '양식');
+INSERT INTO TB_CATEGORY (CATEGORY_NO, CATEGORY_FOOD) 
+VALUES ('C5', '일식');
+INSERT INTO TB_CATEGORY (CATEGORY_NO, CATEGORY_FOOD) 
+VALUES ('C6', '중식');
+INSERT INTO TB_CATEGORY (CATEGORY_NO, CATEGORY_FOOD) 
+VALUES ('C7', '분식');
+INSERT INTO TB_CATEGORY (CATEGORY_NO, CATEGORY_FOOD) 
+VALUES ('C8', '기타');
+
+
+
+
+--유저리뷰 게시판...게시판 구분 AR: 관리자리뷰/ UR: 유저리뷰
+
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C6', 'admin', 'AR', '서울에서 즐기는 중국! 중국식 볶음면!', '중국 사람들은 면을 참 많이 먹습니다. 밥만큼 먹어요. 아님 말고요. 사진은 너무 맛있게 생긴 촤이니즈누들입니다. 이름은 잘 모루게쏘요 그냥 맛있어 보여서 가져왔어요. 전 계란후라이가 화룡점정같아요.', '<p><img src="/mimi/resources/files/adminboard/201808242030815_sunny-side-up-632217_1280.jpg" style="width: 914px;"></p><p>중국 사람들은 면을 참 많이 먹습니다. 밥만큼 먹어요. 아님 말고요. 사진은 너무 맛있게 생긴 촤이니즈누들입니다. 이름은 잘 모루게쏘요 그냥 맛있어 보여서 가져왔어요. 전 계란후라이가 화룡점정같아요.&nbsp;</p>', TO_DATE('2018/08/01', 'RR/MM/DD'), 0, '중국',	'서울특별시 강남구 논현2동',	'02-4444-5564',	37.52146479145704,	127.03447958828373,	8310,	52,	0,	'링크',	'SN',	'201808242030815_sunny-side-up-632217_1280.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'admin', 'AR', '삼겹살에 소주 한 잔이면 크으으..!', '	한국인의 소울푸드 삼!겹!살! 한국에서 가장 유명한 삽겹살집! 종로 골목에 위치한 퇴근길삼겹살, 팀 MIMI가 직접 방문해봤습니다!입구부터 맛집 포스 풀풀 풍기는 퇴근길삼겹살! 장고의 기다림 끝에 드디어 입성! 육즙 가득한 삼겹살 사진부터 보시죠~크으으..!', '<p><img src="/mimi/resources/files/adminboard/201808242010850_img1.jpg" style="width: 914px;"><br></p><p>한국인의 소울푸드 삼!겹!살! 한국에서 가장 유명한 삽겹살집! 종로 골목에 위치한 퇴근길삼겹살, 팀 MIMI가 직접 방문해봤습니다!</p><p>입구부터 맛집 포스 풀풀 풍기는 퇴근길삼겹살! 장고의 기다림 끝에 드디어 입성! 육즙 가득한 삼겹살 사진부터 보시죠~크으으..!</p>', TO_DATE('2018/08/01', 'RR/MM/DD'), 0, '퇴근길삼겹살',	'서울특별시 종로구 종로1.2.3.4가동',	'02-0202-2020',	37.570663434185185,	126.9851033565888,	1044,	455,	0,	'링크',	'SN',	'201808242010850_img1.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C4', 'admin', 'AR', '한국 프렌치 레스토랑의 시초! 뿌뿌뿌!', '개업 직후부터 업계에 파란을 일으키며 반년간 예약이 꽉찬 그곳!? 뿌뿌뿌!프랑스 파리에 있는 미슐랭1스타 밑에서 7년간 경력을 쌓으시고 한국에 돌아와 서초동에 자리를 잡으신 김띵띵 셰프님이 운영하시는 뿌뿌뿌 레스토랑!', '<p><img src="/mimi/resources/files/adminboard/201808242020840_img3.jpg" style="width: 914px;"><br></p><p><br></p><p>개업 직후부터 업계에 파란을 일으키며 반년간 예약이 꽉찬 그곳!&nbsp; 뿌뿌뿌!프랑스 파리에 있는 미슐랭1스타 밑에서 7년간 경력을 쌓으시고 한국에 돌아와 서초동에 자리를 잡으신 김띵띵 셰프님이 운영하시는 뿌뿌뿌 레스토랑!&nbsp;</p>', TO_DATE('2018/08/03', 'RR/MM/DD'), 0, '유명셰프가한대',	'서울특별시 서초구 서초2동', '02-3348-1245',	37.49638361693517,	127.02297870274916,	15791,	1234,	0,	'링크',	'SN',	'201808242020840_img3.jpg', NULL);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2', 'admin', 'AR', '양념통닭의 본거지! 상도동 엄마닭', '추억의 맛을 지닌 상도동 엄마닭으로 팀 MIMI가 출동했습니다! 엄마닭은 상도동 치킨골목의 터줏대감으로 참 유명하죠?', '<p><img src="/mimi/resources/files/adminboard/201808242020814_img2.jpg" style="width: 914px;"></p><p>추억의 맛을 지닌 상도동 엄마닭으로 팀 MIMI가 출동했습니다! 엄마닭은 상도동 치킨골목의 터줏대감으로 참 유명하죠?&nbsp;</p>', TO_DATE('2018/08/05', 'RR/MM/DD'), 0, '엄마닭',	'서울특별시 동작구 상도4동',	'02-123-1234',	37.50119822082732,	126.93657833026259,	1530,	130,	0,	'링크',	'SN',	'201808242020814_img2.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C8', 'admin', 'AR', '퓨전볶음밥 제대로 즐기자!', 'SNS 하시는 분이라면 모를 수 없는 불광동 볶음밥! 떠오르는 강자! 퓨전 음식계의 신예 칠리새우소시지토마토파슬리볶음밥~! 이름이 이게 맞나 모르겠네요 허허^^...', '<p><img src="/mimi/resources/files/adminboard/201808242020800_img4.jpg" style="width: 914px;"></p><p>SNS 하시는 분이라면 모를 수 없는 불광동 볶음밥! 떠오르는 강자! 퓨전 음식계의 신예 칠리새우소시지토마토파슬리볶음밥~! 이름이 이게 맞나 모르겠네요 허허^^...</p>', TO_DATE('2018/08/07', 'RR/MM/DD'), 0, '볶음밥',	'서울특별시 은평구 불광2동',	'02-1313-5462',	37.62045420586108,	126.92168386500192,	5712,	90,	0,	'링크',	'SN',	'201808242020800_img4.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2', 'admin', 'AR', '금요일 밤에는 역시 치킨!!', '금요일 밤에는 역시 치킨!!	아무리 먹어도 질리지 않는 음식이 어디있겠어 질리지. 벌써 물린다 기름냄새. 근데 지금은 좀 먹고싶네. 맛있겠다. 배고프다..', '<p><img src="/mimi/resources/files/adminboard/201808242020806_img6.jpg" style="width: 914px;"></p><p>아무리 먹어도 질리지 않는 음식이 어디있겠어 질리지. 벌써 물린다 기름냄새. 근데 지금은 좀 먹고싶네. 맛있겠다. 배고프다..</p>', TO_DATE('2018/08/10', 'RR/MM/DD'), 0, '질리는치킨',	'서울특별시 서초구 양재2동',	'02-7878-9999',	37.47381651016893,	127.0437278002316,	88402,	150,	0,	'링크',	'SN',	'201808242020806_img6.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C5', 'admin', 'AR', '한국에서 즐기는 일본의 맛!', '한국에서 즐기는 일본의 맛!	북한산 산중에 있는 라멘집~! 은 뻥이에요 없어 북한산에는 그런집. 일본식 라면 그냥 돼지고기국물맛 별로 특별한거 없음...양이 너무 적어서 싫어..', '<p><img src="/mimi/resources/files/adminboard/201808242020837_japanese-food-2199962_1280.jpg" style="width: 914px;"></p><p>북한산 산중에 있는 라멘집~! 은 뻥이에요 없어 북한산에는 그런집. 일본식 라면 그냥 돼지고기국물맛 별로 특별한거 없음...양이 너무 적어서 싫어..</p>', TO_DATE('2018/08/12', 'RR/MM/DD'), 0, '저는혐일입니다',	'서울특별시 은평구 불광1동',	'02-131-3333',	37.61188196818496,	126.94721006393014,	4670,	330,	0,	'링크',	'SN',	'201808242020837_japanese-food-2199962_1280.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C6', 'admin', 'AR', '진한 육즙이 터져나오는 소룡포!', '개인적으로 내 소울푸드다...너무맛있어서 중국에서 이거 먹으려고 일행이랑 따로 떨어져서 혼자 돌아다님..중국은 혼밥하는 사람 되게 많아서 혼자 주문해도 2인이상 뭐 그런거 없음 개좋아', '<p><img src="/mimi/resources/files/adminboard/201808242030809_dumplings-503775_1280.jpg" style="width: 914px;"></p><p>개인적으로 내 소울푸드다...너무맛있어서 중국에서 이거 먹으려고 일행이랑 따로 떨어져서 혼자 돌아다님..중국은 혼밥하는 사람 되게 많아서 혼자 주문해도 2인이상 뭐 그런거 없음 개좋아</p>', TO_DATE('2018/08/15', 'RR/MM/DD'), 0, '소룡포맛집',	'서울특별시 강남구 청담동',	'02-4646-2215', 37.52542456848377,	127.04778526129503,	1310,	250,	0,	'링크',	'SN',	'201808242030809_dumplings-503775_1280.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2', 'admin', 'AR', '로보캅이 좋아하는 음식, 윙~치킨', '로보캅이 좋아하는 음식, 윙~치킨	나도 더이상 드립이 떠오르지 않아. 윙치킨이던 위윙치킨이던 그냥 맛있으니까 넘어갔으면 좋겠다. ㅎㅎ 제발요 히히힣ㅎㅎ', '<p><img src="/mimi/resources/files/adminboard/201808242020846_img5.jpg" style="width: 914px;"></p><p>나도 더이상 드립이 떠오르지 않아. 윙치킨이던 위윙치킨이던 그냥 맛있으니까 넘어갔으면 좋겠다. ㅎㅎ 제발요 히히힣ㅎㅎ</p>', TO_DATE('2018/08/20', 'RR/MM/DD'), 0, '윙치킨',	'서울특별시 종로구 교남동',	'02-333-5757',	37.57358598229138,	126.96044764050873,	8885,	80,	0,	'링크',	'SN',	'201808242020846_img5.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'admin', 'AR', '비 오는 날에는? 부침개!', '비오는 날, 부침개 부치는 소리... 이보다 낭만적인 구절이 있을까요. 있다고 봅니다. 부침개 부칠 때 기름냄새 너무 심해요. 집에서 부치기 싫어...나가서 사드세요. 종로에 많을듯.', '<p><img src="/mimi/resources/files/adminboard/201808242030850_kimchi-pizza-1346285_1280.jpg" style="width: 914px;"></p><p>비오는 날, 부침개 부치는 소리... 이보다 낭만적인 구절이 있을까요. 있다고 봅니다. 부침개 부칠 때 기름냄새 너무 심해요. 집에서 부치기 싫어...나가서 사드세요. 종로에 많을듯.</p>', TO_DATE('2018/08/21', 'RR/MM/DD'), 0, '기자촌',	'서울특별시 은평구 진관동',	'02-4567-7894',	37.63297611435402,	126.93341898247132,	6750,	310,	0,	'링크',	'SN',	'201808242030850_kimchi-pizza-1346285_1280.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C1', 'admin', 'AR', '혜화동의 포슬포슬~한 팬케익!', '메이플시럽이 듬뿍 올라간 포슬포슬한 펜케익! 그 위에 산딸기까지 올리면 증말 맛있겠다. 그쳐? 산딸기가 시면 안돼. 얼어있어도 안돼. 방금 딴 싱싱한 산딸기여야해. 아님 꺼져주라', '<p><img src="/mimi/resources/files/adminboard/201808242030844_pancake-1984716_1280.jpg" style="width: 914px;"></p><p>메이플시럽이 듬뿍 올라간 포슬포슬한 펜케익! 그 위에 산딸기까지 올리면 증말 맛있겠다. 그쳐? 산딸기가 시면 안돼. 얼어있어도 안돼. 방금 딴 싱싱한 산딸기여야해. 아님 꺼져주라</p>', TO_DATE('2018/08/22', 'RR/MM/DD'), 0, '혜화동이네',	'서울특별시 종로구 혜화동',	'02-7878-1212', 37.5895131195994,	126.99669383233723,	7512,	750,	0,	'링크',	'SN',	'201808242030844_pancake-1984716_1280.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'admin', 'AR', '여기..모르시는 분 있나요...?', '장인이 무려 10000번 칼로 두드려 탄생한 떡갈비. 정성이 듬뿍 들어간 만큼 맛도 죽이길 바랍니다. 떡갈비 두 장이면 밥 한공기 뚝딱이죠. 아님 말고요.', '<p><img src="/mimi/resources/files/adminboard/201808242030816_korean-tteokgalbi-751205_1280.jpg" style="width: 914px;"></p><p>장인이 무려 10000번 칼로 두드려 탄생한 떡갈비. 정성이 듬뿍 들어간 만큼 맛도 죽이길 바랍니다. 떡갈비 두 장이면 밥 한공기 뚝딱이죠. 아님 말고요.&nbsp;</p>', TO_DATE('2018/08/24', 'RR/MM/DD'), 0, '떡갈비',	'서울특별시 은평구 진관동',	'02-0202-0202',	37.63646279818138,	126.91882333365083,	14640,	1081,	0,	'링크',	'SN',	'201808242030816_korean-tteokgalbi-751205_1280.jpg', NULL);
+
+
+
+
+
+
+---
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'user01', 'UR', '역삼 새마을식당 개존맛', '열탄불고기 개존맛ㅋㅋㅋ 믿고 먹는 백종원임ㅋㅋㅋ근데 4인분은 먹어야 고기 먹은 느낌이 남게다가 고기가 기름종이마냥 얇아서 타니까 빨리 먹어야 함배가 안 차서 시킨 7분 김치찌개도 ㄹㅇ 개존맛역삼 새마을식당은 입구가 반지하라서? 술먹고 올라가다 자빠지기 십상임12시 폐점이라 11시부터 눈치 오지게 줌ㅋㅋㅋㅋ이거 뺴고 다 ㄱㅊㄱㅊ', '<p></p><p><br></p><p><img src="/mimi/resources/files/userboard/201808240010849_KakaoTalk_20161024_163645027.jpg" style="width: 914px;"></p><p>열탄불고기 개존맛ㅋㅋㅋ 믿고 먹는 백종원임ㅋㅋㅋ</p><p>근데 4인분은 먹어야 고기 먹은 느낌이 남</p><p>게다가 고기가 기름종이마냥 얇아서 타니까 빨리 먹어야 함</p><p><br></p><p><br></p><p><br></p><p><img src="/mimi/resources/files/userboard/201808240010849_232BB24C57158D3F28.jpg" style="width: 820px;"></p><p>배가 안 차서 시킨 7분 김치찌개도 ㄹㅇ 개존맛</p><p><br></p><p>역삼 새마을식당은 입구가 반지하라서&nbsp; 술먹고 올라가다 자빠지기 십상임</p><p>12시 폐점이라 11시부터 눈치 오지게 줌ㅋㅋㅋㅋ</p><p>이거 뺴고 다 ㄱㅊㄱㅊ</p>', TO_DATE('2018/07/01', 'RR/MM/DD'), 0, '새마을식당 역삼점', '서울특별시 강남구 역삼1동', '02-556-1587', 37.49858810252488, 127.03510235698243, 3578, 235, 0, '링크', 'SN', '201808240010849_KakaoTalk_20161024_163645027.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'user02', 'UR', '가성비가 내리는 착한돼지', '돼지고기 무한리필집인데 주말인데도 사람이 별로 없음..양념고기가 맛있음 양념 목살ㅋㅋ곱창이 고무호스같았음 먹지마 제발 이 글을 본다면 곱창은 먹지마 제발제발...ㅜㅜ그..모냐...그.....인당 천원 추가하면 음료도 무한리필임14900원? 이었던거 같은데 여튼 개쌈가성비 쏟아지는 대신 돼지냄새도 많이 남...', '<p><img src="/mimi/resources/files/userboard/201808240020805_KakaoTalk_20180828_015531155.jpg" style="width: 914px;"></p><p>돼지고기 무한리필집인데 주말인데도 사람이 별로 없음..</p><p>양념고기가 맛있음 양념 목살ㅋㅋ</p><p>곱창이 고무호스같았음 먹지마 제발 이 글을 본다면 곱창은 먹지마 제발제발...ㅜㅜ</p><p>그..모냐...그.....</p><p>인당 천원 추가하면 음료도 무한리필임</p><p><br></p><p>14900원? 이었던거 같은데 여튼 개쌈</p><p>가성비 쏟아지는 대신 돼지냄새도 많이 남...</p><p><br></p>', TO_DATE('2018/07/03', 'RR/MM/DD'), 0, '착한돼지', '서울특별시 강남구 역삼1동', '02-556-1113', 37.501787039931344, 127.03384852985131, 1298, 29, 0, '링크', 'SN', '201808240020805_KakaoTalk_20180828_015531155.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'user03', 'UR', '곱창고', '땡볕에 20분 웨이팅 개빡쳤는데 한입 먹고 사르르 풀림조오오오온ㄴㄴㄴ맛우리는 무한리필 말고 그냥 시켜 먹음사람 많다고 개별주문 안되고 모둠만 가능', '<p><img src="/mimi/resources/files/userboard/201808240020853_KakaoTalk_20180828_015630123.jpg" style="width: 720px;"></p><p>땡볕에 20분 웨이팅 개빡쳤는데 한입 먹고 사르르 풀림</p><p>조오오오온ㄴㄴㄴ맛</p><p>우리는 무한리필 말고 그냥 시켜 먹음</p><p>사람 많다고 개별주문 안되고 모둠만 가능</p><p><br></p>', TO_DATE('2018/07/04', 'RR/MM/DD'), 0, '곱창고', '서울특별시 강남구 역삼1동', '02-556-1587', 37.502066367879195, 127.03379210958198, 3448, 149, 0, '링크', 'SN', '201808240020853_KakaoTalk_20180828_015630123.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C1', 'user04', 'UR', '알바가 만들다가 본인 싸가지도 블렌더에 같이 갈아버린 카페', '집에서 나도 만들 수 있을 거 같은 그런맛사진에 보이는 바로 그맛임 특별한거 1도 없음ㅋ걍 니가 아는 그 맛카운터 남알바생 개싸가지', '<p><img src="/mimi/resources/files/userboard/201808240020834_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhs91xT.jpg" style="width: 720px;"></p><p>집에서 나도 만들 수 있을 거 같은 그런맛</p><p>사진에 보이는 바로 그맛임 특별한거 1도 없음ㅋ</p><p>걍 니가 아는 그 맛</p><p>카운터 남알바생 개싸가지</p>', TO_DATE('2018/07/05', 'RR/MM/DD'), 0, '커피집나무', '서울특별시 강남구 삼성2동', '02-223-7342', 37.505313119516366, 127.05030582653288, 13578, 345, 0, '링크', 'SN', '201808240020834_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhs91xT.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C5', 'user05', 'UR', '역삼역 주변에 저렴하고 괜찮은 일식집~!', '모밀 양도 겁나 많고 맛도 괜찮아여사이드로 샐러드랑 초밥 2개 주는데 맛있어요가게가 좀 작은데 주변 회사사람들이 다들 포장 많이 해가는 듯?암튼 친절하고 싸고 좋아여 추천~!!', '<p><img src="/mimi/resources/files/userboard/201808240020810_KakaoTalk_20180828_015723535.jpg" style="width: 665px;"></p><p>모밀 양도 겁나 많고 맛도 괜찮아여</p><p>사이드로 샐러드랑 초밥 2개 주는데 맛있어요</p><p>가게가 좀 작은데 주변 회사사람들이 다들 포장 많이 해가는 듯?</p><p>암튼 친절하고 싸고 좋아여 추천~!!</p>', TO_DATE('2018/07/05', 'RR/MM/DD'), 0, '회파는초밥집', '서울특별시 강남구 역삼1동', '02-556-1587', 37.497624638420966, 127.03297588856162, 1238, 15, 0, '링크', 'SN', '201808240020810_KakaoTalk_20180828_015723535.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'user06', 'UR', '여기 성게알 국수 진~~~~~~짜 맛있음', 'ㅇ여기 성게알국수 맛있당ㅇ되게 허름한데 사람도 많ㄷ러ㅏ 주변 사람들만 아는 맛집인가봐ㅏ넘 작아서 술마시고 오래 있긴 좀 그럼...ㅜㅜ내친구는 비려서 잘 못먹던데 난 개존맛이엇음', '<p><img src="/mimi/resources/files/userboard/201808240020855_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsk1xv.jpg" style="width: 914px;">ㅇ여기 성게알국수 맛있당ㅇ</p><p>되게 허름한데 사람도 많ㄷ러ㅏ 주변 사람들만 아는 맛집인가봐ㅏ</p><p>넘 작아서 술마시고 오래 있긴 좀 그럼...ㅜㅜ</p><p>내친구는 비려서 잘 못먹던데 난 개존맛이엇음</p><p><br></p><p><br></p><p><br></p>', TO_DATE('2018/07/06', 'RR/MM/DD'), 0, '김할머니국수', '서울특별시 강남구 역삼1동', '02-556-1587', 37.495615716354756, 127.03179894198271, 2328, 41, 0, '링크', 'SN', '201808240020855_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsk1xv.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C5', 'user07', 'UR', '이치란 ㄱㅊ', '쪽국놈들 맛', '<p><img src="/mimi/resources/files/userboard/201808240020821_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsvQFH.jpg" style="width: 914px;"></p><p>쪽국놈들 맛</p>', TO_DATE('2018/07/08', 'RR/MM/DD'), 0, '이치란', '서울특별시 강남구 역삼1동', '02-222-2287', 37.50549797796163, 127.03781994181034, 3578, 243, 0, '링크', 'SN', '201808240020821_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsvQFH.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'user08', 'UR', '동문시장에 있는,, 남해수산,,,회,,, 추천합니다,,,', '주문하면,,사장님이 눈앞에서,,슥슥 쓸어줍니다,,,탱글탱글,,,아주 맛잇읍니다,,,,회가 고소하기 까지 합니다,,ㅋㅋ,,사진은 방어회,,입니다,ㅋ,,귀한 거라,,,못드셔 보신분들,ㅋ,,많을듯,,ㅋㅋ,,앉아 먹을 수 있는 매장은 업는게 흠이지만,,,ㅋ,,,맛은 조으니 강.렷.추.천. 합니다,,ㅋ', '<p></p><p>주문하면,,사장님이 눈앞에서,,슥슥 쓸어줍니다,,,</p><p>탱글탱글,,,아주 맛잇읍니다,,,,회가 고소하기 까지 합니다,,ㅋㅋ,,</p><p><img src="/mimi/resources/files/userboard/201808240020814_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsck8N.jpg" style="width: 50%;"><br></p><p>사진은 방어회,,입니다,ㅋ,,귀한 거라,,,못드셔 보신분들,ㅋ,,많을듯,,ㅋㅋ,,</p><p><br></p><p>앉아 먹을 수 있는 매장은 업는게 흠이지만,,,ㅋ,,,</p><p>맛은 조으니 강.렷.추.천. 합니다,,ㅋ</p>', TO_DATE('2018/08/22', 'RR/MM/DD'), 0, '남해수산', '서울특별시 강남구 역삼2동', '02-135-8459', 37.49342358205079, 127.04057299720937, 278, 35, 0, '링크', 'SN', '201808240020814_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsck8N.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C1', 'user09', 'UR', '얼그레이 케익 맛있는 카페~!', '저 원래 얼그레이 덕후라 다 좋아하는데 이건 진짜 맛있음내 인생케익 ㅠㅠ', '<p><img src="/mimi/resources/files/userboard/201808240020818_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsEEg1.jpg" style="width: 640px;"></p><p>저 원래 얼그레이 덕후라 다 좋아하는데 이건 진짜 맛있음</p><p>내 인생케익 ㅠㅠ</p>', TO_DATE('2018/07/08', 'RR/MM/DD'), 0, '알베르', '서울특별시 서초구 서초4동', '02-556-1587', 37.49876176374542, 127.02546736198536, 3278, 95, 0, '링크', 'SN', '201808240020818_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsEEg1.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'user10', 'UR', '새우구이에 술이 술술 들어감', '버터에 생새우 구워먹음야외라 벌레천국', '<p><img src="/mimi/resources/files/userboard/201808240020844_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhssh1L.jpg" style="width: 50%;"></p><p>버터에 생새우 구워먹음</p><p>야외라 벌레천국</p>', TO_DATE('2018/07/09', 'RR/MM/DD'), 0, '불닭볶음탕면', '서울특별시 강남구 역삼2동', '02-555-1587', 37.49872154680299, 127.04044015827033, 178, 2, 0, '링크', 'SN', '201808240020844_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhssh1L.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2', 'user11', 'UR', '봉구비어ㅓ 갬zㅏ티김이랑 치z스틱', '말해뭐해 그맛이지', '<p><img src="/mimi/resources/files/userboard/201808240020809_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsQckV.jpg" style="width: 640px;"></p><p>말해뭐해 그맛이지</p>', TO_DATE('2018/07/11', 'RR/MM/DD'), 0, '봉구비어', '서울특별시 강남구 역삼1동', '02-236-1287', 37.50268803583077, 127.03388286469539, 1578, 5, 0, '링크', 'SN', '201808240020809_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsQckV.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'user12', 'UR', '전복 한상', '밑반찬도 되게 많았는데 밥이 제일 맛있었음임연수 구인가?? 생선 겁나 짜', '<p><img src="/mimi/resources/files/userboard/201808240020844_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsdYrf.jpg" style="width: 50%;"></p><p>밑반찬도 되게 많았는데 밥이 제일 맛있었음</p><p>임연수 구인가?? 생선 겁나 짜</p>', TO_DATE('2018/07/12', 'RR/MM/DD'), 0, '전복전문점', '서울특별시 강남구 역삼1동', '02-156-1581', 37.50340671455183, 127.04062363677293, 1378, 18, 0, '링크', 'SN', '201808240020844_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsdYrf.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'user13', 'UR', '돼지냄새 안나는 맛있는 고기집', '취해서 잘 기억 안나는데 맛있었음된장찌개 가운데에서 눈치없게 걸리적거림ㅡㅡ', '<p><img src="/mimi/resources/files/userboard/201808240020819_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsMlDX.jpg" style="width: 50%;"></p><p>취해서 잘 기억 안나는데 맛있었음</p><p>된장찌개 가운데에서 눈치없게 걸리적거림ㅡㅡ</p>', TO_DATE('2018/07/15', 'RR/MM/DD'), 0, '돼지꿀꿀', '서울특별시 강남구 역삼2동', '02-323-2387', 37.50066662654375, 127.04351727209108, 124, 5, 0, '링크', 'SN', '201808240020819_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsMlDX.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C4', 'user14', 'UR', '가격, 양, 맛 뭐 하나 안빠지는 창렬 개창렬', '누가 사준다고해서 다신 안 감여길 도대체 왜 기다려서 먹음?? 도라이인가??', '<p><img src="/mimi/resources/files/userboard/201808240020859_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsqCJj.jpg" style="width: 50%;"></p><p><br></p><p>누가 사준다고해서 다신 안 감</p><p>여길 도대체 왜 기다려서 먹음?? 도라이인가??</p>', TO_DATE('2018/07/16', 'RR/MM/DD'), 0, '스텔라', '서울특별시 강남구 역삼1동', '02-123-2532', 37.49504833399206, 127.0308488113568, 3578, 275, 0, '링크', 'SN', '201808240020859_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsqCJj.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C3', 'user01', 'UR', '해산물 좋아하시는분 여기 꼭 가보세요~~', '해산물 진짜 싱싱하고 좋아요 강추~!비싼 값 하네요^^사람 많아서 기다려야하니까 예약하고 가시는게 좋을거에요~', '<p><img src="/mimi/resources/files/userboard/201808240030800_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsDh0B.jpg" style="width: 640px;"></p><p>해산물 진짜 싱싱하고 좋아요 강추~!</p><p>비싼 값 하네요^^</p><p>사람 많아서 기다려야하니까 예약하고 가시는게 좋을거에요~</p>', TO_DATE('2018/07/19', 'RR/MM/DD'), 0, '바이킹스', '서울특별시 서초구 서초2동', '02-236-1234', 37.4967436915979, 127.02460723287587, 3578, 245, 0, '링크', 'SN', '201808240030800_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsDh0B.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C8', 'user02', 'UR', '둘이서 배고프게 먹을 수 있는 타코집', '저거 하나 시키면 둘이서 배고프게 먹을 수 있음타코 리필도 해주는데? 낱장씩 가져다줌장난하나?', '<p><img src="/mimi/resources/files/userboard/201808240030846_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhs5IWZ.jpg" style="width: 914px;"></p><p>저거 하나 시키면 둘이서 배고프게 먹을 수 있음</p><p>타코 리필도 해주는데&nbsp; 낱장씩 가져다줌</p><p>장난하나?</p><p><br></p>', TO_DATE('2018/07/20', 'RR/MM/DD'), 0, '감성타코', '서울특별시 서초구 서초2동', '02-136-1587', 37.495734050844405, 127.02695903185888, 378, 24, 0, '링크', 'SN', '201808240030846_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhs5IWZ.jpg', NULL);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C5', 'user03', 'UR', '레드락 로스트비프동..', '고기 누린내도 없고.. 나름 괜춘...근데 1시간 기다릴 맛은 아님;;여긴 진짜 인스타용으로 딱임', '<p><img src="/mimi/resources/files/userboard/201808240030805_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsucnf.jpg" style="width: 50%;"></p><p>고기 누린내도 없고.. 나름 괜춘...</p><p>근데 1시간 기다릴 맛은 아님;;</p><p>여긴 진짜 인스타용으로 딱임</p><p><br></p>', TO_DATE('2018/07/22', 'RR/MM/DD'), 0, '레드락', '서울특별시 강남구 역삼1동', '02-556-1233', 37.50059763747973, 127.03410810112914, 578, 25, 0, '링크', 'SN', '201808240030805_KakaoTalk_Moim_5MJEXgjTuk9oEAGVuJvPqIGIhsucnf.jpg', NULL);
+
+------------------
+
+-- 카페/디저트(C1)
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C1',	'user07',	'UR',	'아.. 매뉴팩트 커피 진짜 맛있어요..!!',	'원래 음료는 빨리 마셔버리는 편인데,여기 커피는 진짜 쪼오금음씩 음미하며 마셨습니다!',	'<p><img src="/mimi/resources/files/userboard/201808241020854_카페1.jpg" style="width: 512px;"></p><br><p>원래 음료는 빨리 마셔버리는 편인데,</p><br><p>여기 커피는 진짜 쪼오금음씩 음미하며 마셨습니다!</p>',	'18/08/29',	0,	'매뉴팩트커피',	'서울 강남구 신사동 649-8',	'02-3442-0914',	37.5253837915211,	127.035694123198,	1,	0,	0,	'링크',	'SN',	'201808241020854_카페1.jpg',	 null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C1',	'user07',	'UR',	'전혀 기대안했는데 맛있었다',	'맛도 좋고 질감도 정말 취향저격.가운데 잼이 상큼하면서 씁쓸해서 좋았다.',	'<p><img src="/mimi/resources/files/userboard/201808241020804_카페2.jpg" style="width: 512px;"></p><br><p>맛도 좋고 질감도 정말 취향저격.</p><br><p>가운데 잼이 상큼하면서 씁쓸해서 좋았다.<br></p>',	'18/08/29',	0,	'트레플유오',	'서울 강남구 대치동 935-10',	'02-561-6565',	37.49829085715978,	127.05476255678221,	0,	0,	0,	'링크',	'SN',	'201808241020804_카페2.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C1',	'user07',	'UR',	'가볍게 브런치하기 딱 좋은 곳',	'사람이 정말 많네요. 웨이팅까지 있어요.아보카도오렌지볼, 소시지오믈렛, 플랫빈센트, 모카크라우드 샐러드도 신선하고 아보카도도 후숙이 잘 되었네요.',	'<p><img src="/mimi/resources/files/userboard/201808241020842_카페3.jpg" style="width: 512px;"></p><br><p>사람이 정말 많네요. 웨이팅까지 있어요.</p><br><p>아보카도오렌지볼, 소시지오믈렛, 플랫빈센트, 모카크라우드 샐러드도 신선하고 아보카도도 후숙이 잘 되었네요.<br></p>',	'18/08/29',	0,	'카페413프로젝트',	'서울 강남구 역삼동 640-9',	'070-7798-0544',	37.5023544936241,	127.034470798439,	15230,	320,	0,	'링크',	'SN',	'201808241020842_카페3.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C1',	'user07',	'UR',	'조용하고 책도 많고 제가 좋아하는 적당히 어두운 분위기라 더 좋았어요',	'치즈케이크 색깔이 너무 샛노랗고 예쁘길래 다이어트 중이란 사실 까먹고 저도 모르게 시켜버렸어요.근데 안시켰음 어쩔뻔 ㅠㅠㅠ 진짜 맛있었어요.',	'<p><img src="/mimi/resources/files/userboard/201808241020827_카페4.jpg" style="width: 512px;"></p><br><p>치즈케이크 색깔이 너무 샛노랗고 예쁘길래 다이어트 중이란 사실 까먹고 저도 모르게 시켜버렸어요.</p><br><p>근데 안시켰음 어쩔뻔 ㅠㅠㅠ 진짜 맛있었어요.<br></p>',	'18/08/29',	0,	'빈브라더스 강남점',	'서울 강남구 역삼동 819-1',	'02-568-8192',	37.4993178791053,	127.028557131114,	0,	0,	0,	'링크',	'SN',	'201808241020827_카페4.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C1',	'user08',	'UR', '플라워토스트 하나만으로 여길 가볼만하다 라고 생각하게 되는 카페',	'플라워토스트 하나만으로 여길 가볼만하다 라고 생각하게 되는 카페. 물론 커피도 맛있다.아몬드 라떼가 기분좋은 신선함으로 다가왔다.',	'<p><img src="/mimi/resources/files/userboard/201808241020851_카페5.jpg" style="width: 512px;"></p><br><p>플라워토스트 하나만으로 여길 가볼만하다 라고 생각하게 되는 카페. 물론 커피도 맛있다.</p><br><p>아몬드 라떼가 기분좋은 신선함으로 다가왔다.<br></p>',	'18/08/29',	0,	'이스트덜위치',	'서울 강남구 대치동 916-73',	'02-6369-1319',	37.5001192096966,	127.055477330601,	1,	0,	0,	'링크',	'SN',	'201808241020851_카페5.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C1',	'user08',	'UR',	'늘 앞에만 지나다니던 랩오에서 잠깐 커피 한잔 했습니다!',	'가족 식사 후 디저트 먹으러 무작정 들어간 곳 알고봤더니 오리온에서 운영하는 초코파이 전문점이였네요.초코파이 전문이라 주문해본 초코파이 시판 초코파이하고는 레벨이 다른 부드러움과 진한 초코렛 코팅은 유명하다고 하는 그 어떤 초코파이보다 맛있네요.',	'<p><img src="/mimi/resources/files/userboard/201808241020842_카페6.jpg" style="width: 512px;"></p><br><p>가족 식사 후 디저트 먹으러 무작정 들어간 곳 알고봤더니 오리온에서 운영하는 초코파이 전문점이였네요.</p><br><p>초코파이 전문이라 주문해본 초코파이 시판 초코파이하고는 레벨이 다른 부드러움과 진한 초코렛 코팅은 유명하다고 하는 그 어떤 초코파이보다 맛있네요.</p>',	'18/08/29',	0,	'랩오 압구정점',	'서울 강남구 논현동 91-6',	'02-544-8373',	37.5215780284244,	127.035457015993,	1,	0,	0,	'링크',	'SN',	'201808241020842_카페6.jpg	', null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C1',	'user08',	'UR',	'로마의 아이스크림을 강남역에서!',	'네가지 맛으로 둘이 같이 먹으니 양이 딱 좋았어요. 과일 맛 나는 상큼한 종류가 인기가 많고 종류도 다양하더라구요!개인적으로는 밤꿀? 이 제일 맛있었고 쫀득해서 좋았고, 귤이랑 베리류도 맛있었어요!',	'<p><img src="/mimi/resources/files/userboard/201808241020812_카페7.jpg" style="width: 512px;"></p><br><p>네가지 맛으로 둘이 같이 먹으니 양이 딱 좋았어요. 과일 맛 나는 상큼한 종류가 인기가 많고 종류도 다양하더라구요!</p><br><p>개인적으로는 밤꿀? 이 제일 맛있었고 쫀득해서 좋았고, 귤이랑 베리류도 맛있었어요!<br></p>',	'18/08/29',	0,	'지올리띠 강남직영점',	'서울 강남구 역삼동 601-1',	'02-563-3364',	37.5046452568339,	127.025813174126,	1,	0,	0,	'링크',	'SN',	'201808241020812_카페7.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C1',	'user08',	'UR',	'날씨 좋은날 창가에 앉으면 너무 좋은 곳!',	'미국의 유명한 원두를 가져다 쓴다던데 커피가 엄청 고소하고 맛있다.커피에 비해 저렴한 팬케이크도 맛있다.',	'<p><img src="/mimi/resources/files/userboard/201808241020805_카페8.jpg" style="width: 50%;"></p><br><p>미국의 유명한 원두를 가져다 쓴다던데 커피가 엄청 고소하고 맛있다.</p><br><p>커피에 비해 저렴한 팬케이크도 맛있다.<br></p>',	'18/08/29',	0,	'더팬케이크에피데믹 서울',	'서울 강남구 신사동 645-24',	'02-3445-4525',	37.5260000536292,	127.035771344439,	1,	0,	0,	'링크',	'SN',	'201808241020805_카페8.jpg	', null);
+
+-- 패스트푸드(C2)
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2',	'user10',	'UR',	'매장이 넓기도하고 2층이 탁 트여있어서 좋아요',	'사람도 바글바글한 게 아니라 조용하게 먹기 좋은 것 같아요.햄버거도 맛있음!! 역시 버거킹!!',	'<p><img src="/mimi/resources/files/userboard/201808241070858_패스트푸드1.jpg" style="width: 512px;"></p><br><p>사람도 바글바글한 게 아니라 조용하게 먹기 좋은 것 같아요.</p><br><p>햄버거도 맛있음!! 역시 버거킹!!<br></p>',	'18/08/29',	0,	'버거킹 선릉역점',	'서울 강남구 역삼동 708-36',	'02-3452-0377', 37.5032033492197,	127.049395131643,	4,	0,	0,	'링크',	'SN',	'201808241070858_패스트푸드1.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2',	'user10',	'UR',	'한입 물었을 때 적당히 육즙이 묻어나고 부드러운 식감이 느껴지네요',	'뉴욕에서 수제버거 먹던 기억에 가봤는데, 맛이 전혀 뒤지지 않아요!!가격대는 조금 있어도 돈 쓸만 합니다!!',	'<p></p><br><p><img src="/mimi/resources/files/userboard/201808241080828_패스트푸드2.jpg" style="width: 480px;"></p><br><p>뉴욕에서 수제버거 먹던 기억에 가봤는데, 맛이 전혀 뒤지지 않아요!!</p><br><p>가격대는 조금 있어도 돈 쓸만 합니다!!</p>',	'18/08/29',	0,	'브루클린더버거조인트 가로수길점',	'서울 강남구 신사동 540-11',	'02-545-0718',	37.5190688966562,	127.024094217652,	1232,	40,	0,	'링크',	'SN',	'201808241080828_패스트푸드2.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2',	'user10',	'UR',	'고기 패티가 퍽퍽하지 않고 육즙이 살아있어서 좋았어요',	'너무 맛있었어요!!! 고기 패티가 퍽퍽하지 않고 육즙이 살아있어서 좋았어요.양파랑 아보카도가 넉넉히 들어가 있어서 질리지 않게 계속 먹을 수 있었어요ㅠㅡㅠ오랜만에 즐거운 식사 시간이었습니다.',	'<p><img src="/mimi/resources/files/userboard/201808241080813_패스트푸드3.jpg" style="width: 50%;"></p><br><p>너무 맛있었어요!!! 고기 패티가 퍽퍽하지 않고 육즙이 살아있어서 좋았어요.</p><br><p>양파랑 아보카도가 넉넉히 들어가 있어서 질리지 않게 계속 먹을 수 있었어요ㅠㅡㅠ오랜만에 즐거운 식사 시간이었습니다.<br></p>',	'18/08/29',	0,	'다운타우너 청담점',	'서울 강남구 신사동 666-25',	'070-8860-3696',	37.524063818054,	127.038575942978,	2,	0,	0,	'링크',	'SN',	'201808241080813_패스트푸드3.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2',	'user10',	'UR',	'카페마마스 양도 많고 맛도 괜찮아요!',	'처음엔 워낙 밖에서 사먹는 샐러드 가격들이 비싸고 양이 적어서 여기도 그럴 줄 알았는데 양 엄청나요!특히 닭가슴살 진짜 큰 거 통째로 넣어주시는 거 같아서 혼자 다 못 먹었어요ㅠㅠ그리고 파니니는 정말 치즈가 살살 녹아서 너무 맛있었어요ㅠㅠ',	'<p><img src="/mimi/resources/files/userboard/201808241080840_패스트푸드4.jpg" style="width: 740px;"></p><br><p>처음엔 워낙 밖에서 사먹는 샐러드 가격들이 비싸고 양이 적어서 여기도 그럴 줄 알았는데 양 엄청나요!</p><br><p>특히 닭가슴살 진짜 큰 거 통째로 넣어주시는 거 같아서 혼자 다 못 먹었어요ㅠㅠ</p><br><p>그리고 파니니는 정말 치즈가 살살 녹아서 너무 맛있었어요ㅠㅠ<br></p>',	'18/08/29',	0,	'카페마마스 역삼점',	'서울 강남구 역삼동 738-6',	'02-538-1280',	37.499030850275,	127.036898404118,	9423	, 324,	0,	'링크',	'SN',	'201808241080840_패스트푸드4.jpg',	null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2',	'user10',	'UR',	'패티도 알맞게 익혀서 나오고 번도 고소하니 너무 좋네요!',	'버거 너무 맛있어요! 패티도 알맞게 익혀서 나오고 번도 고소하니 너무 좋네요!프라이즈는 감자 고구마 둘다 먹어봤는데요. 감자는 기름기 쏙 빼서 담백한 느낌이였고,고구마는 좀 더 바삭 바삭 기름 기름 해서 제 취향이였어요. 강추!',	'<p><img src="/mimi/resources/files/userboard/201808241080806_패스트푸드5.jpg" style="width: 743px;"></p><br><p>버거 너무 맛있어요! 패티도 알맞게 익혀서 나오고 번도 고소하니 너무 좋네요!</p><br><p>프라이즈는 감자 고구마 둘다 먹어봤는데요. 감자는 기름기 쏙 빼서 담백한 느낌이였고,</p><br><p>고구마는 좀 더 바삭 바삭 기름 기름 해서 제 취향이였어요. 강추!<br></p>',	'18/08/29',	0,	'길버트버거앤프라이즈',	'서울 강남구 신사동 545-3',	'02-546-5453',	37.5212314778099,	127.023226138725,	7563,	299,	0,	'링크',	'SN',	'201808241080806_패스트푸드5.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2',	'user10',	'UR',	'베라피자, 그릭슈바인, 라뜰리에를 모두 즐길 수 있는 곳',	'메뉴 선택의 초이스도 다양해서 취향대로 먹을 수 있는 것이 장점이다. 실내 분위기도 좋고 서비스도 좋다.',	'<p><img src="/mimi/resources/files/userboard/201808241080844_패스트푸드6.jpg" style="width: 740px;"></p><br><p>메뉴 선택의 초이스도 다양해서 취향대로 먹을 수 있는 것이 장점이다. </p><br><p>실내 분위기도 좋고 서비스도 좋다.<br></p>',	'18/08/29',	0,	'라뜰리에',	'서울 강남구 역삼동 831-23',	'02-3288-1788',	37.4944053072779,	127.029708688568,	0,	0,	0,	'링크',	'SN',	'201808241080844_패스트푸드6.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2', 'user11',	'UR',	'Rips are fresh and tasty',	'The rip source is good, which let you not feel oily.Fulled pork hot dish also satisfied me.Beer is also good!',	'<p><img src="/mimi/resources/files/userboard/201808241080851_패스트푸드7.jpg" style="width: 50%;"></p><br><p>The rip source is good, which let you not feel oily.Fulled pork hot dish also satisfied me.Beer is also good!<br></p>',	'18/08/29',	0,	'존쿡델리미트 시그니처압구정점',	'서울 강남구 신사동 574-4',	'02-514-0040',	37.5252386379586,	127.025639263671,	4,	0,	0,	'링크',	'SN',	'201808241080851_패스트푸드7.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C2',	'user11',	'UR',	'수제 버거를 이가격에 먹기는 쉽지 않을듯',	'미국의 인앤아웃버거가 부럽지않은 깔끔하면서 패티는 매우 쥬시한 맛입니다.점심시간에 자주 찾는데 12시에 가면 대기가 필요합니다.',	'<p><img src="/mimi/resources/files/userboard/201808241080812_패스트푸드8.jpg" style="width: 50%;"></p><br><p>미국의 인앤아웃버거가 부럽지않은 깔끔하면서 패티는 매우 쥬시한 맛입니다.점심시간에 자주 찾는데 12시에 가면 대기가 필요합니다.<br></p>',	'18/08/29',	0,	'크라이치즈버거 삼성역점',	'서울 강남구 대치동 996-17',	'02-566-6244',	37.50905082658106,	127.06518466271231,	2,	0,	0,	'링크',	'SN',	'201808241080812_패스트푸드8.jpg',	null);
+
+-- 중식(C6)
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C6', 'user06', 'UR',	'정말 가보고 싶었던 딤섬집!!!!',	'정말 가보고 싶었던 딤섬집!소룡포, 새우토스트, 새우부추, 마라우육면, 새우춘권, 하가우 개인적으로 이 순서로 맛있었어요',	'<p><img src="/mimi/resources/files/userboard/201808241010823_중식1.jpg" style="width: 512px;"><br></p><br><p>정말 가보고 싶었던 딤섬집!</p><br><p>소룡포, 새우토스트, 새우부추, 마라우육면, 새우춘권, 하가우 개인적으로 이 순서로 맛있었어요</p>',	'18/08/28',	0,	'골드피쉬딤섬퀴진',	'서울 강남구 신사동 657-5', '02-511-5266',	37.52612388515505, 127.03710719280019,	2, 	0, 	0, 	'링크',	'SN',	'201808241010823_중식1.jpg'	, null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'),	'C6',	'user06',	'UR',	'역대급으로 맛있었어요!!',	'배부른데도 맛있어서 계속 계속 먹게 될 정도..!배부를 때에도 맛있는 음식이 진짜 맛있는 거 아시죠..?',	'<p><img src="/mimi/resources/files/userboard/201808241010846_중식2.jpg" style="width: 512px;"><br></p><br><p>배부른데도 맛있어서 계속 계속 먹게 될 정도..!</p><br><p>배부를 때에도 맛있는 음식이 진짜 맛있는 거 아시죠..?</p>',	'18/08/28',	0,	'핑하오',	'서울 마포구 도화동 50-1',	'02-3274-1188',	'37.5404416678041',	'126.946199119405',	1, 	0, 	0, 	'링크',	'SN',	'201808241010846_중식2.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'),	'C6',	'user06',	'UR',	'양꼬치에 하얼빈은 언제나 옳다!!!',	'건대 양꼬치골목 첨 가보았어요양은 많은 편이고 서비스로 만두도 줘요!',	'<p><img src="/mimi/resources/files/userboard/201808241010816_중식3.jpg" style="width: 512px;"><br></p><br><p>건대 양꼬치골목 첨 가보았어요</p><br><p>양은 많은 편이고 서비스로 만두도 줘요!</p>',	'18/08/28',	0, 	'명봉반점',	'서울 광진구 자양동 4-1',	'02-498-8808',	37.538102179276,	127.068653153916,	3, 0, 0,	'링크',	'SN',	'201808241010816_중식3.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'),	'C6',	'user05',	'UR',	'진짜 중국인이 운영하시는 중국 만두집! 여기 제대로 중식이다:)',	'생각보다 가게 작아서 놀랐어요 아기자기한 느낌!한입 베어물면 안에서 육즙이 터져나와요..!',	'<p><img src="/mimi/resources/files/userboard/201808241010807_중식4.jpg" style="width: 512px;"><br></p><br><p>생각보다 가게 작아서 놀랐어요 아기자기한 느낌!</p><br><p>한입 베어물면 안에서 육즙이 터져나와요..!</p>',	'18/08/28',	0,	'빠오즈푸',	'서울 광진구 군자동 361-32',	'070-8991-4797',	37.548097972995,	127.071509482015,	1,	0,	0,	'링크',	'SN',	'201808241010807_중식4.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'),	'C6',	'user05',	'UR',	'가성비가 정말 좋고! 양도 푸짐한 쟈니덤플링!',	'늘 대기가 길어 지나치곤 했는데 주말 8시쯤 가니 오래 기다리진 않았다!군만두는 짭조름해서 간장 없이 먹어도 좋다! 무엇보다 이 가격에 이 양과 퀄리티라니!',	'<p><img src="/mimi/resources/files/userboard/201808241010838_중식5.jpg" style="width: 512px;"><br></p><br><p>늘 대기가 길어 지나치곤 했는데 주말 8시쯤 가니 오래 기다리진 않았다!</p><br><p>군만두는 짭조름해서 간장 없이 먹어도 좋다! 무엇보다 이 가격에 이 양과 퀄리티라니!</p>',	'18/08/28',	0,	'쟈니덤플링 2호점',	'서울 용산구 이태원동 123-5',	'02-790-8839',	37.5349396854701,	126.994768297226,	5121,	190,	0,	'링크',	'SN',	'201808241010838_중식5.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'),	'C6',	'user05',	'UR',	'정말... 이곳의 딤섬.. 샤오롱바오는 너무너무 맛있다.',	'한 입에 탁 넣고 육즙이 터지길 기대하면서 입 안에 머금고 있을 때 어디선가 툭 하고 육즙이 세어나온다.고기의 풍미와 함께... 너무 맛있다.',	'<p><img src="/mimi/resources/files/userboard/201808241010821_중식6.jpg" style="width: 512px;"><br></p><br><p>한 입에 탁 넣고 육즙이 터지길 기대하면서 입 안에 머금고 있을 때 어디선가 툭 하고 육즙이 세어나온다.</p><br><p>고기의 풍미와 함께... 너무 맛있다.</p>',	'18/08/28',	0,	'쮸즈',	'서울 강남구 신사동 540-15',	'02-6081-9888',	37.5192597840747,	127.02470059515,	21232,	1311,	0,	'링크',	'SN',	'201808241010821_중식6.jpg', null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'),	'C6',	'user05',	'UR',	'음식이 깔끔하고 맛있어요!!',	'중식을 좋아하지만 먹고나서 속이 안 좋았던 적이 많았는데,이 집은 그렇지 않아서 좋았습니다.',	'<p><img src="/mimi/resources/files/userboard/201808241010854_중식7.jpg" style="width: 512px;"><br></p><br><p>중식을 좋아하지만 먹고나서 속이 안 좋았던 적이 많았는데,</p><br><p>이 집은 그렇지 않아서 좋았습니다.</p>',	'18/08/28',	0,	'삼선',	'서울 강남구 역삼동 797-2',	'02-562-3522',	37.4949936001293,	127.039198768628,	2,	0,	0,	'링크',	'SN',	'201808241010854_중식7.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'),	'C6',	'user06',	'UR',	'이게 진짜 훠궈였구나!!',	'예전에 광화문 쪽에서 먹어본 훠궈는 향신료맛이 거의 안 느껴지는 완전 한국적인 맛이었는데여기 진짜 향신료 때문에 입 안이 얼얼해지는 맛이었다.',	'<p><img src="/mimi/resources/files/userboard/201808241010842_중식8.jpg" style="width: 512px;"><br></p><br><p>예전에 광화문 쪽에서 먹어본 훠궈는 향신료맛이 거의 안 느껴지는 완전 한국적인 맛이었는데</p><br><p>여기 진짜 향신료 때문에 입 안이 얼얼해지는 맛이었다.</p>',	'18/08/28',	0,	'불이아 역삼점',	'서울 강남구 역삼동 668-14',	'02-556-6689',	37.502577950786474,	127.03654333962912,	1423,	32,	0,	'링크',	'SN',	'201808241010842_중식8.jpg', null);
+
+-- 분식(C7)
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C7',	'user09',	'UR',	'최애 김밥집!! 속재료가 실하고 맛도 좋아요',	'매콤견과김밥 치즈참치 중독적인맛ㅠㅠ집이랑 가까웠다면 매번 사다먹어서 살쪘을듯..',	'<p><img src="/mimi/resources/files/userboard/201808241070803_분식3.jpg" style="width: 512px;"></p><br><p>매콤견과김밥 치즈참치 중독적인맛ㅠㅠ</p><br><p>집이랑 가까웠다면 매번 사다먹어서 살쪘을듯..</p>',	'18/08/29',	0,	'리김밥 압구정본점',	'서울 강남구 신사동 610',	'02-548-5552',	37.5266397837502,	127.029146767663,	2,	0,	0,	'링크',	'SN',	'201808241070803_분식3.jpg',	 null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C7',	'user09',	'UR',	'저 원래 떡볶이 잘 안먹는데 여기 넘 맛있어요 ㅠㅠ',	'달아요. 하지만 꽤 중독적이라 배불러도 끝까지 먹게 돼요.오징어보다는 차돌박이 떡볶이가 더 맛있어요.',	'<p><img src="/mimi/resources/files/userboard/201808241070818_분식2.jpg" style="width: 512px;"></p><br><p>달아요. 하지만 꽤 중독적이라 배불러도 끝까지 먹게 돼요.</p><br><p>오징어보다는 차돌박이 떡볶이가 더 맛있어요.<br></p>',	'18/08/29',	0,	'모범떡볶이와 수제돈가스',	'서울 강남구 역삼동 696-4',	'02-561-5445',	37.5053919265287,	127.047102951314,	2,	0,	0,	'링크',	'SN',	'201808241070818_분식2.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C7',	'user09',	'UR',	'맛있게 맵고 단맛이 잘 조화되서 좋아요',	'맛있어요. 옛날떡볶이 중간사이즈 안맵게 주문했는데 맛있게 맵고 단맛이 잘 조화되서 좋아요.?튀김이 깔끔해요.',	'<p><img src="/mimi/resources/files/userboard/201808241070814_분식4.jpg" style="width: 512px;"></p><br><p>맛있어요. 옛날떡볶이 중간사이즈 안맵게 주문했는데 맛있게 맵고 단맛이 잘 조화되서 좋아요.<br></p><br><p>튀김이 깔끔해요.<br><br></p>',	'18/08/29',	0,	'선릉역매운떡볶이',	'서울 동작구 사당동 1039-7', '02-1234-0012',		37.477785351932,	126.978863024753,	2,	0,	0,	'링크',	'SN',	'201808241070814_분식4.jpg',	 null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C7',	'user09',	'UR',	'매운맛과 보통맛 떡볶이, 순대, 튀김까지!!!',	'매운맛과 보통맛 떡볶이, 순대, 튀김까지!!! 맵고 쫄깃한게 땡길때 찾게되는 곳이다.좀만 더 매웠으면 좋을거같다ㅋㅋ 순대도 너무 맛있어ㅜㅜ',	'<p><img src="/mimi/resources/files/userboard/201808241070813_분식1.jpg" style="width: 512px;"></p><br><p>매운맛과 보통맛 떡볶이, 순대, 튀김까지!!! 맵고 쫄깃한게 땡길때 찾게되는 곳이다.</p><br><p>좀만 더 매웠으면 좋을거같다ㅋㅋ 순대도 너무 맛있어ㅜㅜ<br></p>',	'18/08/29',	0,	'핵볶이', '서울 강남구 역삼동 827-46',	'02-501-9868',	37.4970718770193,	127.03129746112,	5,	0,	0,	'링크',	'SN',	'201808241070813_분식1.jpg',	 null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C7',	'user10',	'UR',	 '소스가 좀 달긴하지만 맛난 즉석떡볶이!',	'와 지인 소개로 왔는데 !!!! 진짜 맛있어요 !!치즈 완전 대박 !!!!!전체적인 맛은 로제 떡볶이 같은데 떡이 진짜 맛있었어요 !!!!!!',	'<p><img src="/mimi/resources/files/userboard/201808241070840_분식5.jpg" style="width: 512px;"></p><br><p>와 지인 소개로 왔는데 !!!! 진짜 맛있어요 !!치즈 완전 대박 !!!!!</p><br><p>전체적인 맛은 로제 떡볶이 같은데 떡이 진짜 맛있었어요 !!!!!!<br></p>',	'18/08/29',	0,	'떡찌니',	'서울 강남구 도곡동 420-11',	'02-529-1345',	37.4848818530551,	127.045972971634,	1,	0,	0,	'링크',	'SN',	'201808241070840_분식5.jpg	', null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C7', 'user10',	'UR',	'기본적으로 해물이 들어가고 양이 많은 곳', 	'면사리를 추가해서 그런지는 몰라도 떡보다는 면이 더 많았던 떡볶이집볶음밥은 약간 싱겁기 때문에 밥을 볶기전에 국물을 잘 조절해서 남기시면 맛있게 드실 수 있습니다~',	'<p><img src="/mimi/resources/files/userboard/201808241070856_분식6.jpg" style="width: 512px;"></p><br><p>면사리를 추가해서 그런지는 몰라도 떡보다는 면이 더 많았던 떡볶이집</p><br><p>볶음밥은 약간 싱겁기 때문에 밥을 볶기전에 국물을 잘 조절해서 남기시면 맛있게 드실 수 있습니다~</p>',	'18/08/29',	0,	'대장곰',	'서울 강남구 역삼동 637-36',	'02-568-2220',	37.500720427930396,	127.03344007059962,	3,	0,	0,	'링크',	'SN',	'201808241070856_분식6.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C7',	'user10',	'UR', '어디갈까 고민하다가 결국 두끼로 선택했는데 넘나 굿초이스!!!',	'사람이 많은데 회전율도 좋아서 재료도 신선한 것 같아용 바쁜데도 불구하고 직원분들 넘나 친절하십니다..기분좋게 잘 먹고 나왔어여 마이쪙 마이쪙 떡볶이 싸랑훼~~',	'<p><img src="/mimi/resources/files/userboard/201808241070809_분식7.jpg" style="width: 512px;"></p><br><p>사람이 많은데 회전율도 좋아서 재료도 신선한 것 같아용 바쁜데도 불구하고 직원분들 넘나 친절하십니다..</p><br><p>기분좋게 잘 먹고 나왔어여 마이쪙 마이쪙 떡볶이 싸랑훼~~<br><br></p>',	'18/08/29',	0,	'두끼떡볶이 강남점',	'서울 강남구 역삼동 818-13',	'02-3454-1009',	37.4995486106254,	127.028249617074,	4,	0,	0,	'링크',	'SN',	'201808241070809_분식7.jpg', null);	
+
+-- 기타(C8)
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C8',	'user11',	'UR',	'타코 요리집 중에 제일 맛나는 것 같아요',	'브리또에 고추장같은 매콤한 맛이 들어가있어서 새로워요:-)?치즈퀘사디아는 꿀이 나와서 함께 먹으니 맛있어요',	'<p><img src="/mimi/resources/files/userboard/201808241080852_기타1.jpg" style="width: 650px;"></p><br><p>브리또에 고추장같은 매콤한 맛이 들어가있어서 새로워요:-)<br>치즈퀘사디아는 꿀이 나와서 함께 먹으니 맛있어요<br></p>',	'18/08/29',	0,	'무차초 서울',	'서울 강남구 역삼동 812-18',	'02-538-8854',	37.5024248843174,	127.027128815426,	3,	0,	0,	'링크',	'SN',	'201808241080852_기타1.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C8',	'user11',	'UR',	'반미가 특히맛있음 빵이 바삭하면서 부드럽고 소스가 맛남',	'분짜랑 쌀국수도 내 입맛엔 딱이었음!!분짜는 새콤달콤한 맛, 쌀국수는 숙주 없는 하노이식 쌀국수로 담백하고 진한 맛!',	'<p><img src="/mimi/resources/files/userboard/201808241080834_기타2.jpg" style="width: 50%;"></p><br><p>분짜랑 쌀국수도 내 입맛엔 딱이었음!!</p><br><p>분짜는 새콤달콤한 맛, 쌀국수는 숙주 없는 하노이식 쌀국수로 담백하고 진한 맛!<br></p>',	'18/08/29',	0,	'레호이',	'서울 용산구 이태원동 261-9',	'070-4242-0426',	37.543243012875,	126.990209837374,	7954,	645,	0,	'링크',	'SN',	'201808241080834_기타2.jpg',	 null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C8',	'user11',	'UR',	'전체적으로 양이 푸짐하고 쌀국수의 육수맛이 진하다',	'직접뽑은면 직접뽑은 육수 만으로도 의미가 있는데 볶음밥이나 분짜는 그야말로 베트남의 맛이다.재료 맛 양 모두 좋다. 가격까지 좋다.',	'<p><img src="/mimi/resources/files/userboard/201808241090833_기타3.jpg" style="width: 50%;"></p><br><p>직접뽑은면 직접뽑은 육수 만으로도 의미가 있는데 볶음밥이나 분짜는 그야말로 베트남의 맛이다.</p><br><p>재료 맛 양 모두 좋다. 가격까지 좋다.<br></p>',	'18/08/29',	0,	'분짜라붐 이태원점',	'서울 용산구 한남동 738-25',	'02-749-4993',	37.536896774316,	127.000312281077,	1,	0,	0,	'링크',	'SN',	'201808241090833_기타3.jpg', null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C8',	'user11',	'UR',	'피쉬앤칩스랑 맥앤치즈 개짱. 런던프라이드와 함께라면 최고!',	'가볍게 먹기 좋습니다.싸지만 음식의 퀄리티가 절대 낮지 않았습니다.',	'<p><img src="/mimi/resources/files/userboard/201808241090807_기타5.jpg" style="width: 50%;"></p><br><p>가볍게 먹기 좋습니다.싸지만 음식의 퀄리티가 절대 낮지 않았습니다.<br></p>',	'18/08/29',	0,	'로즈앤크라운',	'서울 용산구 이태원동 118-23',	'02-794-2555',	37.5347341021091,	126.991998594196,	1,	0,	0,	'링크',	'SN',	'201808241090807_기타5.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C8',	'user11',	'UR',	'새우가 탱글탱글하고 맛있어요!', '새우가 탱글탱글하고 맛있어요! 런치에 면 밥 국 종류있는데 저는 밥 추천!오믈렛 부들부들하고 담백해용',	'<p><img src="/mimi/resources/files/userboard/201808241090811_기타6.jpg" style="width: 50%;"></p><br><p>새우가 탱글탱글하고 맛있어요! 런치에 면 밥 국 종류있는데 저는 밥 추천!</p><br><p>오믈렛 부들부들하고 담백해용<br></p>',	'18/08/29',	0,	'볼리포인트',	'서울 용산구 한남동 684-65',	'02-6404-0410',	37.5358407951717,	127.001276261189,	2,	0,	0,	'링크',	'SN',	'201808241090811_기타6.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C8',	'user11',	'UR',	'팬케익도 팬케익이지만 오믈렛은 와우오우예아',	'밀가루로 만든 팬케이크는 가끔 텁텁해서 별로인데, 여기는 감자를 발효해서 만든 것 때문인지 엄청 부드럽습니다.먹다보면 정신없이 다 먹어치우더라구요.?팬케익도 팬케익이지만 오믈렛은 와우오우예아. 그 계란과 치즈의 향연. 베이컨 할라피뇨 오믈렛을 추천합니다.',	'<p><img src="/mimi/resources/files/userboard/201808241090829_기타7.jpg" style="width: 50%;"></p><br><p>밀가루로 만든 팬케이크는 가끔 텁텁해서 별로인데, 여기는 감자를 발효해서 만든 것 때문인지 엄청 부드럽습니다.</p><br><p>먹다보면 정신없이 다 먹어치우더라구요.<br></p><br><p>팬케익도 팬케익이지만 오믈렛은 와우오우예아. 그 계란과 치즈의 향연. 베이컨 할라피뇨 오믈렛을 추천합니다.<br></p>',	'18/08/29',	0,	'오리지널 팬케익하우스 이태원점',	'서울 용산구 이태원동 172-2',	'02-795-7481',	37.5345538292542,	126.990989388798,	3,	0,	0,	'링크',	'SN',	'201808241090829_기타7.jpg', null);	
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C8',	'user11',	'UR',	'가끔 색다른 식사가 필요할 때 좋을 듯 합니다',	'웨이팅도 길지 않고 문자로 웨이팅 시간을 알려줘서 마냥 서서 기다리지 않고, 주변구경하기 좋아 시간 낭비 안 하고 좋았어요.음식도 바로바로나오고 분위기가 너무좋았답니다.',	'<p><img src="/mimi/resources/files/userboard/201808241090831_기타4.jpg" style="width: 50%;"></p><br><p>웨이팅도 길지 않고 문자로 웨이팅 시간을 알려줘서 마냥 서서 기다리지 않고, 주변구경하기 좋아 시간 낭비 안 하고 좋았어요.</p><br><p>음식도 바로바로나오고 분위기가 너무좋았답니다.</p>',	'18/08/29',	0,	'라이너스바베큐',	'서울 용산구 이태원1동 56-20',	'02-790-2920',	37.5338149042573,	126.989713251038,	4572,	135,	0,	'링크',	'SN',	'201808241090831_기타4.jpg',	 null);
+INSERT INTO TB_BOARD_REVIEW (BOARD_NO, CATEGORY_NO, USER_ID, BOARD_GB, TITLE, CONTENTS, CONTENTS_TAG, BOARD_DATE, COMMENT_NUM, SHOP_NAME, SHOP_ADDRESS, SHOP_CALL, LATITUDE, LONGITUDE, HITS, RECOMMEND, FILE_CNT, BOARD_LINK, STATE, THUMBNAIL_NAME, DEL_DATE) 
+VALUES ('BR'||LPAD(BOARD_REVIEW_SEQ.NEXTVAL, 4, '0'), 'C8',	'user11',	'UR',	'으어아아아 여기 크림치즈 크래커 존맛...',	'으어아아아 여기 크림치즈 크래커 존맛... 다른 메뉴도 먹어봤지만 단연 크림치즈크래커입니다....크래커는 평범하지만 어떻게 저런 디핑 조합을 만들수있나 영혼정도 가뿐히 팔고싶은 맛',	'<p><img src="/mimi/resources/files/userboard/201808241090830_기타8.jpg" style="width: 50%;"></p><br><p>으어아아아 여기 크림치즈 크래커 존맛... 다른 메뉴도 먹어봤지만 단연 크림치즈크래커입니다....</p><br><p>크래커는 평범하지만 어떻게 저런 디핑 조합을 만들수있나 영혼정도 가뿐히 팔고싶은 맛<br></p>',	'18/08/29',	0,	'더버뮤다',	'서울 용산구 이태원동 34-50', '02-8888-8888',	37.5332238052644,	126.989238145198,	8123,	288,	0,	'링크',	'SN',	'201808241090830_기타8.jpg', null);
+
+
+
+
+
+---
+      
+
+
+--베스트리뷰 20개(7월 8월)
+--글번호/선정된연월/상태/랭크
+
+--7월
+INSERT INTO TB_BOARD_BEST VALUES ('BR0016','18/07', 'SN', 1);
+INSERT INTO TB_BOARD_BEST VALUES ('BR0026','18/07', 'SN', 2);
+INSERT INTO TB_BOARD_BEST VALUES ('BR0027','18/07', 'SN', 3);
+INSERT INTO TB_BOARD_BEST VALUES ('BR0019','18/07', 'SN', 4);
+INSERT INTO TB_BOARD_BEST VALUES ('BR0013','18/07', 'SN', 5);
+INSERT INTO TB_BOARD_BEST VALUES ('BR0015','18/07', 'SN', 6);
+INSERT INTO TB_BOARD_BEST VALUES ('BR0021','18/07', 'SN', 7);
+INSERT INTO TB_BOARD_BEST VALUES ('BR0018','18/07', 'SN', 8);
+INSERT INTO TB_BOARD_BEST VALUES ('BR0014','18/07', 'SN', 9);
+INSERT INTO TB_BOARD_BEST VALUES ('BR0029','18/07', 'SN', 10);
+            
+----8월               
+--INSERT INTO TB_BOARD_BEST VALUES ('BR0060','18/08', 'SN', 1);
+--INSERT INTO TB_BOARD_BEST VALUES ('BR0085','18/08', 'SN', 2);
+--INSERT INTO TB_BOARD_BEST VALUES ('BR0056','18/08', 'SN', 3);
+--INSERT INTO TB_BOARD_BEST VALUES ('BR0087','18/08', 'SN', 4);
+--INSERT INTO TB_BOARD_BEST VALUES ('BR0064','18/08', 'SN', 5);
+--INSERT INTO TB_BOARD_BEST VALUES ('BR0080','18/08', 'SN', 6);
+--INSERT INTO TB_BOARD_BEST VALUES ('BR0061','18/08', 'SN', 7);
+--INSERT INTO TB_BOARD_BEST VALUES ('BR0077','18/08', 'SN', 8);
+--INSERT INTO TB_BOARD_BEST VALUES ('BR0082','18/08', 'SN', 9);
+--INSERT INTO TB_BOARD_BEST VALUES ('BR0053','18/08', 'SN', 10);         
+-- 
+ 
+ 
+          
+          
+--서비스게시판
+--글번호,작성자,제목,내용,작성일(DEFAULT SYSDATE),카테고리,상태(DEFAULT 'SN')
+--서비스게시판
+
+
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user01', '식당을 등록하고 싶습니다', '제 가게를 등록하려면 어떻게 해야하나요 ', TO_DATE('2018/08/10', 'RR/MM/DD'), 0, 'SD');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user02', '홍보가 의심되는 글이 있습니다', '유저리뷰에 양아치님이 쓰신글 보면 사장님이 아니고야 알수없는 내용이 적힌거 같은데 확인 부탁드려요', TO_DATE('2018/08/10', 'RR/MM/DD'), 1, 'SD');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user03', '제가 작성한 글만 볼 수 있나요', '제가 작성한 글만 보고싶어요', TO_DATE('2018/08/11', 'RR/MM/DD'), 2, 'SD');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user04', '베스트 리뷰에 글을 쓰고 싶어요', '베스트 리뷰에 글을 쓰고싶은데 어떻게 해야하나요', TO_DATE('2018/08/12', 'RR/MM/DD'), 2, 'SD');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user05', '제가 작성한 댓글만 보고싶어요', '어디서 볼 수 있나요', TO_DATE('2018/08/13', 'RR/MM/DD'), 0, 'SD');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user06', '베스트 리뷰가 되게 하고싶어요', '방법을 알려주세요', TO_DATE('2018/08/14', 'RR/MM/DD'), 2, 'SD');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user07', '양심고백 합니다', '제가 작성한글들은 협찬을 받고 작성한 글 입니다ㅠㅠ', TO_DATE('2018/08/15', 'RR/MM/DD'), 1, 'SD');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user08', '즐겨찾기 한 게시물은 어디서 볼수있나요', '즐겨찾기는 했는데 어디서 볼수있는지 궁금해요', TO_DATE('2018/08/16', 'RR/MM/DD'), 2, 'SD');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user09', '궁금한게 있어요', '제가 글 쓰려고 사진을 찍으니까 사장님께서 인터넷에 올리는거냐고 물어보시더니 잘 써주라며 음료를 서비스로 주셨는데 이거도 안되는건가요? 글은 소신껏 적었습니다', TO_DATE('2018/08/17', 'RR/MM/DD'), 0, 'SD');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user10', '맛있는집을 찾았는데 주소를 모르면 어떻게하나요', '주소가 기억이 안나요ㅜㅜ', TO_DATE('2018/08/18', 'RR/MM/DD'), 2, 'SD');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user01', '탈퇴하고싶어요', '탈퇴하는 방법 알려주세요', TO_DATE('2018/08/23', 'RR/MM/DD'), 0, 'SN');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user11', '찾아간 평양냉면집이 망했어요', '미미 보고 찾아간건데 엊그제 문 닫았더라구요ㅠㅠ', TO_DATE('2018/08/19', 'RR/MM/DD'), 1, 'SN');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user12', '가게 이름은 그대론데 메뉴가 바뀌었어요', '이럴땐 어떻게하나요', TO_DATE('2018/08/20', 'RR/MM/DD'), 1, 'SN');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user13', '맛집을 찾았는데 이름이 기억 안나요', '이럴경우에는 어떻게 글 작성 해야하나요', TO_DATE('2018/08/21', 'RR/MM/DD'), 0, 'SN');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user14', '가게 주인이 바꼈어요', '주인이 바뀌어서 그런지 맛이 변한거 같아서 찾아보니 옆골목에 다시 가게를 차린거 같은데 어떻게 해야하나요', TO_DATE('2018/08/22', 'RR/MM/DD'), 1, 'SN');
+INSERT INTO TB_BOARD_SERVICE (BOARD_NO, USER_ID, TITLE, CONTENTS, WRITE_DATE, CATEGORY, STATE) 
+VALUES ('BS'||LPAD(BOARD_SERVICE_SEQ.NEXTVAL, 4, '0'), 'user15', '닉네임을 변경하고 싶어요', '방법을 알려주세요', TO_DATE('2018/08/23', 'RR/MM/DD'), 2, 'SN');
+
+
+
+
+
+
+
+
+--서비스 댓글
+
+INSERT INTO TB_COMMENT_SERVICE (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS) 
+VALUES ('CS'||LPAD(COMMENT_SERVICE_SEQ.NEXTVAL, 4, '0'), 'BS0001', 'admin', TO_DATE('2018/08/10', 'RR/MM/DD'), '손님이 직접 등록하는 게시판 이여서 사장님께서 직접 등록하시긴 어렵습니다.');
+INSERT INTO TB_COMMENT_SERVICE (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS) 
+VALUES ('CS'||LPAD(COMMENT_SERVICE_SEQ.NEXTVAL, 4, '0'), 'BS0002', 'admin', TO_DATE('2018/08/11', 'RR/MM/DD'), '확인 후 처리조치 하겠습니다. 감사합니다');
+INSERT INTO TB_COMMENT_SERVICE (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS) 
+VALUES ('CS'||LPAD(COMMENT_SERVICE_SEQ.NEXTVAL, 4, '0'), 'BS0003', 'admin', TO_DATE('2018/08/12', 'RR/MM/DD'), '작성글은 로그인 하신후 오른쪽 상단 아이콘을 누르시면 작성하신글을 볼 수 있는 목록이 나옵니다^^');
+INSERT INTO TB_COMMENT_SERVICE (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS) 
+VALUES ('CS'||LPAD(COMMENT_SERVICE_SEQ.NEXTVAL, 4, '0'), 'BS0004', 'admin', TO_DATE('2018/08/13', 'RR/MM/DD'), '베스트리뷰는 추천을 가장 많이받은 게시물이 이동하는것으로 글을 작성하기는 어렵습니다');
+INSERT INTO TB_COMMENT_SERVICE (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS) 
+VALUES ('CS'||LPAD(COMMENT_SERVICE_SEQ.NEXTVAL, 4, '0'), 'BS0005', 'admin', TO_DATE('2018/08/14', 'RR/MM/DD'), '댓글은 로그인 하신후 오른쪽 상단 아이콘을 누르시면 작성하신 댓글을 볼 수 있는 목록이 나옵니다^^');
+INSERT INTO TB_COMMENT_SERVICE (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS) 
+VALUES ('CS'||LPAD(COMMENT_SERVICE_SEQ.NEXTVAL, 4, '0'), 'BS0006', 'admin', TO_DATE('2018/08/15', 'RR/MM/DD'), '베스트 리뷰는 추천을 많이 받은 게시물이 이동합니다, 맛있는 맛집을 찾아 미미에 작성해 주세요^^!');
+INSERT INTO TB_COMMENT_SERVICE (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS) 
+VALUES ('CS'||LPAD(COMMENT_SERVICE_SEQ.NEXTVAL, 4, '0'), 'BS0007', 'admin', TO_DATE('2018/08/16', 'RR/MM/DD'), '확인후 처리 조치 하겠습니다. 감사합니다');
+INSERT INTO TB_COMMENT_SERVICE (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS) 
+VALUES ('CS'||LPAD(COMMENT_SERVICE_SEQ.NEXTVAL, 4, '0'), 'BS0008', 'admin', TO_DATE('2018/08/17', 'RR/MM/DD'), '로그인 하신후 오른쪽 상단 아이콘을 누르시면 즐겨찾기하신글 클릭하시면 볼 수 있습니다^^');
+INSERT INTO TB_COMMENT_SERVICE (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS) 
+VALUES ('CS'||LPAD(COMMENT_SERVICE_SEQ.NEXTVAL, 4, '0'), 'BS0009', 'admin', TO_DATE('2018/08/18', 'RR/MM/DD'), '음료 한병 서비스 정도는 괜찮습니다^^ 감사합니다');
+INSERT INTO TB_COMMENT_SERVICE (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS) 
+VALUES ('CS'||LPAD(COMMENT_SERVICE_SEQ.NEXTVAL, 4, '0'), 'BS0010', 'admin', TO_DATE('2018/08/19', 'RR/MM/DD'), '정확한 정보를 위해 포털사이트나 지도사이트에서 검색후 글을 작성해 주세요');
+
+
+
+
+
+
+
+
+--추천
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0031', 'user01', TO_DATE('2018/08/10', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0032', 'user02', TO_DATE('2018/08/10', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0033', 'user03', TO_DATE('2018/08/11', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0034', 'user04', TO_DATE('2018/08/12', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0035', 'user05', TO_DATE('2018/08/12', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0036', 'user06', TO_DATE('2018/08/13', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0037', 'user07', TO_DATE('2018/08/13', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0038', 'user08', TO_DATE('2018/08/14', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0039', 'user09', TO_DATE('2018/08/14', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0041', 'user10', TO_DATE('2018/08/15', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0042', 'user11', TO_DATE('2018/08/15', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0038', 'user12', TO_DATE('2018/08/15', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0055', 'user13', TO_DATE('2018/08/16', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0057', 'user14', TO_DATE('2018/08/16', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0032', 'user15', TO_DATE('2018/08/17', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0041', 'user01', TO_DATE('2018/08/17', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0052', 'user02', TO_DATE('2018/08/18', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0042', 'user03', TO_DATE('2018/08/18', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0051', 'user04', TO_DATE('2018/08/19', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0044', 'user05', TO_DATE('2018/08/20', 'RRRR/MM/DD'));
+INSERT INTO TB_RECOMMEND (BOARD_NO, USER_ID, RECOMMEND_DATE) 
+VALUES ('BR0033', 'user06', TO_DATE('2018/08/21', 'RRRR/MM/DD'));
+
+
+
+
+
+
+--북마크
+INSERT INTO TB_BOOKMARK
+VALUES ('BR0001', 'user01', TO_DATE('2018/08/10', 'RRRR/MM/DD'));
+INSERT INTO TB_BOOKMARK
+VALUES ('BR0002', 'user01', TO_DATE('2018/08/12', 'RRRR/MM/DD'));
+INSERT INTO TB_BOOKMARK 
+VALUES ('BR0003', 'user01', TO_DATE('2018/08/11', 'RRRR/MM/DD'));
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0002', 'user02');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0003', 'user03');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID)  
+VALUES ('BR0001', 'admin');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID)  
+VALUES ('BR0002', 'admin');
+
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0005', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0067', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0012', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0023', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0014', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0015', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0056', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0017', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0018', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0022', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0025', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0027', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0029', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0032', 'user01');
+INSERT INTO TB_BOOKMARK (BOARD_NO, BOOKMARK_USER_ID) 
+VALUES ('BR0042', 'user01');
+
+
+
+--리뷰댓글
+INSERT INTO TB_COMMENT_REVIEW (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS, COMMENT_STATE, DEL_DATE) 
+VALUES ('CR'||LPAD(COMMENT_REVIEW_SEQ.NEXTVAL, 4, '0'), 'BR0001', 'user01', TO_DATE('2018/08/10', 'RR/MM/DD'), '댓글1', 'SN', NULL);
+INSERT INTO TB_COMMENT_REVIEW (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS, COMMENT_STATE, DEL_DATE) 
+VALUES ('CR'||LPAD(COMMENT_REVIEW_SEQ.NEXTVAL, 4, '0'), 'BR0002', 'user01', TO_DATE('2018/08/10', 'RR/MM/DD'), '댓글2', 'SN', NULL);
+INSERT INTO TB_COMMENT_REVIEW (COMMENT_NO, BOARD_NO, USER_ID, COMMENT_DATE, COMMENT_CONTENTS, COMMENT_STATE, DEL_DATE) 
+VALUES ('CR'||LPAD(COMMENT_REVIEW_SEQ.NEXTVAL, 4, '0'), 'BR0001', 'user01', TO_DATE('2018/08/11', 'RR/MM/DD'), '댓글3', 'SN', NULL);
+
+
+
+
+--등급
+INSERT INTO TB_GRADE (GRADE_NAME, MIN_POINT, MAX_POINT) 
+VALUES ('손님', 0, 100);
+INSERT INTO TB_GRADE (GRADE_NAME, MIN_POINT, MAX_POINT) 
+VALUES ('종업원', 101, 500);
+INSERT INTO TB_GRADE (GRADE_NAME, MIN_POINT, MAX_POINT) 
+VALUES ('주방보조', 501, 1200);
+INSERT INTO TB_GRADE (GRADE_NAME, MIN_POINT, MAX_POINT) 
+VALUES ('주방장', 1201, 2000);
+INSERT INTO TB_GRADE (GRADE_NAME, MIN_POINT, MAX_POINT) 
+VALUES ('식신', 2001, 999999999);
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------
+COMMIT;
+------------------------------------------------------------------------------------
+PROMPT Complete....
+
+

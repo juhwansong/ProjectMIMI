@@ -62,7 +62,7 @@ public class NearshopDao {
 		int listCount = 0;
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
-		String query = "select count(*) from(select contents, board_no, shop_name, shop_address, shop_call, title, thumbnail_name, latitude, longitude, DISTNACE_WGS84(?, ?, latitude, longitude) as distance from tb_board_review where state = 'SN' order by distance) where distance < 10";
+		String query = "select count(*) from(select contents, board_no, shop_name, shop_address, shop_call, title, thumbnail_name, latitude, longitude, DISTNACE_WGS84(?, ?, latitude, longitude) as distance from tb_board_review where state = 'SN' and BOARD_GB = 'UR' order by distance) where distance < 10";
 		
 		try {
 			pstmt = con.prepareStatement(query);

@@ -390,7 +390,8 @@ function cmtinsert(){
 		url : "/mimi/adminboardreplyinsert",
 		type : "post",
 		data : {userid : "ssuserId", bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
-		success : function(data){		
+		success : function(data){	
+			$("#cmtContent").val("");
 			commentList(maxPage); 
 		},
 		error : function(jqXHR, textstatus, errorThrown){
@@ -474,24 +475,6 @@ function bookmarkSub(){
 
 </script>
 
-<script type="text/javascript">
-function cmtinsert(){
-    var bnum = $("#bnum").val();
-    var cmtContent = $("#cmtContent").val();
-	$.ajax({
-		url : "/mimi/adminboardreplyinsert",
-		type : "post",
-		data : {userid : "ssuserId", bnum : $("#bnum").val(), cmtContent : $("#cmtContent").val()},
-		success : function(data){		
-			commentList(maxPage); 
-		},
-		error : function(jqXHR, textstatus, errorThrown){
-			console.log("error : " + jqXHR + ", " + 
-					textstatus + ", " + errorThrown);
-		}
-	});  //ajax close
-}
-</script>
 <script type="text/javascript">
 	//$(function(){
 		
