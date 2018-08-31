@@ -46,7 +46,7 @@ public class BestBoardDao {
 		ResultSet rset = null;
 		
 		String query = "SELECT * FROM V_BEST_REVIEW"
-				+ " WHERE SELECTED_MONTH = TO_CHAR(SYSDATE, 'RR/MM') AND STATE = 'SN'"
+				+ " WHERE SELECTED_MONTH = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'RR/MM') AND STATE = 'SN'"
 				+ " ORDER BY RANK ASC";
 		
 		try {
