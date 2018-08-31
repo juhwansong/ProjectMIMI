@@ -526,7 +526,7 @@ function cmtinsert(){
 				<td id="text_category">
 				<span class="badge badge-primary"><%= board.getCategoryName() %></span>
 				</td>			
-				<td style="width: 300px; align:center;" rowspan="5" colspan="2">
+				<td style="max-width: 350px; align:center;" rowspan="4" colspan="2">
 				<input type="hidden" readonly="readonly" name="latitude" id="latitude" value="<%=board.getLatitude()%>" >
 				<input type="hidden" readonly="readonly" name="longitude" id="longitude" value="<%=board.getLongitude()%>">	
 				
@@ -537,7 +537,7 @@ function cmtinsert(){
         					<span onclick="zoomOut()"><img style="position:relative;right:1px;height:100%;" src="http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
     					</div>
 	    		</div>
-	    	
+	    		</td>
 			</tr>
 			<tr>
 				<th>매장명</th>
@@ -592,8 +592,10 @@ function cmtinsert(){
 		<td width="10%"></td><!-- 빈칸 -->
 		<td width="*"><!-- 페이지 -->
 		<!-- Pagination -->
+			<div style="text-align: center">
 			<ul class="pagination" id="pagination" style="float: center; display: flex; justify-content: center;">
-			</ul>	
+			</ul>
+			</div>	
 		</td>
 	</tr>
 </table>
