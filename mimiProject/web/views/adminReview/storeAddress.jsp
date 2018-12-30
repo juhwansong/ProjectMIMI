@@ -222,7 +222,14 @@ function placesSearchCB(data, status, pagination) {
 	map.setCursor(""); //버튼 기능 초기화 됐으니  커서모양도 초기화 (직접 지도에 마커 표시 클릭시 변하는 커서모양 초기화)
 	
     if (status === daum.maps.services.Status.OK) {
-
+		
+    	//새 검색 시 기존 윈도우 인포들을 전부 지움
+    	for(var i=0; i<infowindow.length; i++){
+	    	if(infowindow[i] !== undefined){  //이미 지워진 인덱스의 값을 또 close()할경우 undefinded 발생 (안닫힌 info창만 제거)
+	    		infowindow[i].setMap(null);
+	    	} 
+	    }
+    	
         // 정상적으로 검색이 완료됐으면
         // 검색 목록과 마커를 표출합니다
         displayPlaces(data);
